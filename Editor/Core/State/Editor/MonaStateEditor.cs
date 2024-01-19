@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Mona.SDK.Core.State.UIEditors
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(MonaState))]
     public class MonaStateEditor : Editor
     {
@@ -15,4 +16,5 @@ namespace Mona.SDK.Core.State.UIEditors
             return root;
         }
     }
+#endif
 }
