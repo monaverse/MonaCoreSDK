@@ -5,8 +5,8 @@ namespace Mona.SDK.Core.Network
     public interface IMonaNetworkSpawner
     {
         int LocalPlayerId { get; }
-        void RegisterMonaReactor(MonaReactor reactor);
-        void RegisterMonaBody(MonaBody monaBody);
+        void RegisterMonaReactor(IMonaReactor reactor);
+        void RegisterMonaBody(IMonaBody monaBody);
         void RegisterNetworkMonaReactor(INetworkMonaReactorClient reactor);
         void RegisterNetworkMonaBody(INetworkMonaBodyClient monaBody);
         void RegisterMonaPrefabProvider(IMonaPrefabProvider provider);

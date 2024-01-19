@@ -5,6 +5,5 @@ namespace Mona
     public interface IMonaPrefabProvider
     {
         MonaBody GetMonaBodyPrefab(string prefabId);
-        MonaReactor GetMonaReactorPrefab(string prefabId);
     }
 }

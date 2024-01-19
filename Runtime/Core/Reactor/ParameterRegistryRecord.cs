@@ -3,14 +3,11 @@ using System;
 
 namespace Mona
 {
-    public partial class MonaReactor
+    [Serializable]
+    public struct ParameterRegistryRecord
     {
-        [Serializable]
-        public struct ParameterRegistryRecord
-        {
-            public string name;
-            public ValueType valueType;
-            public Animator animator;
-        }
+        public string name;
+        public ValueType valueType;
+        public Animator animator;
     }
-}
+ }

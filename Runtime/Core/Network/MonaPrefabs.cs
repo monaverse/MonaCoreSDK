@@ -14,7 +14,6 @@ namespace Mona.SDK.Core.Network
         private IMonaNetworkSpawner _networkSpawner;
 
         public List<MonaBody> _monaBodyPrefabs;
-        public List<MonaReactor> _monaReactorPrefabs;
 
         private Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
 
@@ -48,12 +47,6 @@ namespace Mona.SDK.Core.Network
         public MonaBody GetMonaBodyPrefab(string prefabId)
         {
             var prefab = _monaBodyPrefabs.Find((x) => x.PrefabId.Equals(prefabId));
-            return prefab != null ? prefab : null;
-        }
-
-        public MonaReactor GetMonaReactorPrefab(string prefabId)
-        {
-            var prefab = _monaReactorPrefabs.Find((x) => x.PrefabId.Equals(prefabId));
             return prefab != null ? prefab : null;
         }
     }

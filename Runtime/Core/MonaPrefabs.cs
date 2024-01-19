@@ -9,6 +9,5 @@ namespace Mona.SDK.Core
     public partial class MonaPrefabs : MonoBehaviour
     {
         public List<MonaBody> _monaBodyPrefabs;
-        public List<MonaReactor> _monaReactorPrefabs;
     }
 }
