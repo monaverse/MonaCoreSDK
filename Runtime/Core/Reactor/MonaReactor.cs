@@ -1,8 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using Mona.Core.Body;
-using Mona.Core;
+using Mona.SDK.Core.Body;
+using Mona.SDK.Core;
 
 namespace Mona
 {

@@ -1,13 +1,13 @@
-using Mona.Core.Body;
-using Mona.Core.Events;
-using Mona.Core.Network;
-using Mona.Core.State.Structs;
+using Mona.SDK.Core.Body;
+using Mona.SDK.Core.Events;
+using Mona.SDK.Core.Network;
+using Mona.SDK.Core.State.Structs;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Mona.Core.State
+namespace Mona.SDK.Core.State
 {
     [Serializable]
     public class MonaState : IMonaState

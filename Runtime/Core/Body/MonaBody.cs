@@ -1,10 +1,10 @@
 using UnityEngine;
 using Unity.VisualScripting;
 using System.Collections.Generic;
-using Mona.Core.Network;
-using Mona.Core.Events;
+using Mona.SDK.Core.Network;
+using Mona.SDK.Core.Events;
 
-namespace Mona.Core.Body
+namespace Mona.SDK.Core.Body
 {
     public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {

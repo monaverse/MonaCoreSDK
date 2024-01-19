@@ -1,4 +1,4 @@
-﻿namespace Mona.Core
+﻿namespace Mona.SDK.Core
 {
     public class MonaCoreConstants
     {

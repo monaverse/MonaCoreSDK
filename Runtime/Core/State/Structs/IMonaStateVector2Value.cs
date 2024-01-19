@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Mona.Core.State.Structs
+namespace Mona.SDK.Core.State.Structs
 {
     public interface IMonaStateVector2Value
     { 

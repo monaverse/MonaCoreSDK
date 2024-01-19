@@ -1,10 +1,10 @@
-﻿using Mona.Core.Body;
-using Mona.Core.State.Structs;
+﻿using Mona.SDK.Core.Body;
+using Mona.SDK.Core.State.Structs;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mona.Core.State
+namespace Mona.SDK.Core.State
 {
     public interface IMonaState
     {

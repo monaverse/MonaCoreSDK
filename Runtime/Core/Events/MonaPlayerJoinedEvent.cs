@@ -1,7 +1,7 @@
-﻿using Mona.Core.Body;
+﻿using Mona.SDK.Core.Body;
 using UnityEngine;
 
-namespace Mona.Core.Events
+namespace Mona.SDK.Core.Events
 {
     public struct MonaPlayerJoinedEvent
     {

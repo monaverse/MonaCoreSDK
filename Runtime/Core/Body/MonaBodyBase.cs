@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Linq;
 
-namespace Mona.Core.Body
+namespace Mona.SDK.Core.Body
 {
     public class MonaBodyBase : MonoBehaviour
     {

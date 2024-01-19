@@ -1,4 +1,4 @@
-﻿namespace Mona.Core.Events
+﻿namespace Mona.SDK.Core.Events
 {
     public struct MonaFloatChangedEvent
     {

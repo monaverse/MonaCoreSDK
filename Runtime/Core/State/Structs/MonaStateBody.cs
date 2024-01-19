@@ -1,8 +1,8 @@
-﻿using Mona.Core.Body;
+﻿using Mona.SDK.Core.Body;
 using System;
 using UnityEngine;
 
-namespace Mona.Core.State.Structs
+namespace Mona.SDK.Core.State.Structs
 {
     [Serializable]
     public class MonaStateBody : IMonaStateValue, IMonaStateBodyValue

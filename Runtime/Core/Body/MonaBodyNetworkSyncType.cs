@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mona.Core.Body
+namespace Mona.SDK.Core.Body
 {
     [Serializable]
     public enum MonaBodyNetworkSyncType

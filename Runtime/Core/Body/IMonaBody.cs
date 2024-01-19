@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mona.Core.Body
+namespace Mona.SDK.Core.Body
 {
     public interface IMonaBody
     {

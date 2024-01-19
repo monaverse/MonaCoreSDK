@@ -1,7 +1,7 @@
-﻿using Mona.Core.Body;
+﻿using Mona.SDK.Core.Body;
 using UnityEngine;
 
-namespace Mona.Core.State.Structs
+namespace Mona.SDK.Core.State.Structs
 {
     public interface IMonaStateBodyValue
     { 

@@ -1,4 +1,4 @@
-namespace Mona.Core.Body.Enums
+namespace Mona.SDK.Core.Body.Enums
 {
     public enum MonaPlayerBodyParts
     {

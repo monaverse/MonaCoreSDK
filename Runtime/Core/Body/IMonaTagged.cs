@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mona.Core.Body
+namespace Mona.SDK.Core.Body
 {
     public interface IMonaTagged
     {

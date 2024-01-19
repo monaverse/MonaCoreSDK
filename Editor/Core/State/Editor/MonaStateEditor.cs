@@ -1,11 +1,8 @@
-﻿using Mona.Core.Body;
-using Mona.Core.State.UIElements;
-using System;
+﻿using Mona.SDK.Core.State.UIElements;
 using UnityEditor;
-using UnityEditor.Search;
 using UnityEngine.UIElements;
 
-namespace Mona.Core.State.UIEditors
+namespace Mona.SDK.Core.State.UIEditors
 {
     [CustomEditor(typeof(MonaState))]
     public class MonaStateEditor : Editor

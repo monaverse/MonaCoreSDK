@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Mona.Core.Body;
+using Mona.SDK.Core.Body;
 
 namespace Mona.Core
 {

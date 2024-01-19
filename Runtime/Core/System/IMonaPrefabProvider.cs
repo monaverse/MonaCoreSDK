@@ -1,4 +1,4 @@
-﻿using Mona.Core.Body;
+﻿using Mona.SDK.Core.Body;
 
 namespace Mona.Core
 {

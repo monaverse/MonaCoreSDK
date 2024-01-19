@@ -1,8 +1,8 @@
-﻿using Mona.Core.State.Structs;
+﻿using Mona.SDK.Core.State.Structs;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Mona.Core.State.UIElements
+namespace Mona.SDK.Core.State.UIElements
 {
     public class MonaStateVisualElement : VisualElement
     {

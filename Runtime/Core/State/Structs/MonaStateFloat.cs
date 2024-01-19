@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Mona.Core.State.Structs
+namespace Mona.SDK.Core.State.Structs
 {
     [Serializable]
     public class MonaStateFloat : IMonaStateValue, IMonaStateFloatValue

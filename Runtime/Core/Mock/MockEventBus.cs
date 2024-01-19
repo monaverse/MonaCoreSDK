@@ -1,9 +1,9 @@
-using Mona.Core.Body;
-using Mona.Core.Events;
+using Mona.SDK.Core.Body;
+using Mona.SDK.Core.Events;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Mona.Core.Mock
+namespace Mona.SDK.Core.Mock
 {
     public class MockEventBus : MonoBehaviour
     {
