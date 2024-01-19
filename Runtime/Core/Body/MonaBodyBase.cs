@@ -36,10 +36,10 @@ namespace Mona.SDK.Core.Body
             set => _localId = value;
         }
 
-
+        
         //Fall back for Empty Guids on Reactors
         private StringBuilder _pathNameBuilder = new StringBuilder();
-        private string PathName
+        public string PathName
         {
             get
             {
@@ -58,34 +58,22 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        private void CalculateLocalIdOnIndex()
+        public void CalculateUniqueId(Dictionary<MonaBodyBase, int> uniquesIndex)
         {
-            if (string.IsNullOrEmpty(_localId))
+            if (uniquesIndex.ContainsKey(this))
             {
-                //Attempt to calculate a deterministic GUID for scene objects that have the same GUID.
-                //Scenes with Reactors before this update will have an empty GUID.
-                //monavox-editor has over 22000 reactors and they need to be durably identified otherwise networking does not sync correctly.
-                //old spaces should be migrated to the new guid convention
-                var uniques = new List<MonaBodyBase>(GameObject.FindObjectsOfType<MonaBodyBase>(true));
-
-                uniques.Sort((a, b) =>
-                {
-                    var compare = a.PathName.CompareTo(b.PathName);
-                    if (compare == 0) return a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex());
-                    else return compare;
-                });
-
-                var count = uniques.FindIndex((x) => x.guid == _guid && x == this);
-                if (count > -1)
+                var count = uniquesIndex[this];
+                if (count > 0)
                 {
                     var suffix = (_localPlayerId * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
-                    Debug.Log($"make unique {_localId}");
                 }
                 else
                     _localId = _guid;
             }
+            else
+                _localId = _guid;
         }
 
         private void CalculateLocalIdOnCount()
@@ -115,5 +103,6 @@ namespace Mona.SDK.Core.Body
             CalculateLocalIdOnCount();
             Debug.Log($"{nameof(MonaBody)}.{nameof(MakeUnique)} {_localId}");
         }
+
     }
 }
