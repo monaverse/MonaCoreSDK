@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Mona.SDK.Core.Body;
 
-namespace Mona.Core
+namespace Mona.SDK.Core
 {
     public partial class MonaPrefabs : MonoBehaviour
     {
