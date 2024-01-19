@@ -3,11 +3,15 @@ using Unity.VisualScripting;
 using System.Collections.Generic;
 using Mona.SDK.Core.Network;
 using Mona.SDK.Core.Events;
+using System;
+using System.Collections;
 
 namespace Mona.SDK.Core.Body
 {
     public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
+        private bool _registerWhenEnabled;
+        private IMonaNetworkSpawner _networkSpawner;
         private INetworkMonaBodyClient _networkBody;
         private Rigidbody _rigidbody;
         private CharacterController _characterController;
@@ -44,20 +48,72 @@ namespace Mona.SDK.Core.Body
         public Transform FindChildTransformByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag))?.ActiveTransform;
         public List<IMonaBody> FindChildrenByTag(string tag) => _childMonaBodies.FindAll((x) => x.HasMonaTag(tag));
 
+        public Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
+
         private void Awake()
         {
             RegisterInParents();
+            CacheComponents();
+            InitializeTags();
+            AddDelegates();
+            RegisterInParents();
+        }
+
+        private void CacheComponents()
+        {
             _rigidbody = GetComponent<Rigidbody>();
             _characterController = GetComponent<CharacterController>();
             _camera = GetComponentInChildren<Camera>();
-
+        }
+        
+        private void InitializeTags()
+        {
             _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
             _monaTagged.Remove(this);
+        }
+
+        private void AddDelegates()
+        {
+            OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
+            EventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+        }
+
+        private void RemoveDelegates()
+        {
+            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+        }
+
+        private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
+        {
+            if (SyncType != MonaBodyNetworkSyncType.NotNetworked)
+            {
+                _registerWhenEnabled = true;
+                _networkSpawner = evt.NetworkSpawner;
+                if(gameObject.activeInHierarchy)
+                    RegisterWithNetwork();
+            }
+            RemoveDelegates();
+        }
+
+        private void OnEnable()
+        {
+            if (_registerWhenEnabled)
+            {
+                RegisterWithNetwork();
+                _registerWhenEnabled = false;
+            }
+        }
+
+        private void RegisterWithNetwork()
+        {
+            if (_networkSpawner != null && gameObject != null)
+                _networkSpawner.RegisterMonaBody(this);
         }
 
         private void OnDestroy()
         {
             UnregisterInParents();
+            RemoveDelegates();
         }
 
         private void RegisterInParents()

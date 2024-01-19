@@ -112,7 +112,7 @@ namespace Mona
         // On Player look at this trigger
         [Tooltip("List of events to be executed when a player looks at this trigger")]
         public MonaEvent[] OnPlayerLookStart;
-        
+
         // On Player look away from this trigger
         [Tooltip("List of events to be executed when a player looks away from this trigger")]
         public MonaEvent[] OnPlayerLookEnd;
