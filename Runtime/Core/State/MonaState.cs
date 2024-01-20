@@ -81,7 +81,7 @@ namespace Mona.SDK.Core.State
                 FireBoolEvent(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public bool GetBool(string name)
@@ -100,7 +100,7 @@ namespace Mona.SDK.Core.State
                 FireFloatEvent(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public float GetFloat(string name)
@@ -119,7 +119,7 @@ namespace Mona.SDK.Core.State
                 FireIntEvent(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public int GetInt(string name)
@@ -138,7 +138,7 @@ namespace Mona.SDK.Core.State
                 FireStringEvent(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public string GetString(string name)
@@ -157,7 +157,7 @@ namespace Mona.SDK.Core.State
                 FireVector2Event(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public Vector2 GetVector2(string name)
@@ -176,7 +176,7 @@ namespace Mona.SDK.Core.State
                 FireVector3Event(name, propValue.Value);
             }
             if (isNetworked)
-                _networkState?.Update(prop);
+                _networkState?.UpdateValue(prop);
         }
 
         public Vector3 GetVector3(string name)
