@@ -180,7 +180,8 @@ namespace Mona.SDK.Core.Body
 
         public bool HasControl()
         {
-            if (_networkBody == null) return true;
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked) return true;
+            if (_networkBody == null) return false;
             return _networkBody.HasControl();
         }
 
