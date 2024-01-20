@@ -9,8 +9,4 @@ namespace Mona.SDK.Core.Body
         NetworkTransform,
         NetworkRigidbody
     }
-
-#if UNITY_EDITOR
-
-#endif
 }
