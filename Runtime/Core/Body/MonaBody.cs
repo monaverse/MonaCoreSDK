@@ -10,6 +10,8 @@ namespace Mona.SDK.Core.Body
 {
     public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
+        public event Action OnStarted = delegate { };
+
         private bool _registerWhenEnabled;
         private IMonaNetworkSpawner _networkSpawner;
         private INetworkMonaBodyClient _networkBody;
@@ -51,6 +53,8 @@ namespace Mona.SDK.Core.Body
 
         public Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
 
+        private bool _mockNetwork;
+
         private void Awake()
         {
             RegisterInParents();
@@ -76,7 +80,7 @@ namespace Mona.SDK.Core.Body
         private void AddDelegates()
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
-            EventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
         }
 
         private void RemoveDelegates()
@@ -90,9 +94,12 @@ namespace Mona.SDK.Core.Body
             {
                 _registerWhenEnabled = true;
                 _networkSpawner = evt.NetworkSpawner;
-                if(gameObject.activeInHierarchy)
+                if (_networkSpawner == null)
+                    _mockNetwork = true;
+                if (gameObject.activeInHierarchy)
                     RegisterWithNetwork();
             }
+            OnStarted();
             RemoveDelegates();
         }
 
@@ -180,7 +187,7 @@ namespace Mona.SDK.Core.Body
 
         public bool HasControl()
         {
-            if (SyncType == MonaBodyNetworkSyncType.NotNetworked) return true;
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork) return true;
             if (_networkBody == null) return false;
             return _networkBody.HasControl();
         }
