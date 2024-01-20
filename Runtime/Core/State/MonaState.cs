@@ -185,7 +185,19 @@ namespace Mona.SDK.Core.State
             return ((IMonaStateVector3Value)prop).Value;
         }
 
-        public void SetNetworkState(INetworkMonaState state) => _networkState = state;
+        public void SetNetworkState(INetworkMonaState state)
+        {
+            _networkState = state;
+            SyncValuesOnNetwork();
+        }
+
+        public void SyncValuesOnNetwork()
+        {
+            if (_networkState == null) return;
+
+            for (var i = 0; i < _values.Count; i++)
+                _networkState.UpdateValue(_values[i]);
+        }
 
         protected IMonaBody _monaBody;
 
