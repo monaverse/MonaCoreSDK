@@ -5,6 +5,6 @@ namespace Mona.SDK.Core.Network
 {
     public interface INetworkMonaState
     {
-        void Update(IMonaStateValue value);
+        void UpdateValue(IMonaStateValue value);
     }
 }
