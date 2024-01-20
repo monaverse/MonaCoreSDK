@@ -17,6 +17,7 @@
         public const string VECTOR3_CHANGED_EVENT = "OnMonaVector3ChangedEvent";
 
         public const string ON_CURSOR_VISIBILITY_CHANGED_EVENT = "OnCursorVisibilityChangedEvent";
+        public const string ON_CHANGE_CURSOR_VISIBILITY_EVENT = "OnChangeCursorVisibilityEvent";
 
         public const string ON_PLAYER_JOINED_EVENT = "OnPlayerJoinedEvent";
         public const string ON_PLAYER_LEFT_EVENT = "OnPlayerLeftEvent";
