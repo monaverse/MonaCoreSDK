@@ -15,6 +15,7 @@ namespace Mona.SDK.Core.Body
         List<string> MonaTags { get; }
         Camera Camera { get; }
         bool LocalOnly { get; }
+        INetworkMonaBodyClient NetworkBody { get; }
 
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void MoveDirection(Vector3 direction, bool isKinematic = true, bool isNetworked = true);

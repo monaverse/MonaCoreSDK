@@ -25,6 +25,7 @@ namespace Mona.SDK.Core.Body
         public Transform Transform => transform;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
+        public INetworkMonaBodyClient NetworkBody => _networkBody;
 
         private bool _updateEnabled;
 
