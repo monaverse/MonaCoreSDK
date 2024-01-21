@@ -99,7 +99,10 @@ namespace Mona.SDK.Core.Body
                 if (gameObject.activeInHierarchy)
                     RegisterWithNetwork();
             }
-            OnStarted();
+            
+            if(_mockNetwork)
+                OnStarted();
+
             RemoveDelegates();
         }
 
@@ -152,7 +155,12 @@ namespace Mona.SDK.Core.Body
                 _childMonaBodies.Add(body);
         }
 
-        public void SetNetworkMonaBody(INetworkMonaBodyClient obj) => _networkBody = obj;
+        public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
+        {
+            _networkBody = obj;
+            OnStarted();
+        }
+
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
         public void FixedUpdateNetwork()
