@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mona.SDK.Core.Body
 {
     public interface IMonaBody
     {
+        event Action OnStarted;
+
         string LocalId { get; }
         Transform ActiveTransform { get; }
         Rigidbody ActiveRigidbody { get; }
         Transform Transform { get; }
         List<string> MonaTags { get; }
         Camera Camera { get; }
+        bool LocalOnly { get; }
 
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void MoveDirection(Vector3 direction, bool isKinematic = true, bool isNetworked = true);
