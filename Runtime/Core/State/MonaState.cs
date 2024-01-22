@@ -209,6 +209,7 @@ namespace Mona.SDK.Core.State
 
         protected virtual void FireValueEvent(string variableName, IMonaStateValue value)
         {
+            value.Change();
             EventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));
         }
     }

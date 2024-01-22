@@ -109,7 +109,7 @@ namespace Mona.SDK.Core.State.UIElements
             Refresh();
         }
 
-        protected virtual void Refresh()
+        public virtual void Refresh()
         {
             Clear();
 

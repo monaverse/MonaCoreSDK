@@ -7,6 +7,10 @@ namespace Mona.SDK.Core.State.Structs
     [Serializable]
     public class MonaStateBody : IMonaStateValue, IMonaStateBodyValue
     {
+        public event Action OnChange = delegate { };
+
+        public void Change() => OnChange();
+
         [SerializeField]
         private string _name;
 

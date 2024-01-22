@@ -6,6 +6,10 @@ namespace Mona.SDK.Core.State.Structs
     [Serializable]
     public class MonaStateVector3 : IMonaStateValue, IMonaStateVector3Value
     {
+        public event Action OnChange = delegate { };
+
+        public void Change() => OnChange();
+
         [SerializeField]
         private string _name;
 
