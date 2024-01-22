@@ -19,6 +19,7 @@ namespace Mona.SDK.Core.State
         void Set(string variableName, Vector3 value, bool isNetworked = true);
 
         List<IMonaStateValue> Values { get; set; }
+        IMonaStateValue GetValue(string variableName);
         IMonaStateValue GetValue(string variableName, Type type);
         IMonaStateValue CreateValue(string variableName, Type type, int i);
 

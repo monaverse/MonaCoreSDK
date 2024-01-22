@@ -13,6 +13,7 @@ namespace Mona.SDK.Core.State
     public class MonaState : IMonaState
     {
         protected INetworkMonaState _networkState;
+        protected IMonaBody _monaBody;
 
         public MonaState(GameObject gameObject = null)
         {
@@ -32,18 +33,25 @@ namespace Mona.SDK.Core.State
 
         public List<IMonaStateValue> Values { get => _values; set => _values = value; }
 
-        public IMonaStateValue GetValue(string name, Type type)
+        public IMonaStateValue GetValue(string name)
         {
-            for(var i = 0;i < _values.Count; i++)
+            for (var i = 0; i < _values.Count; i++)
             {
                 if (_values[i] != null && _values[i].Name == name)
                     return _values[i];
             }
+            return null;
+        }
+
+        public IMonaStateValue GetValue(string name, Type type)
+        {
+            var value = GetValue(name);
+            if (value != null) return value;
             
-            var value = (IMonaStateValue)Activator.CreateInstance(type);
-                value.Name = name;
-            _values.Add(value);
-            return value;
+            var newValue = (IMonaStateValue)Activator.CreateInstance(type);
+            newValue.Name = name;
+            _values.Add(newValue);
+            return newValue;
         }
 
         public IMonaStateValue CreateValue(string name, Type type, int i)
@@ -61,7 +69,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireBodyEvent(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
         }
 
@@ -78,7 +86,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireBoolEvent(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -97,7 +105,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireFloatEvent(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -116,7 +124,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireIntEvent(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -135,7 +143,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireStringEvent(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -154,7 +162,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireVector2Event(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -173,7 +181,7 @@ namespace Mona.SDK.Core.State
             if (propValue.Value != value)
             {
                 propValue.Value = value;
-                FireVector3Event(name, propValue.Value);
+                FireValueEvent(name, prop);
             }
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
@@ -199,42 +207,9 @@ namespace Mona.SDK.Core.State
                 _networkState.UpdateValue(_values[i]);
         }
 
-        protected IMonaBody _monaBody;
-
-        private void FireIntEvent(string variableName, int value)
+        protected virtual void FireValueEvent(string variableName, IMonaStateValue value)
         {
-            EventBus.Trigger<MonaIntChangedEvent>(new EventHook(MonaCoreConstants.INT_CHANGED_EVENT, _monaBody), new MonaIntChangedEvent(variableName, value));
+            EventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));
         }
-
-        private void FireFloatEvent(string variableName, float value)
-        {
-            EventBus.Trigger<MonaFloatChangedEvent>(new EventHook(MonaCoreConstants.FLOAT_CHANGED_EVENT, _monaBody), new MonaFloatChangedEvent(variableName, value));
-        }
-
-        private void FireBoolEvent(string variableName, bool value)
-        {
-            EventBus.Trigger<MonaBoolChangedEvent>(new EventHook(MonaCoreConstants.BOOL_CHANGED_EVENT, _monaBody), new MonaBoolChangedEvent(variableName, value));
-        }
-
-        private void FireStringEvent(string variableName, string value)
-        {
-            EventBus.Trigger<MonaStringChangedEvent>(new EventHook(MonaCoreConstants.STRING_CHANGED_EVENT, _monaBody), new MonaStringChangedEvent(variableName, value));
-        }
-
-        private void FireBodyEvent(string variableName, IMonaBody value)
-        {
-            EventBus.Trigger<MonaBodyChangedEvent>(new EventHook(MonaCoreConstants.BODY_CHANGED_EVENT, _monaBody), new MonaBodyChangedEvent(variableName, value));
-        }
-
-        private void FireVector2Event(string variableName, Vector2 value)
-        {
-            EventBus.Trigger<MonaVector2ChangedEvent>(new EventHook(MonaCoreConstants.VECTOR2_CHANGED_EVENT, _monaBody), new MonaVector2ChangedEvent(variableName, value));
-        }
-
-        private void FireVector3Event(string variableName, Vector3 value)
-        {
-            EventBus.Trigger<MonaVector3ChangedEvent>(new EventHook(MonaCoreConstants.VECTOR3_CHANGED_EVENT, _monaBody), new MonaVector3ChangedEvent(variableName, value));
-        }
-
     }
 }

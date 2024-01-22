@@ -8,13 +8,7 @@
         public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMOnaStateAuthorityChangedEvent";
         public const string FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
 
-        public const string INT_CHANGED_EVENT = "OnMonaIntChangedEvent";
-        public const string BOOL_CHANGED_EVENT = "OnMonaBoolChangedEvent";
-        public const string FLOAT_CHANGED_EVENT = "OnMonaFloatChangedEvent";
-        public const string STRING_CHANGED_EVENT = "OnMonaStringChangedEvent";
-        public const string BODY_CHANGED_EVENT = "OnMonaBodyChangedEvent";
-        public const string VECTOR2_CHANGED_EVENT = "OnMonaVector2ChangedEvent";
-        public const string VECTOR3_CHANGED_EVENT = "OnMonaVector3ChangedEvent";
+        public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
         public const string ON_CURSOR_VISIBILITY_CHANGED_EVENT = "OnCursorVisibilityChangedEvent";
         public const string ON_CHANGE_CURSOR_VISIBILITY_EVENT = "OnChangeCursorVisibilityEvent";
