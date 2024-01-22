@@ -101,7 +101,7 @@ namespace Mona.SDK.Core.Body
                     RegisterWithNetwork();
             }
             
-            if(_mockNetwork)
+            if(SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
                 OnStarted();
 
             RemoveDelegates();
