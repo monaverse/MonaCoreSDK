@@ -6,7 +6,7 @@
     "unity": "2022.3",
     "unityRelease": "6f1",
     "documentationUrl": "https://docs.monaverse.com/",
-    "changelogUrl": "https://docs.monaverse.com/coresdk/changelog.html",
+    "changelogUrl": "https://github.com/monaverse/MonaCoreSDK/releases/tag/0.1.0",
     "licensesUrl": "https://example.com/coresdk/licensing.html",
     "dependencies": {
       "com.unity.visualscripting": "1.8.0",
