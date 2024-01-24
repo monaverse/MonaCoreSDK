@@ -1,6 +1,6 @@
 {
     "name": "com.monaverse.coresdk",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "displayName": "Mona Core SDK",
     "description": "The Mona Core SDK allows creators to access networked objects in mona spaces.",
     "unity": "2022.3",
