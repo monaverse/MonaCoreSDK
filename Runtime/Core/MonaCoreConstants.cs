@@ -3,6 +3,7 @@
     public class MonaCoreConstants
     {
         public const string TAG_PLAYER = "Player";
+        public const string TAG_SPACE = "Space";
 
         public const string STATE_CHANGED_EVENT = "OnMonaStateChangedEvent";
         public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMOnaStateAuthorityChangedEvent";
