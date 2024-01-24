@@ -4,6 +4,8 @@
     {
         public const string TAG_PLAYER = "Player";
         public const string TAG_SPACE = "Space";
+        public const string LAYER_LOCAL_PLAYER = "LocalPlayer";
+        public const string MONA_TAG_PLAYER_CAMERA = "Camera";
 
         public const string STATE_CHANGED_EVENT = "OnMonaStateChangedEvent";
         public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMOnaStateAuthorityChangedEvent";
