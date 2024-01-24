@@ -25,6 +25,9 @@ namespace Mona.SDK.Core.Body
         void SetRotation(Quaternion rotation, bool isKinematic = true, bool isNetworked = true);
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);
+        void SetColor(Color color, bool isNetworked = true);
+
+        Color GetColor();
         Vector3 GetPosition();
         Quaternion GetRotation();
 

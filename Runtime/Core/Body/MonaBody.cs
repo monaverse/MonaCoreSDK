@@ -56,6 +56,8 @@ namespace Mona.SDK.Core.Body
 
         private bool _mockNetwork;
 
+        private Renderer _renderer;
+
         private void Awake()
         {
             RegisterInParents();
@@ -67,6 +69,7 @@ namespace Mona.SDK.Core.Body
 
         private void CacheComponents()
         {
+            _renderer = GetComponentInChildren<Renderer>(true);
             _rigidbody = GetComponent<Rigidbody>();
             _characterController = GetComponent<CharacterController>();
             _camera = GetComponentInChildren<Camera>();
@@ -254,12 +257,18 @@ namespace Mona.SDK.Core.Body
 
         public void SetColor(Color color, bool isNetworked = true)
         {
-            var renderer = GetComponent<Renderer>();
-            if (renderer.material.color != color)
+            if (_renderer != null && _renderer.material.color != color)
             {
-                renderer.material.color = color;
+                _renderer.material.color = color;
                 if (isNetworked) _networkBody?.SetColor(color);
             }
+        }
+
+        public Color GetColor()
+        {
+            if (_renderer != null)
+                return _renderer.material.color;
+            return Color.white;
         }
 
         public void MoveDirection(Vector3 direction, bool isKinematic = false, bool isNetworked = true)
