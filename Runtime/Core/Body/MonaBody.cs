@@ -100,9 +100,12 @@ namespace Mona.SDK.Core.Body
                 if (gameObject.activeInHierarchy)
                     RegisterWithNetwork();
             }
-            
-            if(SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
+
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
+            {
+                FireSpawnEvent();
                 OnStarted();
+            }
 
             RemoveDelegates();
         }
@@ -124,6 +127,7 @@ namespace Mona.SDK.Core.Body
 
         private void OnDestroy()
         {
+            FireDespawnEvent();
             UnregisterInParents();
             RemoveDelegates();
         }
@@ -159,6 +163,7 @@ namespace Mona.SDK.Core.Body
         public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
         {
             _networkBody = obj;
+            FireSpawnEvent();
             OnStarted();
         }
 
@@ -176,6 +181,16 @@ namespace Mona.SDK.Core.Body
         {
             if (_networkBody == null)
                 FireUpdateEvent();
+        }
+
+        private void FireSpawnEvent()
+        {
+            EventBus.Trigger<MonaBodySpawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodySpawnedEvent((IMonaBody)this));
+        }
+
+        private void FireDespawnEvent()
+        {
+            EventBus.Trigger<MonaBodyDespawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodyDespawnedEvent((IMonaBody)this));
         }
 
         private void FireUpdateEvent()

@@ -31,6 +31,8 @@
         public const string MONA_BODIES_BEFORE_START_EVENT = "OnMonaBodiesBeforeStartEvent";
         public const string MONA_BODIES_START_EVENT = "OnMonaBodiesStartEvent";
         public const string MONA_BODIES_CLAIM_HOST_EVENT = "OnMonaBodiesClaimHostEvent";
+        public const string MONA_BODY_SPAWNED = "OnBodySpawned";
+        public const string MONA_BODY_DESPAWNED = "OnBodyDespawned";
 
     }
 }
