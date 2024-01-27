@@ -7,6 +7,8 @@ namespace Mona.SDK.Core.Body
     public interface IMonaBody
     {
         event Action OnStarted;
+        event Action OnResumed;
+        event Action OnPaused;
 
         string LocalId { get; }
         Transform ActiveTransform { get; }
@@ -39,5 +41,7 @@ namespace Mona.SDK.Core.Body
         bool HasControl();
         void TakeControl();
         void ReleaseControl();
+        void Pause();
+        void Resume();
     }
 }

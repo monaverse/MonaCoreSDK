@@ -11,6 +11,8 @@ namespace Mona.SDK.Core.Body
     public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
         public event Action OnStarted = delegate { };
+        public event Action OnResumed = delegate { };
+        public event Action OnPaused = delegate { };
 
         private bool _registerWhenEnabled;
         private IMonaNetworkSpawner _networkSpawner;
@@ -120,6 +122,22 @@ namespace Mona.SDK.Core.Body
                 RegisterWithNetwork();
                 _registerWhenEnabled = false;
             }
+            Resume();
+        }
+
+        private void OnDisable()
+        {
+            Pause();
+        }
+
+        public void Pause()
+        {
+            OnPaused();
+        }
+
+        public void Resume()
+        {
+            OnResumed();
         }
 
         private void RegisterWithNetwork()
