@@ -20,5 +20,6 @@ namespace Mona
         void SetScale(Vector3 scale);
         void SetColor(Color color);
         void SetLayer(string layerName, bool includeChildren);
+        void SetVisible(bool vis);
     }
 }

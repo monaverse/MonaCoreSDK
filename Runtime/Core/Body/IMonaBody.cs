@@ -28,8 +28,11 @@ namespace Mona.SDK.Core.Body
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);
         void SetColor(Color color, bool isNetworked = true);
+        void SetVisible(bool visible, bool isNetworked = true);
+        void SetActive(bool active, bool isNetworked = true);
 
         Color GetColor();
+        bool GetVisible();
         Vector3 GetPosition();
         Quaternion GetRotation();
 

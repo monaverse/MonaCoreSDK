@@ -20,6 +20,7 @@ namespace Mona.SDK.Core.Body
         private Rigidbody _rigidbody;
         private CharacterController _characterController;
         private Camera _camera;
+        private bool _visible = true;
 
         public bool IsNetworked => _networkBody != null;
         public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : transform;
@@ -58,7 +59,7 @@ namespace Mona.SDK.Core.Body
 
         private bool _mockNetwork;
 
-        private Renderer _renderer;
+        private Renderer[] _renderers;
 
         private void Awake()
         {
@@ -71,7 +72,7 @@ namespace Mona.SDK.Core.Body
 
         private void CacheComponents()
         {
-            _renderer = GetComponentInChildren<Renderer>(true);
+            _renderers = GetComponentsInChildren<Renderer>(true);
             _rigidbody = GetComponent<Rigidbody>();
             _characterController = GetComponent<CharacterController>();
             _camera = GetComponentInChildren<Camera>();
@@ -273,21 +274,51 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private Color _color = Color.white;
         public void SetColor(Color color, bool isNetworked = true)
         {
-            if (_renderer != null && _renderer.material.color != color)
+            if (_color != color)
             {
-                _renderer.material.color = color;
-                if (isNetworked) _networkBody?.SetColor(color);
+                _color = color;
+                if (_renderers != null && _renderers.Length > 0)
+                {
+                    for (var i = 0; i < _renderers.Length; i++)
+                        _renderers[i].material.color = _color;
+                }
+                if (isNetworked) _networkBody?.SetColor(_color);
             }
         }
 
         public Color GetColor()
         {
-            if (_renderer != null)
-                return _renderer.material.color;
-            return Color.white;
+            if (_renderers != null && _renderers.Length > 0)
+            {
+                if(_color == null)
+                    _color = _renderers[0].material.color;
+            }
+            return _color;
         }
+
+
+        public void SetVisible(bool vis, bool isNetworked = true)
+        {
+            if (_visible != vis)
+            {
+                _visible = vis;
+                if (_renderers != null && _renderers.Length > 0)
+                {
+                    for (var i = 0; i < _renderers.Length; i++)
+                        _renderers[i].enabled = _visible;
+                }
+                if (isNetworked) _networkBody?.SetVisible(vis);
+            }
+        }
+
+        public bool GetVisible()
+        {
+            return _visible;
+        }
+
 
         public void MoveDirection(Vector3 direction, bool isKinematic = false, bool isNetworked = true)
         {
