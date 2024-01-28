@@ -225,6 +225,13 @@ namespace Mona.SDK.Core.Body
             EventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent(HasControl()));
         }
 
+        public void SetParent(Transform parent)
+        {
+            UnregisterInParents();
+            ActiveTransform.SetParent(parent, true);
+            RegisterInParents();
+        }
+
         public void SetActive(bool active, bool isNetworked = true)
         {
             ActiveTransform.gameObject.SetActive(active);

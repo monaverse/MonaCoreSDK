@@ -30,6 +30,7 @@ namespace Mona.SDK.Core.Body
         void SetColor(Color color, bool isNetworked = true);
         void SetVisible(bool visible, bool isNetworked = true);
         void SetActive(bool active, bool isNetworked = true);
+        void SetParent(Transform parent);
 
         Color GetColor();
         bool GetVisible();

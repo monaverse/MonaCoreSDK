@@ -1,5 +1,6 @@
 using Mona.SDK.Core.Body;
 using Mona.SDK.Core.Events;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -7,6 +8,27 @@ namespace Mona.SDK.Core.Mock
 {
     public class MockEventBus : MonoBehaviour
     {
+        public bool MockPlayer;
+
+        private Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStarted;
+
+        public void Start()
+        {
+            OnNetworkSpawnerStarted = HandleNetworkSpawnerStarted;
+            EventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStarted);
+        }
+
+        public void OnDestroy()
+        {
+            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStarted);
+        }
+
+        private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
+        {
+            if (MockPlayer)
+                TriggerLocalPlayerJoined(MonaBody.FindByTag("Player")[0], 1);
+        }
+
         public void TriggerOlympiaUIVisibilityChanged(bool isVisible)
         {
             EventBus.Trigger<MonaCursorVisibilityEvent>(new EventHook(MonaCoreConstants.ON_CURSOR_VISIBILITY_CHANGED_EVENT), new MonaCursorVisibilityEvent(isVisible));
