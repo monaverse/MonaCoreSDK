@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mona.SDK.Core.Body.Enums;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +21,8 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
 
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
+        void ResetLayer();
+        void ApplyForce(Vector3 force, ForceMode forceMode, bool isNetworked = true);
         void MoveDirection(Vector3 direction, bool isKinematic = true, bool isNetworked = true);
         void SetPosition(Vector3 position, bool isKinematic = true, bool isNetworked = true);
         void RotateAround(Vector3 direction, float angle, bool isKinematic, bool isNetowrked = true);
@@ -31,6 +34,16 @@ namespace Mona.SDK.Core.Body
         void SetVisible(bool visible, bool isNetworked = true);
         void SetActive(bool active, bool isNetworked = true);
         void SetParent(Transform parent);
+
+        void SetDragType(DragType dragType);
+        void SetDrag(float drag);
+        void SetAngularDrag(float drag);
+        void SetVelocity(Vector3 velocity);
+        void SetAngularVelocity(Vector3 velocity);
+        void SetFriction(float friction);
+        void SetBounce(float bounce);
+        void SetUseGravity(bool useGravity);
+        void SetOnlyApplyDragWhenGrounded(bool apply);
 
         Color GetColor();
         bool GetVisible();

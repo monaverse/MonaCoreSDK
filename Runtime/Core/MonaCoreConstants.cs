@@ -5,6 +5,8 @@
         public const string TAG_PLAYER = "Player";
         public const string TAG_SPACE = "Space";
         public const string LAYER_LOCAL_PLAYER = "LocalPlayer";
+        public const string LAYER_DEFAULT = "Default";
+        public const string LAYER_PHYSICS_GROUP_A = "PhysicsGroupA";
         public const string MONA_TAG_PLAYER_CAMERA = "Camera";
 
         public const string STATE_CHANGED_EVENT = "OnMonaStateChangedEvent";
