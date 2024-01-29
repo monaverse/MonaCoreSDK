@@ -56,6 +56,8 @@ namespace Mona.SDK.Core.Body
         public List<IMonaBody> FindChildrenByTag(string tag) => _childMonaBodies.FindAll((x) => x.HasMonaTag(tag));
         public List<IMonaBody> Children() => _childMonaBodies;
 
+        public Transform GetParent() => ActiveTransform.parent;
+
         public Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
 
         private bool _mockNetwork;

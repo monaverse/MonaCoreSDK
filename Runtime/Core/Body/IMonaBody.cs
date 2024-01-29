@@ -36,6 +36,7 @@ namespace Mona.SDK.Core.Body
         bool GetVisible();
         Vector3 GetPosition();
         Quaternion GetRotation();
+        Transform GetParent();
 
         IMonaBody FindChildByTag(string tag);
         Transform FindChildTransformByTag(string tag);
