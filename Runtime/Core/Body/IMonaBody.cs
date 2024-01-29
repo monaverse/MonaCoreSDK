@@ -40,6 +40,7 @@ namespace Mona.SDK.Core.Body
         IMonaBody FindChildByTag(string tag);
         Transform FindChildTransformByTag(string tag);
         List<IMonaBody> FindChildrenByTag(string tag);
+        List<IMonaBody> Children();
         bool HasMonaTag(string tag);
 
         bool HasControl();

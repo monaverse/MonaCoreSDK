@@ -12,7 +12,7 @@ namespace Mona.SDK.Core.Mock
 
         private Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStarted;
 
-        public void Start()
+        public void Awake()
         {
             OnNetworkSpawnerStarted = HandleNetworkSpawnerStarted;
             EventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStarted);

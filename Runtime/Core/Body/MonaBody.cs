@@ -54,6 +54,7 @@ namespace Mona.SDK.Core.Body
         public IMonaBody FindChildByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag));
         public Transform FindChildTransformByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag))?.ActiveTransform;
         public List<IMonaBody> FindChildrenByTag(string tag) => _childMonaBodies.FindAll((x) => x.HasMonaTag(tag));
+        public List<IMonaBody> Children() => _childMonaBodies;
 
         public Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
 
