@@ -312,6 +312,18 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        public bool Intersects(Collider collider)
+        {
+            for (var i = 0; i < _colliders.Count; i++)
+            {
+                var bodyCollider = _colliders[i];
+                var closestPoint = collider.bounds.ClosestPoint(ActiveTransform.position);
+                if (bodyCollider.bounds.Contains(closestPoint))
+                    return true;
+            }
+            return false;
+        }
+
         private bool _grounded;
         private void ApplyDrag()
         {

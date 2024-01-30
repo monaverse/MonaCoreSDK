@@ -35,6 +35,8 @@ namespace Mona.SDK.Core.Body
         void SetActive(bool active, bool isNetworked = true);
         void SetParent(Transform parent);
 
+        bool Intersects(Collider collider);
+
         void SetDragType(DragType dragType);
         void SetDrag(float drag);
         void SetAngularDrag(float drag);
