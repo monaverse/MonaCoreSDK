@@ -116,7 +116,7 @@ namespace Mona.SDK.Core.Body
                     var suffix = (_localPlayerId * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
-                    Debug.Log($"make unique {_localId}");
+                    //Debug.Log($"make unique {_localId}");
                 }
                 else
                     _localId = _guid;
