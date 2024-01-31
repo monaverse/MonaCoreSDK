@@ -535,7 +535,7 @@ namespace Mona.SDK.Core.Body
             {
                 ActiveRigidbody.isKinematic = isKinematic;
                 if (isKinematic)
-                    ActiveRigidbody.position = position;
+                    ActiveTransform.position = position;
                 else
                     ActiveRigidbody.MovePosition(position);
             }
