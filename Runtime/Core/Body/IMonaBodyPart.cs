@@ -1,10 +1,11 @@
-using System.Collections;
+﻿using Mona.SDK.Core.Body.Enums;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mona.SDK.Core.Body
 {
-    public class MonaBodyPart : MonaBody, IMonaBodyPart
+    public interface IMonaBodyPart : IMonaBody
     {
     }
 }

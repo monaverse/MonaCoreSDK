@@ -31,6 +31,9 @@ namespace Mona.SDK.Core.Body
         private float _bounce;
         private float _friction;
         private bool _onlyApplyDragWhenGrounded = true;
+        private IMonaBody _parent;
+
+        public IMonaBody Parent => _parent;
 
         public bool IsNetworked => _networkBody != null;
         public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : transform;
@@ -66,7 +69,7 @@ namespace Mona.SDK.Core.Body
         public List<IMonaBody> FindChildrenByTag(string tag) => _childMonaBodies.FindAll((x) => x.HasMonaTag(tag));
         public List<IMonaBody> Children() => _childMonaBodies;
 
-        public Transform GetParent() => ActiveTransform.parent;
+        public Transform GetTransformParent() => ActiveTransform.parent;
 
         public void SetDragType(DragType dragType) => _dragType = dragType;
         public void SetOnlyApplyDragWhenGrounded(bool apply) => _onlyApplyDragWhenGrounded = apply;
@@ -143,7 +146,6 @@ namespace Mona.SDK.Core.Body
             CacheComponents();
             InitializeTags();
             AddDelegates();
-            RegisterInParents();
         }
 
         private void CacheComponents()
@@ -258,26 +260,35 @@ namespace Mona.SDK.Core.Body
         private void RegisterInParents()
         {
             MonaBodies.Add(this);
-            var parents = GetComponentsInParent<MonaBody>();
+            var parents = GetComponentsInParent<IMonaBody>(true);
+            var foundParentBody = false;
             for (var i = 0; i < parents.Length; i++)
+            {
+                if(!foundParentBody && !(parents[i] is IMonaBodyPart))
+                {
+                    foundParentBody = true;
+                    _parent = parents[i];
+                }
                 parents[i].RegisterAsChild(this);
+            }
         }
 
         private void UnregisterInParents()
         {
             MonaBodies.Remove(this);
-            var parents = GetComponentsInParent<MonaBody>();
+            _parent = null;
+            var parents = GetComponentsInParent<IMonaBody>(true);
             for (var i = 0; i < parents.Length; i++)
                 parents[i].UnregisterAsChild(this);
         }
 
-        public void RegisterAsChild(MonaBody body)
+        public void RegisterAsChild(IMonaBody body)
         {
             if (!_childMonaBodies.Contains(body))
                 _childMonaBodies.Add(body);
         }
 
-        public void UnregisterAsChild(MonaBody body)
+        public void UnregisterAsChild(IMonaBody body)
         {
             if (!_childMonaBodies.Contains(body))
                 _childMonaBodies.Add(body);
@@ -388,11 +399,12 @@ namespace Mona.SDK.Core.Body
             EventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent(HasControl()));
         }
 
-        public void SetParent(Transform parent)
+        public void SetTransformParent(Transform parent)
         {
             UnregisterInParents();
             ActiveTransform.SetParent(parent, true);
             RegisterInParents();
+            EventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
         }
 
         public void SetActive(bool active, bool isNetworked = true)

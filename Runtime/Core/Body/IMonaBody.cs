@@ -19,6 +19,7 @@ namespace Mona.SDK.Core.Body
         Camera Camera { get; }
         bool LocalOnly { get; }
         INetworkMonaBodyClient NetworkBody { get; }
+        IMonaBody Parent { get; }
 
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void ResetLayer();
@@ -33,7 +34,7 @@ namespace Mona.SDK.Core.Body
         void SetColor(Color color, bool isNetworked = true);
         void SetVisible(bool visible, bool isNetworked = true);
         void SetActive(bool active, bool isNetworked = true);
-        void SetParent(Transform parent);
+        void SetTransformParent(Transform parent);
 
         bool Intersects(Collider collider);
 
@@ -51,12 +52,16 @@ namespace Mona.SDK.Core.Body
         bool GetVisible();
         Vector3 GetPosition();
         Quaternion GetRotation();
-        Transform GetParent();
+        Transform GetTransformParent();
 
         IMonaBody FindChildByTag(string tag);
         Transform FindChildTransformByTag(string tag);
         List<IMonaBody> FindChildrenByTag(string tag);
         List<IMonaBody> Children();
+
+        void RegisterAsChild(IMonaBody body);
+        void UnregisterAsChild(IMonaBody body);
+
         bool HasMonaTag(string tag);
 
         bool HasControl();
