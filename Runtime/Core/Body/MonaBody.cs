@@ -329,7 +329,7 @@ namespace Mona.SDK.Core.Body
             {
                 var bodyCollider = _colliders[i];
                 var closestPoint = collider.bounds.ClosestPoint(ActiveTransform.position);
-                if (bodyCollider.bounds.Contains(closestPoint))
+                if (bodyCollider.bounds.Intersects(collider.bounds))
                     return true;
             }
             return false;
