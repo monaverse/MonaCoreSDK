@@ -14,10 +14,15 @@ namespace Mona.SDK.Core.State.UIElements
         protected TextField _nameField;
 
         protected FloatField _floatField;
+        
         protected TextField _stringField;
         protected Toggle _toggleField;
         protected Vector2Field _vector2Field;
         protected Vector3Field _vector3Field;
+        protected FloatField _floatMin;
+        protected FloatField _floatMax;
+        protected Toggle _useMinMax;
+        protected MinMaxConstraintType _contraintType;
 
         public MonaStateItemVisualElement()
         {
@@ -54,6 +59,7 @@ namespace Mona.SDK.Core.State.UIElements
             _floatField.RegisterValueChangedCallback((evt) =>
             {
                 ((IMonaStateFloatValue)_state.Values[_index]).Value = evt.newValue;
+                ((IMonaStateFloatValue)_state.Values[_index]).DefaultValue = evt.newValue;
             });
 
             _stringField = new TextField();
