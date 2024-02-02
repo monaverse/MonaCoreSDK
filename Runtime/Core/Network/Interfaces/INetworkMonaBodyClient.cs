@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Mona
+namespace Mona.SDK.Core.Network.Interfaces
 {
     public interface INetworkMonaBodyClient
     {

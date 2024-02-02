@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using Mona.SDK.Core.Body.Enums;
 using Mona.SDK.Core.Input.Interfaces;
+using Mona.SDK.Core.Network.Interfaces;
 
 namespace Mona.SDK.Core.Body
 {

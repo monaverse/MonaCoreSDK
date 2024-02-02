@@ -1,6 +1,7 @@
 ﻿using Mona.SDK.Core.Body.Enums;
 using Mona.SDK.Core.Input;
 using Mona.SDK.Core.Input.Interfaces;
+using Mona.SDK.Core.Network.Interfaces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

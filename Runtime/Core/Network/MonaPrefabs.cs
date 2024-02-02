@@ -6,6 +6,7 @@ using Mona.SDK.Core.Body;
 using Mona.SDK.Core;
 using Unity.VisualScripting;
 using Mona.SDK.Core.Events;
+using Mona.SDK.Core.Network.Interfaces;
 
 namespace Mona.SDK.Core.Network
 {

@@ -1,7 +1,6 @@
 ﻿using Mona.SDK.Core.State.Structs;
-using UnityEngine;
 
-namespace Mona.SDK.Core.Network
+namespace Mona.SDK.Core.Network.Interfaces
 {
     public interface INetworkMonaState
     {

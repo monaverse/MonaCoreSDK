@@ -1,4 +1,4 @@
-﻿namespace Mona
+﻿namespace Mona.SDK.Core.Network.Interfaces
 {
     public interface INetworkMonaBodyState
     {

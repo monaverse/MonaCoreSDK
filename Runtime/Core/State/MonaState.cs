@@ -1,6 +1,7 @@
 using Mona.SDK.Core.Body;
 using Mona.SDK.Core.Events;
 using Mona.SDK.Core.Network;
+using Mona.SDK.Core.Network.Interfaces;
 using Mona.SDK.Core.State.Structs;
 using System;
 using System.Collections.Generic;

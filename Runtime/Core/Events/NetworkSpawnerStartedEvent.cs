@@ -1,5 +1,5 @@
 ﻿
-using Mona.SDK.Core.Network;
+using Mona.SDK.Core.Network.Interfaces;
 
 namespace Mona.SDK.Core.Events
 {

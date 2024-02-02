@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Mona
+namespace Mona.SDK.Core.Network.Interfaces
 {
     public interface INetworkMonaReactorClient
     {

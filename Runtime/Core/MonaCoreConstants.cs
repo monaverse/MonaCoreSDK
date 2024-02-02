@@ -16,6 +16,7 @@
         public const string FIXED_TICK_EVENT = "OnFixedTick";
         public const string MONA_BODY_FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
         public const string INPUT_EVENT = "OnMonaInputTickEvent";
+        public const string REGISTER_NETWORK_SETTINGS_EVENT = "OnMonaRegisterNetworkSettignsEvent";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
