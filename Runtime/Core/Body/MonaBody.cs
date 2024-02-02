@@ -6,6 +6,7 @@ using Mona.SDK.Core.Events;
 using System;
 using System.Collections;
 using Mona.SDK.Core.Body.Enums;
+using Mona.SDK.Core.Input.Interfaces;
 
 namespace Mona.SDK.Core.Body
 {
@@ -58,6 +59,8 @@ namespace Mona.SDK.Core.Body
 
         public static List<IMonaBody> MonaBodies = new List<IMonaBody>();
         private List<IMonaBody> _childMonaBodies = new List<IMonaBody>();
+
+        private List<IMonaLocalInput> _inputs = new List<IMonaLocalInput>();
 
         private List<IMonaTagged> _monaTagged = new List<IMonaTagged>();
 
@@ -135,6 +138,7 @@ namespace Mona.SDK.Core.Body
         }
 
         public Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStartedEvent;
+        public Action<MonaFixedTickEvent> OnFixedUpdate;
 
         private bool _mockNetwork;
 
@@ -188,6 +192,12 @@ namespace Mona.SDK.Core.Body
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
             EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+
+            if (_networkBody == null)
+            {
+                OnFixedUpdate = HandleFixedUpdate;
+                EventBus.Register(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
+            }
         }
 
         private void RemoveDelegates()
@@ -299,29 +309,37 @@ namespace Mona.SDK.Core.Body
             _networkBody = obj;
             FireSpawnEvent();
             OnStarted();
+
+            if (_networkBody != null)
+                EventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
         }
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
-        public void FixedUpdateNetwork()
+        public void FixedUpdateNetwork(float deltaTime, List<IMonaLocalInput> inputs)
         {
-            if (HasControl())
-            {
-                ApplyDrag();
-                FireUpdateEvent();
-            }
+            ApplyInput(inputs);
+            ApplyDrag();
+            FireFixedUpdateEvent(deltaTime, inputs.Count > 0);
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
 
-        public void FixedUpdate()
+        public void HandleFixedUpdate(MonaFixedTickEvent evt)
         {
             if (_networkBody == null)
             {
+                ApplyInput(_inputs);
                 ApplyDrag();
-                FireUpdateEvent();
+                FireFixedUpdateEvent(evt.DeltaTime, _inputs.Count > 0);
+                _inputs.Clear();
             }
         }
+
+        private void ApplyInput(List<IMonaLocalInput> inputs)
+        {
+            EventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(inputs));
+        }    
 
         public bool Intersects(Collider collider)
         {
@@ -379,6 +397,15 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        public void SetLocalInput(IMonaLocalInput input)
+        {
+            if (!_inputs.Contains(input))
+                _inputs.Add(input);
+
+            if (_networkBody != null)
+                _networkBody.SetLocalInput(_inputs);
+        }
+
         private void FireSpawnEvent()
         {
             EventBus.Trigger<MonaBodySpawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodySpawnedEvent((IMonaBody)this));
@@ -389,9 +416,9 @@ namespace Mona.SDK.Core.Body
             EventBus.Trigger<MonaBodyDespawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodyDespawnedEvent((IMonaBody)this));
         }
 
-        private void FireUpdateEvent()
+        private void FireFixedUpdateEvent(float deltaTime, bool hasInput)
         {
-            EventBus.Trigger<MonaBodyFixedTickEvent>(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT, (IMonaBody)this), new MonaBodyFixedTickEvent());
+            EventBus.Trigger<MonaBodyFixedTickEvent>(new EventHook(MonaCoreConstants.MONA_BODY_FIXED_TICK_EVENT, (IMonaBody)this), new MonaBodyFixedTickEvent(deltaTime, hasInput));
         }
 
         private void FireStateAuthorityChanged()

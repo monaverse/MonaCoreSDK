@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Mona.SDK.Core.Input.Interfaces;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Mona
 {
@@ -9,6 +11,7 @@ namespace Mona
         Rigidbody NetworkRigidbody { get; }
         string LocalId { get; }
         string PrefabId { get; }
+        void SetLocalInput(List<IMonaLocalInput> input);
         void SetActive(bool active);
         bool HasControl();
         void TakeControl();

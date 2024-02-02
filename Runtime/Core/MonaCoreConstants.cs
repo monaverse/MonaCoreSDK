@@ -11,7 +11,11 @@
 
         public const string STATE_CHANGED_EVENT = "OnMonaStateChangedEvent";
         public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMOnaStateAuthorityChangedEvent";
-        public const string FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
+        public const string TICK_EVENT = "OnTick";
+        public const string LATE_TICK_EVENT = "OnLateTick";
+        public const string FIXED_TICK_EVENT = "OnFixedTick";
+        public const string MONA_BODY_FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
+        public const string INPUT_EVENT = "OnMonaInputTickEvent";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 

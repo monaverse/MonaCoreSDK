@@ -1,4 +1,6 @@
 ﻿using Mona.SDK.Core.Body.Enums;
+using Mona.SDK.Core.Input;
+using Mona.SDK.Core.Input.Interfaces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +40,8 @@ namespace Mona.SDK.Core.Body
 
         bool Intersects(Collider collider);
 
+        void SetLocalInput(IMonaLocalInput input);
+
         void SetDragType(DragType dragType);
         void SetDrag(float drag);
         void SetAngularDrag(float drag);
@@ -63,6 +67,8 @@ namespace Mona.SDK.Core.Body
         void UnregisterAsChild(IMonaBody body);
 
         bool HasMonaTag(string tag);
+
+        void FixedUpdateNetwork(float deltaTime, List<IMonaLocalInput> input);
 
         bool HasControl();
         void TakeControl();
