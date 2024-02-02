@@ -26,6 +26,7 @@
         public const string ON_PLAYER_JOINED_EVENT = "OnPlayerJoinedEvent";
         public const string ON_PLAYER_LEFT_EVENT = "OnPlayerLeftEvent";
         public const string ON_PLAYER_NAME_EVENT = "OnPlayerNameEvent";
+        public const string ON_PLAYER_INPUT_EVENT = "OnPlayerInputEvent";
 
         public const string FLOAT_TYPE_LABEL = "Number";
         public const string STRING_TYPE_LABEL = "String";
