@@ -1,5 +1,4 @@
-﻿using Mona.SDK.Core.Input.Interfaces;
-using System.Collections.Generic;
+﻿using Mona.SDK.Core.Input;
 using UnityEngine;
 
 namespace Mona.SDK.Core.Network.Interfaces
@@ -11,7 +10,9 @@ namespace Mona.SDK.Core.Network.Interfaces
         Rigidbody NetworkRigidbody { get; }
         string LocalId { get; }
         string PrefabId { get; }
-        void SetLocalInput(List<IMonaLocalInput> input);
+        bool HasInput();
+        MonaInput GetInput();
+        void SetLocalInput(MonaInput input);
         void SetActive(bool active);
         bool HasControl();
         void TakeControl();

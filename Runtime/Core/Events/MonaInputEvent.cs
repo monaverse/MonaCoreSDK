@@ -1,14 +1,13 @@
-﻿using Mona.SDK.Core.Input.Interfaces;
-using System.Collections.Generic;
+﻿using Mona.SDK.Core.Input;
 
 namespace Mona.SDK.Core.Events
 {
     public struct MonaInputEvent
     {
-        public List<IMonaLocalInput> Inputs;
-        public MonaInputEvent(List<IMonaLocalInput> inputs)
+        public MonaInput Input;
+        public MonaInputEvent(MonaInput input)
         {
-            Inputs = inputs;
+            Input = input;
         }
     }
 }

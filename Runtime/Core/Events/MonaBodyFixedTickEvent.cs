@@ -1,5 +1,4 @@
-﻿using Mona.SDK.Core.Input.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Mona.SDK.Core.Events
 {
