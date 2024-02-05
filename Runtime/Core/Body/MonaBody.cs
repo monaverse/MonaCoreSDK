@@ -323,7 +323,17 @@ namespace Mona.SDK.Core.Body
             if(hasInput)
                 ApplyInput(input);
             ApplyDrag();
-            FireFixedUpdateEvent(deltaTime, _networkBody.HasInput());
+            FireFixedUpdateEvent(deltaTime, hasInput);
+        }
+
+        public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
+        {
+            if (hasInput)
+            {
+                ApplyInputs(inputs);
+            }
+            ApplyDrag();
+            FireFixedUpdateEvent(deltaTime, hasInput);
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
@@ -340,10 +350,15 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        public void ApplyInput(MonaInput input)
+        private void ApplyInput(MonaInput input)
         {
             EventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(input));
         }    
+
+        private void ApplyInputs(List<MonaInput> inputs)
+        {
+            EventBus.Trigger(new EventHook(MonaCoreConstants.INPUTS_EVENT, (IMonaBody)this), new MonaInputsEvent(inputs));
+        }
 
         public bool Intersects(Collider collider)
         {

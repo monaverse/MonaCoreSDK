@@ -10,8 +10,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         Rigidbody NetworkRigidbody { get; }
         string LocalId { get; }
         string PrefabId { get; }
-        bool HasInput();
-        MonaInput GetInput();
         void SetLocalInput(MonaInput input);
         void SetActive(bool active);
         bool HasControl();
