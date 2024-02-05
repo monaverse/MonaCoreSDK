@@ -318,10 +318,10 @@ namespace Mona.SDK.Core.Body
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
-        public void FixedUpdateNetwork(float deltaTime)
+        public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
         {
-            if(_networkBody.HasInput())
-                ApplyInput(_networkBody.GetInput());
+            if(hasInput)
+                ApplyInput(input);
             ApplyDrag();
             FireFixedUpdateEvent(deltaTime, _networkBody.HasInput());
         }
@@ -340,7 +340,7 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        private void ApplyInput(MonaInput input)
+        public void ApplyInput(MonaInput input)
         {
             EventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(input));
         }    

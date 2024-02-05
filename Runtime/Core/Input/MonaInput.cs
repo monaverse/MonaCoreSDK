@@ -11,6 +11,8 @@ namespace Mona.SDK.Core.Input
      * */
     public struct MonaInput
     {
+        public int PlayerId;
+
         public MonaInputState Move;
         public MonaInputState Look;
         public MonaInputState Jump;
