@@ -10,7 +10,8 @@ namespace Mona.SDK.Core.Network
     [Serializable]
     public class MonaNetworkSettings : IMonaNetworkSettings
     {
-        public MonaNetworkType NetworkType = MonaNetworkType.Shared;
+        public MonaNetworkType _NetworkType = MonaNetworkType.Shared;
+        public MonaNetworkType NetworkType { get => _NetworkType; set => _NetworkType = value; }
 
         public MonaNetworkType GetNetworkType() => NetworkType;
     }

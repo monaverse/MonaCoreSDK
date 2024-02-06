@@ -67,6 +67,16 @@ namespace Mona.SDK.Core.Body
         private List<IMonaTagged> _monaTagged = new List<IMonaTagged>();
 
         public bool HasMonaTag(string tag) => MonaTags.Contains(tag) || _monaTagged.Find(x => x.HasMonaTag(tag)) != null;
+        public void AddTag(string tag)
+        {
+            if (!HasMonaTag(tag))
+                MonaTags.Add(tag);
+        }
+        public void RemoveTag(string tag)
+        {
+            if (HasMonaTag(tag))
+                MonaTags.Remove(tag);
+        }
         public static List<IMonaBody> FindByTag(string tag) => MonaBodies.FindAll((x) => x.HasMonaTag(tag));
         public static IMonaBody FindByLocalId(string localId) => MonaBodies.Find((x) => x.LocalId == localId);
         public IMonaBody FindChildByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag));
@@ -328,7 +338,7 @@ namespace Mona.SDK.Core.Body
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
         {
-            if (hasInput)
+            if (hasInput && inputs != null)
             {
                 ApplyInputs(inputs);
             }
@@ -455,14 +465,23 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked = true)
         {
-            ActiveTransform.gameObject.SetActive(active);
-            if (isNetworked) _networkBody?.SetActive(active);
+            if (ActiveTransform.gameObject.activeInHierarchy != active)
+            {
+                ActiveTransform.gameObject.SetActive(active);
+                if (isNetworked) _networkBody?.SetActive(active);
+            }
         }
+
+        public bool GetActive()
+        {
+            return ActiveTransform.gameObject.activeInHierarchy;
+        }
+
 
         public bool HasControl()
         {
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork) return true;
-            if (_networkBody == null) return false;
+            if (_networkBody == null) return true;
             return _networkBody.HasControl();
         }
 
@@ -499,6 +518,11 @@ namespace Mona.SDK.Core.Body
                 }
                 if (isNetworked) _networkBody?.SetLayer(layerName, includeChildren);
             }
+        }
+
+        public int GetLayer()
+        {
+            return gameObject.layer;
         }
 
         public void SetKinematic(bool isKinematic, bool isNetworked = true)
@@ -655,6 +679,11 @@ namespace Mona.SDK.Core.Body
                 ActiveTransform.localScale = scale;
                 if (isNetworked) _networkBody?.SetScale(scale);
             }
+        }
+
+        public Vector3 GetScale()
+        {
+            return ActiveTransform.localScale;
         }
 
     }

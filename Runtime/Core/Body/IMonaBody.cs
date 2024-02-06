@@ -23,6 +23,9 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
 
+        void AddTag(string tag);
+        void RemoveTag(string tag);
+
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void ResetLayer();
         void ApplyForce(Vector3 force, ForceMode forceMode, bool isNetworked = true);
@@ -54,9 +57,12 @@ namespace Mona.SDK.Core.Body
 
         Color GetColor();
         bool GetVisible();
+        bool GetActive();
         Vector3 GetPosition();
         Quaternion GetRotation();
         Transform GetTransformParent();
+        Vector3 GetScale();
+        int GetLayer();
 
         IMonaBody FindChildByTag(string tag);
         Transform FindChildTransformByTag(string tag);

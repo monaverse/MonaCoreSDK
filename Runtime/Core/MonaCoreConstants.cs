@@ -38,6 +38,7 @@
         public const string REFERENCE_TYPE_LABEL = "Reference";
 
         public const string NETWORK_SPAWNER_STARTED_EVENT = "OnNetworkSpawnerStartedEvent";
+        public const string NETWORK_SPAWNER_INITIALIZED_EVENT = "OnNetworkSpawnerInitializedEvent";
         public const string MONA_BODIES_BEFORE_START_EVENT = "OnMonaBodiesBeforeStartEvent";
         public const string MONA_BODIES_START_EVENT = "OnMonaBodiesStartEvent";
         public const string MONA_BODIES_CLAIM_HOST_EVENT = "OnMonaBodiesClaimHostEvent";
