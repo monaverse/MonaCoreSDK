@@ -370,13 +370,12 @@ namespace Mona.SDK.Core.Body
             EventBus.Trigger(new EventHook(MonaCoreConstants.INPUTS_EVENT, (IMonaBody)this), new MonaInputsEvent(inputs));
         }
 
-        public bool Intersects(Collider collider)
+        public bool Intersects(SphereCollider collider)
         {
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
-                var closestPoint = collider.bounds.ClosestPoint(ActiveTransform.position);
-                if (bodyCollider.bounds.Intersects(collider.bounds))
+                if (Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
                     return true;
             }
             return false;
@@ -452,7 +451,7 @@ namespace Mona.SDK.Core.Body
 
         private void FireStateAuthorityChanged()
         {
-            EventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent(HasControl()));
+            EventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this));
         }
 
         public void SetTransformParent(Transform parent)

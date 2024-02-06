@@ -1,11 +1,13 @@
-﻿namespace Mona.SDK.Core.Events
+﻿using Mona.SDK.Core.Body;
+
+namespace Mona.SDK.Core.Events
 {
     public struct MonaStateAuthorityChangedEvent
     {
-        public bool HasControl;
-        public MonaStateAuthorityChangedEvent(bool hasControl)
+        public IMonaBody Body;
+        public MonaStateAuthorityChangedEvent(IMonaBody body)
         {
-            HasControl = hasControl;
+            Body = body;
         }
     }
 }
