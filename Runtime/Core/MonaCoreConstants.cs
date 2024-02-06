@@ -9,8 +9,8 @@
         public const string LAYER_PHYSICS_GROUP_A = "PhysicsGroupA";
         public const string MONA_TAG_PLAYER_CAMERA = "Camera";
 
-        public const string STATE_CHANGED_EVENT = "OnMonaStateChangedEvent";
-        public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMOnaStateAuthorityChangedEvent";
+        public const string STATE_CHANGED_EVENT = "OnMonaVariablesChangedEvent";
+        public const string STATE_AUTHORITY_CHANGED_EVENT = "OnMonaStateAuthorityChangedEvent";
         public const string TICK_EVENT = "OnTick";
         public const string LATE_TICK_EVENT = "OnLateTick";
         public const string FIXED_TICK_EVENT = "OnFixedTick";

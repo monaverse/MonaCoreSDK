@@ -2,7 +2,7 @@
 
 namespace Mona.SDK.Core.State.Structs
 {
-    public interface IMonaStateVector3Value
+    public interface IMonaVariablesVector3Value
     { 
         Vector3 Value { get; set; }
     }

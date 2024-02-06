@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Mona.SDK.Core.State.Structs
 {
     [Serializable]
-    public class MonaStateString : IMonaStateValue, IMonaStateStringValue
+    public class MonaVariablesVector2 : IMonaVariablesValue, IMonaVariablesVector2Value
     {
         public event Action OnChange = delegate { };
 
@@ -16,10 +16,10 @@ namespace Mona.SDK.Core.State.Structs
         public string Name { get => _name; set => _name = value; }
 
         [SerializeField]
-        public string _value;
+        public Vector2 _value;
 
-        public string Value { get => _value; set => _value = value; }
+        public Vector2 Value { get => _value; set => _value = value; }
 
-        public MonaStateString() { }
+        public MonaVariablesVector2() { }
     }
 }

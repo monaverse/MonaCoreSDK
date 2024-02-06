@@ -1,11 +1,10 @@
-﻿using Mona.SDK.Core.Body;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Mona.SDK.Core.State.Structs
 {
     [Serializable]
-    public class MonaStateBody : IMonaStateValue, IMonaStateBodyValue
+    public class MonaVariablesInt : IMonaVariablesValue, IMonaVariablesIntValue
     {
         public event Action OnChange = delegate { };
 
@@ -17,11 +16,10 @@ namespace Mona.SDK.Core.State.Structs
         public string Name { get => _name; set => _name = value; }
 
         [SerializeField]
-        public IMonaBody _value;
+        public int _value;
 
-        public IMonaBody Value { get => _value; set => _value = value; }
+        public int Value { get => _value; set => _value = value; }
 
-        public MonaStateBody() { }
-
+        public MonaVariablesInt() { }
     }
 }

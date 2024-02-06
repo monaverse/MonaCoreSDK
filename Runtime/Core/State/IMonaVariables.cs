@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Mona.SDK.Core.State
 {
-    public interface IMonaState
+    public interface IMonaVariables
     {
         void SetGameObject(GameObject gameObject);
 
@@ -18,10 +18,10 @@ namespace Mona.SDK.Core.State
         void Set(string variableName, Vector2 value, bool isNetworked = true);
         void Set(string variableName, Vector3 value, bool isNetworked = true);
 
-        List<IMonaStateValue> Values { get; set; }
-        IMonaStateValue GetValue(string variableName);
-        IMonaStateValue GetValue(string variableName, Type type);
-        IMonaStateValue CreateValue(string variableName, Type type, int i);
+        List<IMonaVariablesValue> VariableList { get; set; }
+        IMonaVariablesValue GetVariable(string variableName);
+        IMonaVariablesValue GetVariable(string variableName, Type type);
+        IMonaVariablesValue CreateVariable(string variableName, Type type, int i);
 
         int GetInt(string variableName);
         bool GetBool(string variableName);

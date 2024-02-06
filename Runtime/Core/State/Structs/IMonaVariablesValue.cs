@@ -2,7 +2,7 @@
 
 namespace Mona.SDK.Core.State.Structs
 {
-    public interface IMonaStateValue
+    public interface IMonaVariablesValue
     {
         event Action OnChange;
         void Change();

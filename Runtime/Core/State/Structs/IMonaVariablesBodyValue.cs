@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Mona.SDK.Core.State.Structs
 {
-    public interface IMonaStateBodyValue
+    public interface IMonaVariablesBodyValue
     { 
         IMonaBody Value { get; set; }
     }

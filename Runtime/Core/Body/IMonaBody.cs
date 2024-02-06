@@ -79,7 +79,7 @@ namespace Mona.SDK.Core.Body
         bool HasControl();
         void TakeControl();
         void ReleaseControl();
-        void Pause();
-        void Resume();
+        void Pause(bool isNetworked = true);
+        void Resume(bool isNetworked = true);
     }
 }

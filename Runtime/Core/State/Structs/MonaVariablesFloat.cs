@@ -5,7 +5,7 @@ using Mona.SDK.Core.EasyUI;
 namespace Mona.SDK.Core.State.Structs
 {
     [Serializable]
-    public class MonaStateFloat : IMonaStateValue, IMonaStateFloatValue, IEasyUINumericalDisplay
+    public class MonaVariablesFloat : IMonaVariablesValue, IMonaVariablesFloatValue, IEasyUINumericalDisplay
     {
         public event Action OnChange = delegate { };
 
@@ -200,6 +200,6 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private float _pulseFrequency = 0.5f;
         public float PulseFrequency { get => _pulseFrequency; set => _pulseFrequency = value; }
 
-        public MonaStateFloat() { }
+        public MonaVariablesFloat() { }
     }
 }

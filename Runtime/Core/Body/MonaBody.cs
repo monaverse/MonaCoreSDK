@@ -256,14 +256,16 @@ namespace Mona.SDK.Core.Body
             Pause();
         }
 
-        public void Pause()
+        public void Pause(bool isNetworked = true)
         {
             OnPaused();
+            if (isNetworked) _networkBody?.SetPaused(true);
         }
 
-        public void Resume()
+        public void Resume(bool isNetworked = true)
         {
             OnResumed();
+            if (isNetworked) _networkBody?.SetPaused(false);
         }
 
         private void RegisterWithNetwork()

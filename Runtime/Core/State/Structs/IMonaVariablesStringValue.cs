@@ -1,6 +1,6 @@
 ﻿namespace Mona.SDK.Core.State.Structs
 {
-    public interface IMonaStateStringValue
+    public interface IMonaVariablesStringValue
     { 
         string Value { get; set; }
     }

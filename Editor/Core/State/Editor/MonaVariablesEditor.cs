@@ -5,13 +5,13 @@ using UnityEngine.UIElements;
 namespace Mona.SDK.Core.State.UIEditors
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(MonaState))]
-    public class MonaStateEditor : Editor
+    [CustomEditor(typeof(MonaVariables))]
+    public class MonaVariablesEditor : Editor
     {
         public override VisualElement CreateInspectorGUI()
         {
-            var self = (IMonaState)target;
-            var root = new MonaStateVisualElement();
+            var self = (IMonaVariables)target;
+            var root = new MonaVariablesVisualElement();
             root.SetState(self);
             return root;
         }

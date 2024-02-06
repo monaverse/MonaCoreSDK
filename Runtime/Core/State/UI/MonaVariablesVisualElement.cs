@@ -4,12 +4,12 @@ using UnityEngine.UIElements;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    public class MonaStateVisualElement : VisualElement
+    public class MonaVariablesVisualElement : VisualElement
     {
-        private IMonaState _state;
+        private IMonaVariables _state;
         private ListView _list;
 
-        public MonaStateVisualElement()
+        public MonaVariablesVisualElement()
         {
             style.flexDirection = FlexDirection.Column;
 
@@ -28,7 +28,7 @@ namespace Mona.SDK.Core.State.UIElements
             header.ElementAt(1).style.marginRight = 5;
             Add(header);
 
-            _list = new ListView(null, 28, () => new MonaStateItemVisualElement(), (elem, i) => BindStateItem((MonaStateItemVisualElement)elem, i));
+            _list = new ListView(null, 28, () => new MonaVariablesItemVisualElement(), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));
             //_list.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
             _list.showFoldoutHeader = false;
             _list.showAddRemoveFooter = true;
@@ -36,20 +36,20 @@ namespace Mona.SDK.Core.State.UIElements
             _list.itemsAdded += (items) =>
             {
                 foreach (var e in items)
-                    _state.CreateValue("Default", typeof(MonaStateString), e);
+                    _state.CreateVariable("Default", typeof(MonaVariablesString), e);
             };
             Add(_list);
         }
 
-        private void BindStateItem(MonaStateItemVisualElement elem, int i)
+        private void BindStateItem(MonaVariablesItemVisualElement elem, int i)
         {
             elem.SetStateItem(_state, i);
         }
 
-        public void SetState(IMonaState state)
+        public void SetState(IMonaVariables state)
         {
             _state = state;
-            _list.itemsSource = _state.Values;
+            _list.itemsSource = _state.VariableList;
             _list.Rebuild();
         }
 

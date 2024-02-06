@@ -4,9 +4,9 @@ using UnityEngine.UIElements;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    public class MonaStateItemVisualElement : VisualElement
+    public class MonaVariablesItemVisualElement : VisualElement
     {
-        protected IMonaState _state;
+        protected IMonaVariables _state;
         protected int _index;
 
         protected DropdownField _typeField;
@@ -24,7 +24,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected Toggle _useMinMax;
         protected MinMaxConstraintType _contraintType;
 
-        public MonaStateItemVisualElement()
+        public MonaVariablesItemVisualElement()
         {
             style.flexDirection = FlexDirection.Row;
             style.width = Length.Percent(100);
@@ -49,7 +49,7 @@ namespace Mona.SDK.Core.State.UIElements
             _nameField = new TextField();
             _nameField.RegisterValueChangedCallback((evt) =>
             {
-                _state.Values[_index].Name = evt.newValue;
+                _state.VariableList[_index].Name = evt.newValue;
             });
             _nameField.style.width = 100;
             _nameField.style.marginRight = 5;
@@ -58,58 +58,58 @@ namespace Mona.SDK.Core.State.UIElements
             _floatField.style.flexGrow = 1;
             _floatField.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaStateFloatValue)_state.Values[_index]).Value = evt.newValue;
-                ((IMonaStateFloatValue)_state.Values[_index]).DefaultValue = evt.newValue;
+                ((IMonaVariablesFloatValue)_state.VariableList[_index]).Value = evt.newValue;
+                ((IMonaVariablesFloatValue)_state.VariableList[_index]).DefaultValue = evt.newValue;
             });
 
             _stringField = new TextField();
             _stringField.style.flexGrow = 1;
             _stringField.RegisterValueChangedCallback((evt) =>
             {
-                if(_state.Values[_index] is IMonaStateStringValue)
-                    ((IMonaStateStringValue)_state.Values[_index]).Value = evt.newValue;
+                if(_state.VariableList[_index] is IMonaVariablesStringValue)
+                    ((IMonaVariablesStringValue)_state.VariableList[_index]).Value = evt.newValue;
             });
 
             _vector2Field = new Vector2Field();
             _vector2Field.style.flexGrow = 1;
             _vector2Field.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaStateVector2Value)_state.Values[_index]).Value = evt.newValue;
+                ((IMonaVariablesVector2Value)_state.VariableList[_index]).Value = evt.newValue;
             });
 
             _vector3Field = new Vector3Field();
             _vector3Field.style.flexGrow = 1;
             _vector3Field.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaStateVector3Value)_state.Values[_index]).Value = evt.newValue;
+                ((IMonaVariablesVector3Value)_state.VariableList[_index]).Value = evt.newValue;
             });
 
             _toggleField = new Toggle();
             _toggleField.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaStateBoolValue)_state.Values[_index]).Value = evt.newValue;
+                ((IMonaVariablesBoolValue)_state.VariableList[_index]).Value = evt.newValue;
             });
         }
 
         protected virtual void CreateValue(string value)
         {
-            var name = (_state.Values[_index] != null) ? _state.Values[_index].Name : value + "Value";
+            var name = (_state.VariableList[_index] != null) ? _state.VariableList[_index].Name : value + "Value";
             switch (value)
             {
                 case MonaCoreConstants.FLOAT_TYPE_LABEL:
-                    _state.CreateValue(name, typeof(MonaStateFloat), _index);
+                    _state.CreateVariable(name, typeof(MonaVariablesFloat), _index);
                     break;
                 case MonaCoreConstants.STRING_TYPE_LABEL:
-                    _state.CreateValue(name, typeof(MonaStateString), _index);
+                    _state.CreateVariable(name, typeof(MonaVariablesString), _index);
                     break;
                 case MonaCoreConstants.BOOL_TYPE_LABEL:
-                    _state.CreateValue(name, typeof(MonaStateBool), _index);
+                    _state.CreateVariable(name, typeof(MonaVariablesBool), _index);
                     break;
                 case MonaCoreConstants.VECTOR2_TYPE_LABEL:
-                    _state.CreateValue(name, typeof(MonaStateVector2), _index);
+                    _state.CreateVariable(name, typeof(MonaVariablesVector2), _index);
                     break;
                 case MonaCoreConstants.VECTOR3_TYPE_LABEL:
-                    _state.CreateValue(name, typeof(MonaStateVector3), _index);
+                    _state.CreateVariable(name, typeof(MonaVariablesVector3), _index);
                     break;
             }
             Refresh();
@@ -121,44 +121,44 @@ namespace Mona.SDK.Core.State.UIElements
 
             Add(_typeField);
 
-            var value = _state.Values[_index];
+            var value = _state.VariableList[_index];
             Add(_nameField);
             _nameField.value = value.Name;
 
-             if (value is IMonaStateFloatValue)
+             if (value is IMonaVariablesFloatValue)
              {
                 _typeField.value = MonaCoreConstants.FLOAT_TYPE_LABEL;
                 Add(_floatField);
-                _floatField.value = ((IMonaStateFloatValue)value).Value;
+                _floatField.value = ((IMonaVariablesFloatValue)value).Value;
             }
-            else if (value is IMonaStateStringValue)
+            else if (value is IMonaVariablesStringValue)
             {
                 _typeField.value = MonaCoreConstants.STRING_TYPE_LABEL;
                 Add(_stringField);
-                _stringField.value = ((IMonaStateStringValue)value).Value;
+                _stringField.value = ((IMonaVariablesStringValue)value).Value;
                 _stringField.SetEnabled(true);
             }
-            else if(value is IMonaStateBoolValue)
+            else if(value is IMonaVariablesBoolValue)
             {
                 _typeField.value = MonaCoreConstants.BOOL_TYPE_LABEL;
                 Add(_toggleField);
-                _toggleField.value = ((IMonaStateBoolValue)value).Value;
+                _toggleField.value = ((IMonaVariablesBoolValue)value).Value;
             }
-            else if(value is IMonaStateVector2Value)
+            else if(value is IMonaVariablesVector2Value)
             {
                 _typeField.value = MonaCoreConstants.VECTOR2_TYPE_LABEL;
                 Add(_vector2Field);
-                _vector2Field.value = ((IMonaStateVector2Value)value).Value;
+                _vector2Field.value = ((IMonaVariablesVector2Value)value).Value;
             }
-            else if (value is IMonaStateVector3Value)
+            else if (value is IMonaVariablesVector3Value)
             {
                 _typeField.value = MonaCoreConstants.VECTOR3_TYPE_LABEL;
                 Add(_vector3Field);
-                _vector3Field.value = ((IMonaStateVector3Value)value).Value;
+                _vector3Field.value = ((IMonaVariablesVector3Value)value).Value;
             }
         }
 
-        public void SetStateItem(IMonaState state, int i)
+        public void SetStateItem(IMonaVariables state, int i)
         {
             _state = state;
             _index = i;

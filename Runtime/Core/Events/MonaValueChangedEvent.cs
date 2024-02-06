@@ -5,9 +5,9 @@ namespace Mona.SDK.Core.Events
     public struct MonaValueChangedEvent
     {
         public string Name;
-        public IMonaStateValue Value;
+        public IMonaVariablesValue Value;
 
-        public MonaValueChangedEvent(string name, IMonaStateValue value)
+        public MonaValueChangedEvent(string name, IMonaVariablesValue value)
         {
             Name = name;
             Value = value;

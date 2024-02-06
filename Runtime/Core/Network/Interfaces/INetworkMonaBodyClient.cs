@@ -23,5 +23,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetColor(Color color);
         void SetLayer(string layerName, bool includeChildren);
         void SetVisible(bool vis);
+        void SetPaused(bool paused);
     }
 }

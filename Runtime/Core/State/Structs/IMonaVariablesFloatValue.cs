@@ -1,6 +1,6 @@
 ﻿namespace Mona.SDK.Core.State.Structs
 {
-    public interface IMonaStateFloatValue
+    public interface IMonaVariablesFloatValue
     { 
         float Value { get; set; }
         float DefaultValue { get; set; }

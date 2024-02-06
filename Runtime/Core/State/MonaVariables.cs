@@ -11,12 +11,12 @@ using UnityEngine;
 namespace Mona.SDK.Core.State
 {
     [Serializable]
-    public class MonaState : IMonaState
+    public class MonaVariables : IMonaVariables
     {
-        protected INetworkMonaState _networkState;
+        protected INetworkMonaVariables _networkState;
         protected IMonaBody _monaBody;
 
-        public MonaState(GameObject gameObject = null)
+        public MonaVariables(GameObject gameObject = null)
         {
             SetGameObject(gameObject);
         }
@@ -30,11 +30,11 @@ namespace Mona.SDK.Core.State
         }
 
         [SerializeReference]
-        protected List<IMonaStateValue> _values = new List<IMonaStateValue>();
+        protected List<IMonaVariablesValue> _values = new List<IMonaVariablesValue>();
 
-        public List<IMonaStateValue> Values { get => _values; set => _values = value; }
+        public List<IMonaVariablesValue> VariableList { get => _values; set => _values = value; }
 
-        public IMonaStateValue GetValue(string name)
+        public IMonaVariablesValue GetVariable(string name)
         {
             for (var i = 0; i < _values.Count; i++)
             {
@@ -44,20 +44,20 @@ namespace Mona.SDK.Core.State
             return null;
         }
 
-        public IMonaStateValue GetValue(string name, Type type)
+        public IMonaVariablesValue GetVariable(string name, Type type)
         {
-            var value = GetValue(name);
+            var value = GetVariable(name);
             if (value != null) return value;
             
-            var newValue = (IMonaStateValue)Activator.CreateInstance(type);
+            var newValue = (IMonaVariablesValue)Activator.CreateInstance(type);
             newValue.Name = name;
             _values.Add(newValue);
             return newValue;
         }
 
-        public IMonaStateValue CreateValue(string name, Type type, int i)
+        public IMonaVariablesValue CreateVariable(string name, Type type, int i)
         {
-            var prop = (IMonaStateValue)Activator.CreateInstance(type);
+            var prop = (IMonaVariablesValue)Activator.CreateInstance(type);
             prop.Name = name;
             _values[i] = prop;
             return prop;
@@ -65,8 +65,8 @@ namespace Mona.SDK.Core.State
 
         public void Set(string name, IMonaBody value)
         {
-            var prop = GetValue(name, typeof(MonaStateBody));
-            var propValue = ((IMonaStateBodyValue)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesBody));
+            var propValue = ((IMonaVariablesBodyValue)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -76,14 +76,14 @@ namespace Mona.SDK.Core.State
 
         public IMonaBody GetBody(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateBody));
-            return ((IMonaStateBodyValue)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesBody));
+            return ((IMonaVariablesBodyValue)prop).Value;
         }
 
         public void Set(string name, bool value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateBool));
-            var propValue = ((IMonaStateBoolValue)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesBool));
+            var propValue = ((IMonaVariablesBoolValue)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -95,14 +95,14 @@ namespace Mona.SDK.Core.State
 
         public bool GetBool(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateBool));
-            return ((IMonaStateBoolValue)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesBool));
+            return ((IMonaVariablesBoolValue)prop).Value;
         }
 
         public void Set(string name, float value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateFloat));
-            var propValue = ((IMonaStateFloatValue)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            var propValue = ((IMonaVariablesFloatValue)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -114,14 +114,14 @@ namespace Mona.SDK.Core.State
 
         public float GetFloat(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateFloat));
-            return ((IMonaStateFloatValue)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            return ((IMonaVariablesFloatValue)prop).Value;
         }
 
         public void Set(string name, int value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateInt));
-            var propValue = ((IMonaStateIntValue)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesInt));
+            var propValue = ((IMonaVariablesIntValue)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -133,14 +133,14 @@ namespace Mona.SDK.Core.State
 
         public int GetInt(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateInt));
-            return ((IMonaStateIntValue)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesInt));
+            return ((IMonaVariablesIntValue)prop).Value;
         }
 
         public void Set(string name, string value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateString));
-            var propValue = ((IMonaStateStringValue)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesString));
+            var propValue = ((IMonaVariablesStringValue)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -152,14 +152,14 @@ namespace Mona.SDK.Core.State
 
         public string GetString(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateString));
-            return ((IMonaStateStringValue)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesString));
+            return ((IMonaVariablesStringValue)prop).Value;
         }
 
         public void Set(string name, Vector2 value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateVector2));
-            var propValue = ((IMonaStateVector2Value)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesVector2));
+            var propValue = ((IMonaVariablesVector2Value)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -171,14 +171,14 @@ namespace Mona.SDK.Core.State
 
         public Vector2 GetVector2(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateFloat));
-            return ((IMonaStateVector2Value)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            return ((IMonaVariablesVector2Value)prop).Value;
         }
 
         public void Set(string name, Vector3 value, bool isNetworked = true)
         {
-            var prop = GetValue(name, typeof(MonaStateVector3));
-            var propValue = ((IMonaStateVector3Value)prop);
+            var prop = GetVariable(name, typeof(MonaVariablesVector3));
+            var propValue = ((IMonaVariablesVector3Value)prop);
             if (propValue.Value != value)
             {
                 propValue.Value = value;
@@ -190,11 +190,11 @@ namespace Mona.SDK.Core.State
 
         public Vector3 GetVector3(string name)
         {
-            var prop = GetValue(name, typeof(MonaStateVector3));
-            return ((IMonaStateVector3Value)prop).Value;
+            var prop = GetVariable(name, typeof(MonaVariablesVector3));
+            return ((IMonaVariablesVector3Value)prop).Value;
         }
 
-        public void SetNetworkState(INetworkMonaState state)
+        public void SetNetworkVariables(INetworkMonaVariables state)
         {
             _networkState = state;
             SyncValuesOnNetwork();
@@ -208,7 +208,7 @@ namespace Mona.SDK.Core.State
                 _networkState.UpdateValue(_values[i]);
         }
 
-        protected virtual void FireValueEvent(string variableName, IMonaStateValue value)
+        protected virtual void FireValueEvent(string variableName, IMonaVariablesValue value)
         {
             value.Change();
             EventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));

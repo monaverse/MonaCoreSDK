@@ -2,8 +2,8 @@
 
 namespace Mona.SDK.Core.Network.Interfaces
 {
-    public interface INetworkMonaState
+    public interface INetworkMonaVariables
     {
-        void UpdateValue(IMonaStateValue value);
+        void UpdateValue(IMonaVariablesValue value);
     }
 }
