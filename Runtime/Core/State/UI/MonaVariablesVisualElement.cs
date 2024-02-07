@@ -1,4 +1,5 @@
 ﻿using Mona.SDK.Core.State.Structs;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -36,7 +37,16 @@ namespace Mona.SDK.Core.State.UIElements
             _list.itemsAdded += (items) =>
             {
                 foreach (var e in items)
-                    _state.CreateVariable("Default", typeof(MonaVariablesString), e);
+                {
+                    var variable = _state.CreateVariable("Default", typeof(MonaVariablesString), e);
+                    var regex = new Regex("\\d+");
+                    var count = _state.VariableList.FindAll(x => regex.Replace(x.Name, "") == "Default");
+                        count.Remove(variable);
+                    if (count.Count > 0)
+                    {
+                        variable.Name = "Default" + count.Count.ToString("D2");
+                    }
+                }
             };
             Add(_list);
         }

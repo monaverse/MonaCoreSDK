@@ -1,5 +1,6 @@
 ﻿using Mona.SDK.Core.State.Structs;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine.UIElements;
 
 namespace Mona.SDK.Core.State.UIElements
@@ -49,7 +50,22 @@ namespace Mona.SDK.Core.State.UIElements
             _nameField = new TextField();
             _nameField.RegisterValueChangedCallback((evt) =>
             {
-                _state.VariableList[_index].Name = evt.newValue;
+                if (_state.VariableList[_index].Name != evt.newValue)
+                {
+                    _state.VariableList[_index].Name = evt.newValue;
+                }
+            });
+
+            var regex = new Regex("\\d+");
+            _nameField.RegisterCallback<BlurEvent>((evt) =>
+            {
+                var count = _state.VariableList.FindAll(x => regex.Replace(x.Name, "") == _nameField.value);
+                    count.Remove(_state.VariableList[_index]);
+                if (count.Count > 0)
+                {
+                    _state.VariableList[_index].Name = _nameField.value + count.Count.ToString("D2");
+                    _nameField.value = _state.VariableList[_index].Name;
+                }                
             });
             _nameField.style.width = 100;
             _nameField.style.marginRight = 5;
