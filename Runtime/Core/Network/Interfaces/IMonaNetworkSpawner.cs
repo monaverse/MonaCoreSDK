@@ -10,6 +10,7 @@ namespace Mona.SDK.Core.Network.Interfaces
         void RegisterMonaBody(IMonaBody monaBody);
         void RegisterNetworkMonaReactor(INetworkMonaReactorClient reactor);
         void RegisterNetworkMonaBody(INetworkMonaBodyClient monaBody);
+        void RegisterNetworkMonaVariables(INetworkMonaVariables monaVariables);
         void RegisterMonaPrefabProvider(IMonaPrefabProvider provider);
         void SpawnLocalMonaReactor(INetworkMonaReactorClient reactor);
         void SpawnLocalMonaBody(INetworkMonaBodyClient monaBody);

@@ -34,6 +34,7 @@ namespace Mona.SDK.Core.Body
         private float _friction;
         private bool _onlyApplyDragWhenGrounded = true;
         private IMonaBody _parent;
+        private bool _setPin;
 
         public IMonaBody Parent => _parent;
 
@@ -44,6 +45,32 @@ namespace Mona.SDK.Core.Body
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
+
+        private Vector3 _defaultPosition;
+        private Quaternion _defaultRotation;
+
+        public Vector3 DefaultPosition => _defaultPosition;
+        public Quaternion DefaultRotation => _defaultRotation;
+
+        public struct MonaBodyForce
+        {
+            public Vector3 Force;
+            public ForceMode Mode;
+        }
+
+        public struct MonaBodyDirection
+        {
+            public Vector3 Direction;
+        }
+
+        public struct MonaBodyRotation
+        {
+            public Quaternion Rotation;
+        }
+
+        private List<MonaBodyForce> _force = new List<MonaBodyForce>();
+        private List<MonaBodyDirection> _positionDeltas = new List<MonaBodyDirection>();
+        private List<MonaBodyRotation> _rotationDeltas = new List<MonaBodyRotation>();
 
         private bool _updateEnabled;
 
@@ -158,10 +185,32 @@ namespace Mona.SDK.Core.Body
 
         private void Awake()
         {
+            CacheDefault();
             RegisterInParents();
             CacheComponents();
             InitializeTags();
             AddDelegates();
+        }
+
+        private void CacheDefault()
+        {
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                _defaultPosition = ActiveRigidbody.position;
+            else
+                _defaultPosition = ActiveTransform.position;
+
+            _defaultRotation = transform.rotation;
+        }
+
+        public void SetPin()
+        {
+            _setPin = true;
+        }
+
+        public void SetPin(Vector3 pos, Quaternion rot)
+        {
+            _defaultPosition = pos;
+            _defaultRotation = rot;
         }
 
         private void CacheComponents()
@@ -334,8 +383,14 @@ namespace Mona.SDK.Core.Body
         {
             if(hasInput)
                 ApplyInput(input);
-            ApplyDrag();
+
             FireFixedUpdateEvent(deltaTime, hasInput);
+
+            ApplyPosition();
+            ApplyRotation();
+            ApplyAllForces();
+            ApplyDrag();
+            ApplyPin();
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
@@ -344,8 +399,14 @@ namespace Mona.SDK.Core.Body
             {
                 ApplyInputs(inputs);
             }
-            ApplyDrag();
+
             FireFixedUpdateEvent(deltaTime, hasInput);
+
+            ApplyPosition();
+            ApplyRotation();
+            ApplyAllForces();
+            ApplyDrag();
+            ApplyPin();
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
@@ -356,9 +417,84 @@ namespace Mona.SDK.Core.Body
             {
                 if(_hasInput)
                     ApplyInput(_monaInput);
-                ApplyDrag();
+
                 FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
+
+                ApplyPosition();
+                ApplyRotation();
+                ApplyAllForces();
+                ApplyDrag();
+                ApplyPin();
+
+                //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 _hasInput = false;
+            }
+        }
+
+        private void ApplyPin()
+        {
+            if (_setPin)
+            {
+                CacheDefault();
+                _setPin = false;
+                Debug.Log($"{nameof(ApplyPin)} {_defaultPosition}");
+            }
+        }
+
+        private Vector3 _applyPosition;
+        private void ApplyPosition()
+        {
+            _applyPosition = _defaultPosition;
+            for (var i = 0; i < _positionDeltas.Count; i++)
+            {
+                var position = _positionDeltas[i];
+                ApplyAddPosition(position.Direction);
+            }
+            _positionDeltas.Clear();
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                ActiveRigidbody.MovePosition(_applyPosition);
+            else
+                ActiveTransform.position = _applyPosition;
+        }
+
+        private void ApplyAddPosition(Vector3 delta)
+        {
+            _applyPosition += delta;
+        }
+
+        private Quaternion _applyRotation;
+        private void ApplyRotation()
+        {
+            _applyRotation = Quaternion.identity;
+            for (var i = 0; i < _rotationDeltas.Count; i++)
+            {
+                var rotation = _rotationDeltas[i];
+                ApplyAddRotation(rotation.Rotation);
+            }
+            _rotationDeltas.Clear();
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                ActiveRigidbody.MoveRotation(_applyRotation);
+            else
+                ActiveTransform.rotation = _applyRotation;
+        }
+
+        private void ApplyAddRotation(Quaternion delta)
+        {
+            _applyRotation *= delta;
+        }
+
+        private void ApplyAllForces()
+        {
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+            {
+                for (var i = 0; i < _force.Count; i++)
+                {
+                    var force = _force[i];
+                    ActiveRigidbody.AddForce(force.Force, force.Mode);
+                }
+                _force.Clear();
             }
         }
 
@@ -584,37 +720,32 @@ namespace Mona.SDK.Core.Body
         {
             if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
-                ActiveRigidbody.AddForce(direction, mode);
+                AddForce(direction, mode);
             }
+        }
+
+        private void AddForce(Vector3 force, ForceMode mode)
+        {
+            _force.Add(new MonaBodyForce() { Force = force, Mode = mode });
         }
 
         public void MoveDirection(Vector3 direction, bool isKinematic = false, bool isNetworked = true)
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
-            {
-                SetPosition(ActiveRigidbody.position + direction, isKinematic, isNetworked);
-            }
-            else
-            {
-                SetPosition(ActiveTransform.position + direction, isKinematic, isNetworked);
-            }
+            AddPosition(direction, isKinematic, isNetworked);
         }
 
         public void SetPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
         {
+            AddPosition(position - _defaultPosition, isKinematic, isNetworked);
+        }
+
+        private void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
+        {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
                 ActiveRigidbody.isKinematic = isKinematic;
-                if (isKinematic)
-                    ActiveTransform.position = position;
-                else
-                    ActiveRigidbody.MovePosition(position);
             }
-            else
-            {
-                ActiveTransform.position = position;
-            }
-            if (isNetworked) _networkBody?.SetPosition(position, isKinematic);
+            _positionDeltas.Add(new MonaBodyDirection() { Direction = dir });
         }
 
         public Vector3 GetPosition()
@@ -632,7 +763,7 @@ namespace Mona.SDK.Core.Body
             else
                 return ActiveTransform.rotation;
         }
-
+        /* TODO
         public void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
@@ -644,16 +775,17 @@ namespace Mona.SDK.Core.Body
                 SetRotation(Quaternion.Slerp(ActiveTransform.rotation, Quaternion.LookRotation(direction, Vector3.up), angle / 360f), isKinematic, isNetworked);
             }
         }
+        */
 
         public void RotateAround(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
-                SetRotation(ActiveRigidbody.rotation * Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
+                SetRotation(Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
             }
             else
             {
-                SetRotation(ActiveTransform.rotation * Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
+                SetRotation(Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
             }
         }
 
@@ -662,15 +794,8 @@ namespace Mona.SDK.Core.Body
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
                 ActiveRigidbody.isKinematic = isKinematic;
-                if (isKinematic)
-                    ActiveRigidbody.rotation = rotation;
-                else
-                    ActiveRigidbody.MoveRotation(rotation);
-
             }
-            else
-                ActiveTransform.rotation = rotation;
-            if (isNetworked) _networkBody?.SetRotation(rotation, isKinematic);
+            _rotationDeltas.Add(new MonaBodyRotation() { Rotation = rotation });
         }
 
         public void SetScale(Vector3 scale, bool isNetworked = true)
