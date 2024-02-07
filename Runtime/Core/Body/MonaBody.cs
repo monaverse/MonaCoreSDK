@@ -185,32 +185,30 @@ namespace Mona.SDK.Core.Body
 
         private void Awake()
         {
-            CacheDefault();
             RegisterInParents();
             CacheComponents();
             InitializeTags();
             AddDelegates();
+            CacheDefault();
         }
 
         private void CacheDefault()
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+            {
                 _defaultPosition = ActiveRigidbody.position;
+                _defaultRotation = ActiveRigidbody.rotation;
+            }
             else
+            {
                 _defaultPosition = ActiveTransform.position;
-
-            _defaultRotation = transform.rotation;
+                _defaultRotation = ActiveTransform.rotation;
+            }
         }
 
         public void SetPin()
         {
             _setPin = true;
-        }
-
-        public void SetPin(Vector3 pos, Quaternion rot)
-        {
-            _defaultPosition = pos;
-            _defaultRotation = rot;
         }
 
         private void CacheComponents()
@@ -444,6 +442,7 @@ namespace Mona.SDK.Core.Body
         private Vector3 _applyPosition;
         private void ApplyPosition()
         {
+            if (_positionDeltas.Count == 0) return;
             _applyPosition = _defaultPosition;
             for (var i = 0; i < _positionDeltas.Count; i++)
             {
@@ -466,6 +465,7 @@ namespace Mona.SDK.Core.Body
         private Quaternion _applyRotation;
         private void ApplyRotation()
         {
+            if (_rotationDeltas.Count == 0) return;
             _applyRotation = Quaternion.identity;
             for (var i = 0; i < _rotationDeltas.Count; i++)
             {

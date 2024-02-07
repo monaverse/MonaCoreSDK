@@ -27,7 +27,6 @@ namespace Mona.SDK.Core.Body
         Quaternion DefaultRotation { get; }
 
         void SetPin();
-        void SetPin(Vector3 pos, Quaternion rot);
 
         void AddTag(string tag);
         void RemoveTag(string tag);
