@@ -520,6 +520,17 @@ namespace Mona.SDK.Core.Body
             return false;
         }
 
+        public bool Intersects(Collider collider)
+        {
+            for (var i = 0; i < _colliders.Count; i++)
+            {
+                var bodyCollider = _colliders[i];
+                if (bodyCollider.bounds.Intersects(collider.bounds))
+                    return true;
+            }
+            return false;
+        }
+
         private bool _grounded;
         private void ApplyDrag()
         {
