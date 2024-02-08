@@ -22,6 +22,8 @@ namespace Mona.SDK.Core.State
         IMonaVariablesValue GetVariable(string variableName);
         IMonaVariablesValue GetVariable(string variableName, Type type);
         IMonaVariablesValue CreateVariable(string variableName, Type type, int i);
+        IMonaVariablesValue GetVariableByIndex(int index);
+        int GetVariableIndexByName(string name);
 
         int GetInt(string variableName);
         bool GetBool(string variableName);

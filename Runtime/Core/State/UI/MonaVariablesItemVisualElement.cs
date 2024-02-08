@@ -50,6 +50,7 @@ namespace Mona.SDK.Core.State.UIElements
             _nameField = new TextField();
             _nameField.RegisterValueChangedCallback((evt) =>
             {
+                if (evt.newValue == null || evt.newValue.StartsWith("_")) return;
                 if (_state.VariableList[_index].Name != evt.newValue)
                 {
                     _state.VariableList[_index].Name = evt.newValue;
@@ -179,6 +180,11 @@ namespace Mona.SDK.Core.State.UIElements
             _state = state;
             _index = i;
             Refresh();
+        }
+
+        public IMonaVariablesValue GetStateItem()
+        {
+            return _state.VariableList[_index];
         }
     }
 }

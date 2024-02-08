@@ -34,6 +34,19 @@ namespace Mona.SDK.Core.State
 
         public List<IMonaVariablesValue> VariableList { get => _values; set => _values = value; }
 
+        private Dictionary<int, IMonaVariablesValue> _variablesIndex = new Dictionary<int, IMonaVariablesValue>();
+        private Dictionary<string, int> _variablesIndexByName = new Dictionary<string, int>();
+
+        public IMonaVariablesValue GetVariableByIndex(int index)
+        {
+            return _variablesIndex[index];
+        }
+
+        public int GetVariableIndexByName(string name)
+        {
+            return _variablesIndexByName[name];
+        }
+
         public IMonaVariablesValue GetVariable(string name)
         {
             for (var i = 0; i < _values.Count; i++)
@@ -204,8 +217,14 @@ namespace Mona.SDK.Core.State
         {
             if (_networkState == null) return;
 
+            _variablesIndex.Clear();
+            _variablesIndexByName.Clear();
             for (var i = 0; i < _values.Count; i++)
+            {
+                _variablesIndex[i] = _values[i];
+                _variablesIndexByName[_values[i].Name] = i;
                 _networkState.UpdateValue(_values[i]);
+            }
         }
 
         protected virtual void FireValueEvent(string variableName, IMonaVariablesValue value)
