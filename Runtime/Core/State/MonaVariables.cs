@@ -223,6 +223,7 @@ namespace Mona.SDK.Core.State
             {
                 _variablesIndex[i] = _values[i];
                 _variablesIndexByName[_values[i].Name] = i;
+                Debug.Log($"{nameof(SyncValuesOnNetwork)} {_values[i].Name}, index {i}");
                 _networkState.UpdateValue(_values[i]);
             }
         }

@@ -18,7 +18,7 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField]
         public string _value;
 
-        public string Value { get => _value; set => _value = value; }
+        public string Value { get => _value == null ? "" : _value; set => _value = value; }
 
         public MonaVariablesString() { }
     }

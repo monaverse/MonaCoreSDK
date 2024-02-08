@@ -16,6 +16,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnStarted = delegate { };
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
+        public event Action OnControlRequested = delegate { };
 
         private bool _registerWhenEnabled;
         private IMonaNetworkSpawner _networkSpawner;
@@ -625,7 +626,11 @@ namespace Mona.SDK.Core.Body
         public void TakeControl()
         {
             Debug.Log($"{nameof(MonaBody)}.{nameof(TakeControl)} {this}");
-            _networkBody?.TakeControl();
+            if (!HasControl())
+            {
+                _networkBody?.TakeControl();
+                OnControlRequested?.Invoke();
+            }
         }
 
         public void ReleaseControl()
