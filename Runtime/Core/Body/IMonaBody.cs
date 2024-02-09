@@ -61,6 +61,7 @@ namespace Mona.SDK.Core.Body
         void SetBounce(float bounce);
         void SetUseGravity(bool useGravity);
         void SetOnlyApplyDragWhenGrounded(bool apply);
+        void SetApplyPinOnGrounded(bool apply);
 
         Color GetColor();
         bool GetVisible();

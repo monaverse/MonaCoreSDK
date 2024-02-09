@@ -34,6 +34,7 @@ namespace Mona.SDK.Core.Body
         private float _bounce;
         private float _friction;
         private bool _onlyApplyDragWhenGrounded = true;
+        private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
         private bool _setPin;
 
@@ -78,6 +79,7 @@ namespace Mona.SDK.Core.Body
         public bool UpdateEnabled => _updateEnabled;
 
         public MonaBodyNetworkSyncType SyncType;
+        public bool DisableOnLoad = false;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
 
@@ -116,6 +118,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetDragType(DragType dragType) => _dragType = dragType;
         public void SetOnlyApplyDragWhenGrounded(bool apply) => _onlyApplyDragWhenGrounded = apply;
+        public void SetApplyPinOnGrounded(bool apply) => _applyPinOnGrounded = apply;
 
         public void SetDrag(float drag)
         {
@@ -284,6 +287,8 @@ namespace Mona.SDK.Core.Body
             {
                 FireSpawnEvent();
                 OnStarted();
+                if (DisableOnLoad)
+                    SetActive(false);
             }
 
             RemoveDelegates();
@@ -387,8 +392,9 @@ namespace Mona.SDK.Core.Body
 
             ApplyPosition();
             ApplyRotation();
-            ApplyAllForces();
+            ApplyAllForces(deltaTime);
             ApplyDrag();
+
             ApplyPin();
         }
 
@@ -403,7 +409,7 @@ namespace Mona.SDK.Core.Body
 
             ApplyPosition();
             ApplyRotation();
-            ApplyAllForces();
+            ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplyPin();
         }
@@ -415,14 +421,18 @@ namespace Mona.SDK.Core.Body
             if (_networkBody == null)
             {
                 if(_hasInput)
+                {
+                    //Debug.Log($"{nameof(HandleFixedUpdate)} {_monaInput.MoveValue}");
                     ApplyInput(_monaInput);
+                }
 
                 FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
 
                 ApplyPosition();
                 ApplyRotation();
-                ApplyAllForces();
+                ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
+
                 ApplyPin();
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
@@ -436,7 +446,7 @@ namespace Mona.SDK.Core.Body
             {
                 CacheDefault();
                 _setPin = false;
-                Debug.Log($"{nameof(ApplyPin)} {_defaultPosition}");
+                //Debug.Log($"{nameof(ApplyPin)} {_defaultPosition}");
             }
         }
 
@@ -486,7 +496,7 @@ namespace Mona.SDK.Core.Body
             _applyRotation *= delta;
         }
 
-        private void ApplyAllForces()
+        private void ApplyAllForces(float deltaTime)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
@@ -496,6 +506,8 @@ namespace Mona.SDK.Core.Body
                     ActiveRigidbody.AddForce(force.Force, force.Mode);
                 }
                 _force.Clear();
+                Physics.simulationMode = SimulationMode.Script;
+                Physics.Simulate(deltaTime);
             }
         }
 
@@ -538,18 +550,20 @@ namespace Mona.SDK.Core.Body
             {
                 if(_onlyApplyDragWhenGrounded)
                 {
-                    float minimumExtent = Mathf.Infinity;
+                    float maximumExtent = 0;
                     for (var i = 0; i < _colliders.Count; i++)
                     {
                         var collider = _colliders[i];
-                        minimumExtent = Mathf.Min(minimumExtent, collider.bounds.extents.y);
+                        maximumExtent = Mathf.Max(maximumExtent, collider.bounds.extents.y);
                     }
 
                     _grounded = false;
                     RaycastHit hit;
-                    if(Physics.Raycast(ActiveRigidbody.position, -Vector3.up, out hit, minimumExtent+0.01f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
+                    if(Physics.Raycast(ActiveRigidbody.position, -Vector3.up, out hit, maximumExtent+0.01f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
                     {
                         _grounded = true;
+                        if (_applyPinOnGrounded)
+                            SetPin();
                     }
 
                     if(!_grounded)
@@ -578,6 +592,8 @@ namespace Mona.SDK.Core.Body
         public void SetLocalInput(MonaInput input)
         {
             _hasInput = true;
+
+            //Debug.Log($"{nameof(SetLocalInput)} {input.MoveValue}");
             _monaInput = input;
 
             if (_networkBody != null)
