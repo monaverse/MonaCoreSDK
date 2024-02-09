@@ -37,6 +37,10 @@
         public const string VECTOR3_TYPE_LABEL = "Vector3";
         public const string REFERENCE_TYPE_LABEL = "Reference";
 
+        public const string BODY_TYPE_LABEL = "Mona Body Prefab";
+        public const string ANIMATION_TYPE_LABEL = "Animation Clip";
+        public const string AUDIO_TYPE_LABEL = "Audio Clip";
+
         public const string NETWORK_SPAWNER_STARTED_EVENT = "OnNetworkSpawnerStartedEvent";
         public const string NETWORK_SPAWNER_INITIALIZED_EVENT = "OnNetworkSpawnerInitializedEvent";
         public const string MONA_BODIES_BEFORE_START_EVENT = "OnMonaBodiesBeforeStartEvent";

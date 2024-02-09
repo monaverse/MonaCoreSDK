@@ -1,4 +1,5 @@
-﻿using Mona.SDK.Core.Body;
+﻿using Mona.SDK.Core.Assets.Interfaces;
+using Mona.SDK.Core.Body;
 
 namespace Mona.SDK.Core.Network.Interfaces
 {
@@ -11,7 +12,7 @@ namespace Mona.SDK.Core.Network.Interfaces
         void RegisterNetworkMonaReactor(INetworkMonaReactorClient reactor);
         void RegisterNetworkMonaBody(INetworkMonaBodyClient monaBody);
         void RegisterNetworkMonaVariables(INetworkMonaVariables monaVariables);
-        void RegisterMonaPrefabProvider(IMonaPrefabProvider provider);
+        void RegisterMonaPrefabProvider(IMonaAssetProvider provider);
         void SpawnLocalMonaReactor(INetworkMonaReactorClient reactor);
         void SpawnLocalMonaBody(INetworkMonaBodyClient monaBody);
     }
