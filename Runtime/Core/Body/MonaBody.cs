@@ -376,6 +376,9 @@ namespace Mona.SDK.Core.Body
             _networkBody = obj;
             FireSpawnEvent();
             OnStarted();
+            if (DisableOnLoad)
+                SetActive(false);
+
 
             if (_networkBody != null)
                 EventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
