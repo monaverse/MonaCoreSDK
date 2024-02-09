@@ -12,7 +12,7 @@ namespace Mona.SDK.Core.UIEditors
 {
 #if UNITY_EDITOR
     [CustomEditor(typeof(MonaAnimationAssets), editorForChildClasses: true)]
-    public class MonaAnimationAssetEditor : MonaAssetEditor
+    public class MonaAnimationAssetEditor : MonaBodyAssetEditor
     {
         private VisualElement _root;
         private MonaAnimationAssetsVisualElement _assetsEditor;

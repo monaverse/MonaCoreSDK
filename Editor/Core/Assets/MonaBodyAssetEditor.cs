@@ -11,7 +11,8 @@ using Mona.SDK.Core.Assets.Interfaces;
 namespace Mona.SDK.Core.UIEditors
 {
 #if UNITY_EDITOR
-    public class MonaAssetEditor : Editor
+    [CustomEditor(typeof(MonaBodyAssets))]
+    public class MonaBodyAssetEditor : Editor
     {
         private VisualElement _root;
         private MonaAssetsVisualElement _assetsEditor;
