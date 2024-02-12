@@ -27,8 +27,8 @@ namespace Mona.SDK.Core.Assets
         public const string GAMEPLAY_PULL_OBJECT = "Pull Object";
 
         public const string GAMEPLAY_PHYSICAL_WEAK = "Physical Attack Weak";
-        public const string GAMEPLAY_PHYSICAL_STANDARD = "Physical Standard";
-        public const string GAMEPLAY_PHYSICAL_STRONG = "Physical Strong";
+        public const string GAMEPLAY_PHYSICAL_STANDARD = "Physical Attack Standard";
+        public const string GAMEPLAY_PHYSICAL_STRONG = "Physical Attack Strong";
 
         public const string GAMEPLAY_PROJECTILE_WEAK = "Projectile Weak";
         public const string GAMEPLAY_PROJECTILE_STANDARD = "Projectile Standard";
