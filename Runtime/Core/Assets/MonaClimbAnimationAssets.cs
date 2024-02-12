@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Mona.SDK.Core.Assets
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Climb Animation Assets")]
     public class MonaClimbAnimationAssets : MonaAnimationAssets
     {
         public const string CLIMB_SURFACE_UP = "Climb Surface Up";
@@ -47,16 +46,16 @@ namespace Mona.SDK.Core.Assets
             CLIMB_SURFACE_IDLE,
             CLIMB_SURFACE_SLIP,
             CLIMB_SURFACE_SLIDE_DOWN,
-            CLIMB_SURFACE_SURFACE_GRIP, 
+            CLIMB_SURFACE_SURFACE_GRIP,
             CLIMB_SURFACE_TRANSITION_TO_TOP,
             LADDER_UP,
             LADDER_DOWN,
-            LADDER_IDLE, 
+            LADDER_IDLE,
             LADDER_SLIDE_DOWN,
             LADDER_SLIDE_UP,
             LADDER_TRANSITION_TO_TOP,
             ROPE_UP,
-            ROPE_DOWN, 
+            ROPE_DOWN,
             ROPE_IDLE,
             ROPE_SWING_FORWARD,
             ROPE_SWING_BACKWARD,

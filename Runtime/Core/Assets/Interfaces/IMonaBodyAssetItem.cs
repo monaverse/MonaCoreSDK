@@ -4,6 +4,6 @@ namespace Mona.SDK.Core.Assets.Interfaces
 {
     public interface IMonaBodyAssetItem : IMonaAssetItem
     {
-        public IMonaBody Value { get; set; }
+        public MonaBody Value { get; set; }
     }
 }

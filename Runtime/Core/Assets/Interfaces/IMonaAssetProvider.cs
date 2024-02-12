@@ -7,6 +7,7 @@ namespace Mona.SDK.Core.Assets.Interfaces
 {
     public interface IMonaAssetProvider
     {
+        string Name { get; set; }
         List<IMonaAssetItem> AllAssets { get; }
         List<string> DefaultNames { get; }
         List<string> AllNames { get;  }

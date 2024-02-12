@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 
 namespace Mona.SDK.Core.Assets
-{   
+{
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Grounded Animation Assets")]
     public class MonaGroundedAnimationAssets : MonaAnimationAssets
     {
         public const string GROUND_CALM_IDLE = "Ground Calm Idle";
@@ -30,5 +29,4 @@ namespace Mona.SDK.Core.Assets
             GROUND_AGGRO_FIDGET_C
         };
     }
-
 }

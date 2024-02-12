@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Mona.SDK.Core.Assets
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Gameplay Animation Assets")]
     public class MonaGameplayAnimationAssets : MonaAnimationAssets
     {
         public const string GAMEPLAY_INTERACT = "Interact";

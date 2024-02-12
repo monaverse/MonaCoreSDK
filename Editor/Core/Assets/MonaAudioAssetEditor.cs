@@ -11,7 +11,7 @@ using Mona.SDK.Core.Assets.Interfaces;
 namespace Mona.SDK.Core.UIEditors
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(MonaAudioAssets))]
+    [CustomEditor(typeof(MonaAudioAssetsDefinition))]
     public class MonaAudioAssetEditor : Editor
     {
         private VisualElement _root;
@@ -21,7 +21,7 @@ namespace Mona.SDK.Core.UIEditors
         {
             _root = new VisualElement();
             _assetsEditor = new MonaAudioAssetsVisualElement();
-            _assetsEditor.SetMonaAssets((IMonaAssetProvider)target);
+            _assetsEditor.SetMonaAssets(((MonaAssetsDefinition)target).MonaAsset);
             _assetsEditor.TrackSerializedObjectValue(serializedObject, HandleCallback);
             _root.Add(_assetsEditor);
             return _root;

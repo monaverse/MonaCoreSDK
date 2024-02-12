@@ -4,6 +4,6 @@ namespace Mona.SDK.Core.Assets.Interfaces
 {
     public interface IMonaAnimationAssetItem : IMonaAssetItem
     {
-        public Animation Value { get; set; }
+        public AnimationClip Value { get; set; }
     }
 }

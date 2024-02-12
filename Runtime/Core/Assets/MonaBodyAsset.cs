@@ -11,8 +11,8 @@ namespace Mona.SDK.Core.Assets
         [SerializeField] private string _prefabId = "";
         public string PrefabId { get => _prefabId; set => _prefabId = value; }
 
-        [SerializeReference] private IMonaBody _monaBody;
-        public IMonaBody Value { get => _monaBody; set => _monaBody = value; }
+        [SerializeField] private MonaBody _monaBody;
+        public MonaBody Value { get => _monaBody; set => _monaBody = value; }
 
         public MonaBodyAsset()
         {

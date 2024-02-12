@@ -7,11 +7,12 @@ using UnityEngine.UIElements;
 using Mona.SDK.Core.Assets;
 using Mona.SDK.Core.UIElements;
 using Mona.SDK.Core.Assets.Interfaces;
+using Mona.SDK.Core.Assets.ScriptableObjects;
 
 namespace Mona.SDK.Core.UIEditors
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(MonaBodyAssets))]
+    [CustomEditor(typeof(MonaBodyAssetsDefinition))]
     public class MonaBodyAssetEditor : Editor
     {
         private VisualElement _root;
@@ -21,7 +22,7 @@ namespace Mona.SDK.Core.UIEditors
         {
             _root = new VisualElement();
             _assetsEditor = new MonaAssetsVisualElement();
-            _assetsEditor.SetMonaAssets((IMonaAssetProvider)target);
+            _assetsEditor.SetMonaAssets(((MonaAssetsDefinition)target).MonaAsset);
             _assetsEditor.TrackSerializedObjectValue(serializedObject, HandleCallback);
             _root.Add(_assetsEditor);
             return _root;

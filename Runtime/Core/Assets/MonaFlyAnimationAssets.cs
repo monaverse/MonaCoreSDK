@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Mona.SDK.Core.Assets
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Fly Animation Assets")]
     public class MonaFlyAnimationAssets : MonaAnimationAssets
     {
         public const string FLY_FORWARD = "Fly Forward";

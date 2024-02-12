@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -9,11 +8,14 @@ using Unity.VisualScripting;
 using Mona.SDK.Core.Network.Interfaces;
 
 namespace Mona.SDK.Core.Assets
-{   
+{
     [Serializable]
-    public class MonaAssets : ScriptableObject, IMonaAssetProvider
+    public class MonaAssets : IMonaAssetProvider
     {
-        [SerializeReference] 
+        [SerializeField] private string _name = "";
+        public string Name { get => _name; set => _name = value; }
+
+        [SerializeReference]
         private List<IMonaAssetItem> _monaAssets = new List<IMonaAssetItem>();
 
         public List<IMonaAssetItem> AllAssets => _monaAssets;
@@ -28,7 +30,7 @@ namespace Mona.SDK.Core.Assets
 
         public virtual List<string> DefaultNames => new List<string>();
 
-        public void Awake()
+        public void Initialize()
         {
             AddDelegates();
         }
@@ -44,7 +46,7 @@ namespace Mona.SDK.Core.Assets
             EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
         }
 
-        private void OnDestroy()
+        private void Dispose()
         {
             RemoveDelegates();
         }
@@ -81,5 +83,4 @@ namespace Mona.SDK.Core.Assets
         public List<IMonaAnimationAssetItem> GetMonaAnimations() => _monaAssets.FindAll(x => x is IMonaBodyAssetItem).ConvertAll<IMonaAnimationAssetItem>(x => (IMonaAnimationAssetItem)x);
 
     }
-
 }

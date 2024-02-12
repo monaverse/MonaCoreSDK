@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Mona.SDK.Core.Assets
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Float Animation Assets")]
     public class MonaFloatAnimationAssets : MonaAnimationAssets
     {
         public const string FLOAT_FORWARD = "Float Forward";
@@ -61,6 +60,6 @@ namespace Mona.SDK.Core.Assets
             FLOAT_AGGRO_FIDGET_A,
             FLOAT_AGGRO_FIDGET_B,
             FLOAT_AGGRO_FIDGET_C
-    };
+        };
     }
 }

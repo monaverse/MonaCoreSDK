@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Mona.SDK.Core.Assets
-{   
+{
     [Serializable]
     public class MonaAnimationAssets : MonaAssets
     {
@@ -12,5 +12,4 @@ namespace Mona.SDK.Core.Assets
 
         };
     }
-
 }

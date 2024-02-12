@@ -71,7 +71,7 @@ namespace Mona.SDK.Core.UIElements
             _objectField.style.flexGrow = 1;
             _objectField.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Value = (IMonaBody)evt.newValue;
+                ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Value = (MonaBody)evt.newValue;
             });
 
             _audioField = new ObjectField();
@@ -86,7 +86,7 @@ namespace Mona.SDK.Core.UIElements
             _animationField.style.flexGrow = 1;
             _animationField.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Value = (Animation)evt.newValue;
+                ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Value = (AnimationClip)evt.newValue;
             });
 
         }

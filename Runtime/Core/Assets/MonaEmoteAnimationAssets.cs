@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Mona.SDK.Core.Assets
 {
     [Serializable]
-    [CreateAssetMenu(menuName = "Mona Brains/Animation/Emote Animation Assets")]
     public class MonaEmoteAnimationAssets : MonaAnimationAssets
     {
         public const string EMOTE_YES = "Yes";

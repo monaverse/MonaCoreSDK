@@ -10,7 +10,7 @@ namespace Mona.SDK.Core.Assets
         [SerializeField] private string _prefabId = "";
         public string PrefabId { get => _prefabId; set => _prefabId = value; }
 
-        [SerializeField] private Animation _animation;
-        public Animation Value { get => _animation; set => _animation = value; }
+        [SerializeField] private AnimationClip _animation;
+        public AnimationClip Value { get => _animation; set => _animation = value; }
     }
 }
