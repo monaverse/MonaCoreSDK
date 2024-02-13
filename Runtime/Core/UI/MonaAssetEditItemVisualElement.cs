@@ -65,7 +65,6 @@ namespace Mona.SDK.Core.UIElements
             });
             _nameField.style.width = 100;
             _nameField.style.marginRight = 5;
-            _nameField.style.flexGrow = 1;
 
             _objectField = new ObjectField();
             _objectField.style.flexGrow = 1;

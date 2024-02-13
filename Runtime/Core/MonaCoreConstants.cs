@@ -15,6 +15,7 @@
         public const string LATE_TICK_EVENT = "OnLateTick";
         public const string FIXED_TICK_EVENT = "OnFixedTick";
         public const string MONA_BODY_FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
+        public const string MONA_BODY_ANIMATION_TRIGGERED_EVENT = "OnMonaBodyAnimationTriggeredEvent";
         public const string LOCAL_INPUT_EVENT = "OnMonaLocalInputEvent";
         public const string INPUT_EVENT = "OnMonaInputTickEvent";
         public const string INPUTS_EVENT = "OnMonaInputsTickEvent";
