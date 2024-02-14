@@ -63,6 +63,8 @@ namespace Mona.SDK.Core.Body
         void SetOnlyApplyDragWhenGrounded(bool apply);
         void SetApplyPinOnGrounded(bool apply);
 
+        void SetAnimator(Animator animator);
+
         Color GetColor();
         bool GetVisible();
         bool GetActive();

@@ -23,6 +23,7 @@ namespace Mona.SDK.Core.Body
         private INetworkMonaBodyClient _networkBody;
         private Rigidbody _rigidbody;
         private CharacterController _characterController;
+        private Animator _animator;
         private Camera _camera;
         private bool _visible = true;
         private DragType _dragType = DragType.Linear;
@@ -381,7 +382,17 @@ namespace Mona.SDK.Core.Body
 
 
             if (_networkBody != null)
+            {
+                if(_animator != null)
+                    _networkBody?.SetAnimator(_animator);
                 EventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
+            }
+        }
+
+        public void SetAnimator(Animator animator)
+        {
+            _animator = animator;
+            _networkBody?.SetAnimator(_animator);
         }
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
