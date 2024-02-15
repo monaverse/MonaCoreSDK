@@ -111,22 +111,28 @@ namespace Mona.SDK.Core.State.UIElements
 
         protected virtual void CreateValue(string value)
         {
-            var name = (_state.VariableList[_index] != null) ? _state.VariableList[_index].Name : value + "Value";
+            var variable = _state.VariableList[_index];
+            var name = (variable != null) ? variable.Name : value + "Value";
             switch (value)
             {
                 case MonaCoreConstants.FLOAT_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesFloatValue) return;
                     _state.CreateVariable(name, typeof(MonaVariablesFloat), _index);
                     break;
                 case MonaCoreConstants.STRING_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesStringValue) return;
                     _state.CreateVariable(name, typeof(MonaVariablesString), _index);
                     break;
                 case MonaCoreConstants.BOOL_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesBoolValue) return;
                     _state.CreateVariable(name, typeof(MonaVariablesBool), _index);
                     break;
                 case MonaCoreConstants.VECTOR2_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesVector2Value) return;
                     _state.CreateVariable(name, typeof(MonaVariablesVector2), _index);
                     break;
                 case MonaCoreConstants.VECTOR3_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesVector3Value) return;
                     _state.CreateVariable(name, typeof(MonaVariablesVector3), _index);
                     break;
             }
