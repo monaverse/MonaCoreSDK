@@ -159,8 +159,9 @@ namespace Mona.SDK.Core.State.UIElements
                 _typeField.value = MonaCoreConstants.FLOAT_TYPE_LABEL;
                 Add(_floatField);
                 _floatField.value = ((IMonaVariablesFloatValue)value).Value;
-
+#if UNITY_EDITOR
                 btn.clicked += () => { MonaVariablesExpandedWindow.Open(_state.VariableList[_index], callback); };
+#endif
 
                 //btn.clicked += () => { MonaVariablesExpandedWindow.Open(_state.VariableList[_index], ()=>
                 //{

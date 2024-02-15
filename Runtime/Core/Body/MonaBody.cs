@@ -37,7 +37,6 @@ namespace Mona.SDK.Core.Body
         private bool _onlyApplyDragWhenGrounded = true;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
-        private bool _setPin;
 
         public IMonaBody Parent => _parent;
 
@@ -209,11 +208,6 @@ namespace Mona.SDK.Core.Body
                 _defaultPosition = ActiveTransform.position;
                 _defaultRotation = ActiveTransform.rotation;
             }
-        }
-
-        public void SetPin()
-        {
-            _setPin = true;
         }
 
         private void CacheComponents()
@@ -408,8 +402,6 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-
-            ApplyPin();
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
@@ -425,7 +417,6 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-            ApplyPin();
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
@@ -447,20 +438,8 @@ namespace Mona.SDK.Core.Body
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
 
-                ApplyPin();
-
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 _hasInput = false;
-            }
-        }
-
-        private void ApplyPin()
-        {
-            if (_setPin)
-            {
-                CacheDefault();
-                _setPin = false;
-                //Debug.Log($"{nameof(ApplyPin)} {_defaultPosition}");
             }
         }
 
@@ -468,7 +447,12 @@ namespace Mona.SDK.Core.Body
         private void ApplyPosition()
         {
             if (_positionDeltas.Count == 0) return;
-            _applyPosition = _defaultPosition;
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                _applyPosition = ActiveRigidbody.position;
+            else
+                _applyPosition = ActiveTransform.position;
+
             for (var i = 0; i < _positionDeltas.Count; i++)
             {
                 var position = _positionDeltas[i];
@@ -576,8 +560,6 @@ namespace Mona.SDK.Core.Body
                     if(Physics.Raycast(ActiveRigidbody.position, -Vector3.up, out hit, maximumExtent+0.01f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
                     {
                         _grounded = true;
-                        if (_applyPinOnGrounded)
-                            SetPin();
                     }
 
                     if(!_grounded)
@@ -785,7 +767,7 @@ namespace Mona.SDK.Core.Body
             AddPosition(position - _defaultPosition, isKinematic, isNetworked);
         }
 
-        private void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
+        public void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
