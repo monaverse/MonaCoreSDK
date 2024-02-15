@@ -11,7 +11,7 @@ namespace Mona.SDK.Core.State.UIEditors
         public override VisualElement CreateInspectorGUI()
         {
             var self = (IMonaVariables)target;
-            var root = new MonaVariablesVisualElement();
+            var root = new MonaVariablesVisualElement(null);
             root.SetState(self);
             return root;
         }

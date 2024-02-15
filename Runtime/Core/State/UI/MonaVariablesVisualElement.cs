@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
 
 namespace Mona.SDK.Core.State.UIElements
 {
@@ -9,9 +10,11 @@ namespace Mona.SDK.Core.State.UIElements
     {
         private IMonaVariables _state;
         private ListView _list;
+        private Action callback;
 
-        public MonaVariablesVisualElement()
+        public MonaVariablesVisualElement(Action newCallback)
         {
+            callback = newCallback;
             style.flexDirection = FlexDirection.Column;
 
             var header = new VisualElement();
@@ -29,7 +32,7 @@ namespace Mona.SDK.Core.State.UIElements
             header.ElementAt(1).style.marginRight = 5;
             Add(header);
 
-            _list = new ListView(null, 28, () => new MonaVariablesItemVisualElement(), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));
+            _list = new ListView(null, 28, () => new MonaVariablesItemVisualElement(callback), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));
             //_list.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
             _list.showFoldoutHeader = false;
             _list.showAddRemoveFooter = true;

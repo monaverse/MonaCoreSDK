@@ -9,6 +9,7 @@ namespace Mona.SDK.Core.State.Structs
         ConstrainToBounds,
         Loop,
         Bounce,
-        ReturnToDefault
+        ReturnToDefault,
+        None
     }
 }

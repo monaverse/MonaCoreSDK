@@ -1,4 +1,5 @@
-﻿using Mona.SDK.Core.State.Structs;
+﻿using System;
+using Mona.SDK.Core.State.Structs;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine.UIElements;
@@ -20,13 +21,12 @@ namespace Mona.SDK.Core.State.UIElements
         protected Toggle _toggleField;
         protected Vector2Field _vector2Field;
         protected Vector3Field _vector3Field;
-        protected FloatField _floatMin;
-        protected FloatField _floatMax;
-        protected Toggle _useMinMax;
-        protected MinMaxConstraintType _contraintType;
 
-        public MonaVariablesItemVisualElement()
+        protected Action callback;
+
+        public MonaVariablesItemVisualElement(Action newCallback)
         {
+            callback = newCallback;
             style.flexDirection = FlexDirection.Row;
             style.width = Length.Percent(100);
             style.paddingBottom = 5;
@@ -142,11 +142,29 @@ namespace Mona.SDK.Core.State.UIElements
             Add(_nameField);
             _nameField.value = value.Name;
 
-             if (value is IMonaVariablesFloatValue)
+            var btn = new Button();
+            btn.style.width = 20;
+            btn.style.height = 20;
+            btn.text = "...";
+
+            if (value is IMonaVariablesFloatValue)
              {
                 _typeField.value = MonaCoreConstants.FLOAT_TYPE_LABEL;
                 Add(_floatField);
                 _floatField.value = ((IMonaVariablesFloatValue)value).Value;
+
+                btn.clicked += () => { MonaVariablesExpandedWindow.Open(_state.VariableList[_index], callback); };
+
+                //btn.clicked += () => { MonaVariablesExpandedWindow.Open(_state.VariableList[_index], ()=>
+                //{
+                //    if (_brain != null)
+                //    {
+                //        EditorUtility.SetDirty(_brain);
+                //        Undo.RecordObject(_brain, "change brain");
+                //    }
+                //});
+                //};
+                Add(btn);
             }
             else if (value is IMonaVariablesStringValue)
             {
