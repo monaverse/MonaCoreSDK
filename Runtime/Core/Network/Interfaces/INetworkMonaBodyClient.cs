@@ -24,5 +24,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetLayer(string layerName, bool includeChildren);
         void SetVisible(bool vis);
         void SetPaused(bool paused);
+        void SetAnimator(Animator animator);
     }
 }

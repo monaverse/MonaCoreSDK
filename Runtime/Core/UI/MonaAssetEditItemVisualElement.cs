@@ -5,7 +5,9 @@ using Mona.SDK.Core.Body;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+#if UNITY_EDITOR
 using UnityEditor.UIElements;
+#endif
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,10 +21,11 @@ namespace Mona.SDK.Core.UIElements
         protected DropdownField _nameDropdown;
 
         protected TextField _nameField;
-
+#if UNITY_EDITOR
         protected ObjectField _objectField;
         protected ObjectField _audioField;
         protected ObjectField _animationField;
+#endif
 
         protected Toggle _toggleField;
 
@@ -66,6 +69,7 @@ namespace Mona.SDK.Core.UIElements
             _nameField.style.width = 100;
             _nameField.style.marginRight = 5;
 
+#if UNITY_EDITOR
             _objectField = new ObjectField();
             _objectField.style.flexGrow = 1;
             _objectField.RegisterValueChangedCallback((evt) =>
@@ -87,6 +91,7 @@ namespace Mona.SDK.Core.UIElements
             {
                 ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Value = (AnimationClip)evt.newValue;
             });
+#endif
 
         }
 
@@ -126,6 +131,7 @@ namespace Mona.SDK.Core.UIElements
                 _nameField.value = value.PrefabId;
             }
 
+#if UNITY_EDITOR
             if (value is IMonaBodyAssetItem)
             {
                 Add(_objectField);
@@ -145,6 +151,7 @@ namespace Mona.SDK.Core.UIElements
                 _animationField.objectType = typeof(AnimationClip);
                 _animationField.value = ((IMonaAnimationAssetItem)value).Value;
             }
+#endif
         }
 
         public void SetAssetItem(IMonaAssetProvider assets, int idx)

@@ -22,7 +22,7 @@ namespace Mona.SDK.Core.Body
         public bool LocallyOwnedMonaBody => _locallyOwnedMonaBody;
 
         private int _localPlayerId = 0;
-        private string _localId;
+        [SerializeField] private string _localId;
 
         [SerializeField] private SerializableGuid _guid;
 
@@ -65,7 +65,7 @@ namespace Mona.SDK.Core.Body
                 var count = uniquesIndex[this];
                 if (count > 0)
                 {
-                    var suffix = (_localPlayerId * 100000 + count).ToString();
+                    var suffix = ((_localPlayerId+1) * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
                 }
@@ -85,7 +85,7 @@ namespace Mona.SDK.Core.Body
                 var count = uniques.FindAll((x) => x.guid == _guid).Count;
                 if (count > 1)
                 {
-                    var suffix = (_localPlayerId * 100000 + count).ToString();
+                    var suffix = ((_localPlayerId + 1) + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
                 }

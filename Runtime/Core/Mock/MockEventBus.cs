@@ -9,6 +9,7 @@ namespace Mona.SDK.Core.Mock
     public class MockEventBus : MonoBehaviour
     {
         public bool MockPlayer;
+        public int MockPlayerId = 0;
 
         private Action<NetworkSpawnerStartedEvent> OnNetworkSpawnerStarted;
 
@@ -26,7 +27,7 @@ namespace Mona.SDK.Core.Mock
         private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
         {
             if (MockPlayer)
-                TriggerLocalPlayerJoined(MonaBody.FindByTag("Player")[0], 1);
+                TriggerLocalPlayerJoined(MonaBody.FindByTag("Player")[0], MockPlayerId);
         }
 
         public void TriggerOlympiaUIVisibilityChanged(bool isVisible)
