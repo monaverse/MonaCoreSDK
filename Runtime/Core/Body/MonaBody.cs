@@ -48,12 +48,6 @@ namespace Mona.SDK.Core.Body
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
 
-        private Vector3 _defaultPosition;
-        private Quaternion _defaultRotation;
-
-        public Vector3 DefaultPosition => _defaultPosition;
-        public Quaternion DefaultRotation => _defaultRotation;
-
         public struct MonaBodyForce
         {
             public Vector3 Force;
@@ -193,21 +187,6 @@ namespace Mona.SDK.Core.Body
             CacheComponents();
             InitializeTags();
             AddDelegates();
-            CacheDefault();
-        }
-
-        private void CacheDefault()
-        {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
-            {
-                _defaultPosition = ActiveRigidbody.position;
-                _defaultRotation = ActiveRigidbody.rotation;
-            }
-            else
-            {
-                _defaultPosition = ActiveTransform.position;
-                _defaultRotation = ActiveTransform.rotation;
-            }
         }
 
         private void CacheComponents()
@@ -475,7 +454,12 @@ namespace Mona.SDK.Core.Body
         private void ApplyRotation()
         {
             if (_rotationDeltas.Count == 0) return;
-            _applyRotation = Quaternion.identity;
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                _applyRotation = ActiveRigidbody.rotation;
+            else
+                _applyRotation = ActiveTransform.rotation;
+
             for (var i = 0; i < _rotationDeltas.Count; i++)
             {
                 var rotation = _rotationDeltas[i];
@@ -764,7 +748,10 @@ namespace Mona.SDK.Core.Body
 
         public void SetPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
         {
-            AddPosition(position - _defaultPosition, isKinematic, isNetworked);
+            Vector3 currentPosition = ActiveTransform.position;
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                currentPosition = ActiveRigidbody.position;
+            AddPosition(position - currentPosition, isKinematic, isNetworked);
         }
 
         public void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)

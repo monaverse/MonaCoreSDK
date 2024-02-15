@@ -23,9 +23,6 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
 
-        Vector3 DefaultPosition { get; }
-        Quaternion DefaultRotation { get; }
-
         void AddTag(string tag);
         void RemoveTag(string tag);
 
