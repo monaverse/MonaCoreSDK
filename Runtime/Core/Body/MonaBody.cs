@@ -73,6 +73,7 @@ namespace Mona.SDK.Core.Body
         public bool UpdateEnabled => _updateEnabled;
 
         public MonaBodyNetworkSyncType SyncType;
+        public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
@@ -196,7 +197,10 @@ namespace Mona.SDK.Core.Body
             if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
                 if (_rigidbody == null)
-                    _rigidbody.AddComponent<Rigidbody>();
+                {
+                    _rigidbody = gameObject.AddComponent<Rigidbody>();
+                    _rigidbody.isKinematic = true;
+                }
                 if(gameObject.GetComponent<DontGoThroughThings>() == null)
                     gameObject.AddComponent<DontGoThroughThings>();
             }
@@ -219,7 +223,7 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        private void InitializeTags()
+        public void InitializeTags()
         {
             _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
             _monaTagged.Remove(this);

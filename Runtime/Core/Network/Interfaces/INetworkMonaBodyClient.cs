@@ -16,6 +16,7 @@ namespace Mona.SDK.Core.Network.Interfaces
         void TakeControl();
         void ReleaseControl();
         void SetIdentifier(string localId, string prefabId, bool locallyOwnedMonaBody);
+        void SetSyncPositionAndRigidbody(bool syncPositionAndRigidbody);
         void SetKinematic(bool isKinematic);
         void SetPosition(Vector3 position, bool isKinematic = false);
         void SetRotation(Quaternion rotation, bool isKinematic = false);
