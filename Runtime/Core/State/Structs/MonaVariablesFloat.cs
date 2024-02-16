@@ -16,7 +16,7 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private string _name;
         [SerializeField] public float _value = 1f;
         [SerializeField] private float _defaultValue;
-        [SerializeField] private MinMaxConstraintType _minMaxType;
+        [SerializeField] private MinMaxConstraintType _minMaxType = MinMaxConstraintType.None;
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
 
@@ -117,14 +117,14 @@ namespace Mona.SDK.Core.State.Structs
 
         // Display Element definitions
 
-        [SerializeField] private EasyUIStringDisplay _displayName;
-        [SerializeField] private EasyUIStringDisplay _tooltip;
-        [SerializeField] private EasyUICompoundSpriteDisplay _primaryIcon;
-        [SerializeField] private EasyUISpriteDisplay _uiBackground;
-        [SerializeField] private EasyUINumericalLayoutType _valueDisplayType = EasyUINumericalLayoutType.HorizontalGauge;
-        [SerializeField] private EasyUIFillType _fillType;
-        [SerializeField] private EasyUICompoundSpriteDisplay _horizontalGaugeVisual;
-        [SerializeField] private EasyUIStringDisplay _numberDisplay;
+        [SerializeField] private EasyUIStringDisplay _displayName = new EasyUIStringDisplay();
+        [SerializeField] private EasyUIStringDisplay _tooltip = new EasyUIStringDisplay();
+        [SerializeField] private EasyUICompoundSpriteDisplay _primaryIcon = new EasyUICompoundSpriteDisplay();
+        [SerializeField] private EasyUISpriteDisplay _uiBackground = new EasyUISpriteDisplay();
+        [SerializeField] private EasyUINumericalLayoutType _valueDisplayType = EasyUINumericalLayoutType.GaugeFill;
+        [SerializeField] private EasyUIFillType _fillType = EasyUIFillType.LeftToRight;
+        [SerializeField] private EasyUICompoundSpriteDisplay _horizontalGaugeVisual = new EasyUICompoundSpriteDisplay();
+        [SerializeField] private EasyUIStringDisplay _numberDisplay = new EasyUIStringDisplay();
         [SerializeField] private string _numberPrefix;
         [SerializeField] private string _numberSuffix;
 
@@ -138,6 +138,8 @@ namespace Mona.SDK.Core.State.Structs
         public EasyUIStringDisplay NumberDisplay { get => _numberDisplay; set => _numberDisplay = value; }
         public string NumberPrefix { get => _numberPrefix; set => _numberPrefix = value; }
         public string NumberSuffix { get => _numberSuffix; set => _numberSuffix = value; }
+        public bool DisplayAsGauge => ValueDisplayType == EasyUINumericalLayoutType.GaugeFill;
+        public bool UseHorizontalGauge => DisplayAsGauge && (FillType == EasyUIFillType.LeftToRight || FillType == EasyUIFillType.RightToLeft);
 
         // Number formatting
 
