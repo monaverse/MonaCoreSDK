@@ -23,6 +23,7 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
 
+        void CacheColliders();
         void InitializeTags();
         void AddTag(string tag);
         void RemoveTag(string tag);

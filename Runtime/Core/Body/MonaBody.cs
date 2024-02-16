@@ -209,7 +209,7 @@ namespace Mona.SDK.Core.Body
             CacheColliders();
         }
 
-        private void CacheColliders()
+        public void CacheColliders()
         {
             _colliders = new List<Collider>();
             var colliders = GetComponentsInChildren<Collider>();
