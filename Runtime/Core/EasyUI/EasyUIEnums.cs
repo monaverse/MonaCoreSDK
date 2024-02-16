@@ -42,9 +42,7 @@ namespace Mona.SDK.Core.EasyUI
     public enum EasyUINumericalLayoutType
     {
         NumberDisplay,
-        HorizontalGauge,
-        VerticalGauge,
-        RadialFill,
+        GaugeFill,
         ObjectCounter
     }
 

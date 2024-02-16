@@ -72,6 +72,9 @@ namespace Mona.SDK.Core.EasyUI
         /// </summary>
         EasyUICompoundSpriteDisplay HorizontalGaugeVisual { get; set; }
 
+        bool DisplayAsGauge { get; }
+        bool UseHorizontalGauge { get; }
+
         EasyUIStringDisplay NumberDisplay { get; set; }
         string NumberPrefix { get; set; }
         string NumberSuffix { get; set; }
