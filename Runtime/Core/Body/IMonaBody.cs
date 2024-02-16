@@ -23,11 +23,7 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
 
-        Vector3 DefaultPosition { get; }
-        Quaternion DefaultRotation { get; }
-
-        void SetPin();
-
+        void InitializeTags();
         void AddTag(string tag);
         void RemoveTag(string tag);
 
@@ -36,6 +32,7 @@ namespace Mona.SDK.Core.Body
         void ApplyForce(Vector3 force, ForceMode forceMode, bool isNetworked = true);
         void MoveDirection(Vector3 direction, bool isKinematic = true, bool isNetworked = true);
         void SetPosition(Vector3 position, bool isKinematic = true, bool isNetworked = true);
+        void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true);
         void RotateAround(Vector3 direction, float angle, bool isKinematic, bool isNetowrked = true);
         //TODO void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true);
         void SetRotation(Quaternion rotation, bool isKinematic = true, bool isNetworked = true);

@@ -37,7 +37,6 @@ namespace Mona.SDK.Core.Body
         private bool _onlyApplyDragWhenGrounded = true;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
-        private bool _setPin;
 
         public IMonaBody Parent => _parent;
 
@@ -48,12 +47,6 @@ namespace Mona.SDK.Core.Body
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
-
-        private Vector3 _defaultPosition;
-        private Quaternion _defaultRotation;
-
-        public Vector3 DefaultPosition => _defaultPosition;
-        public Quaternion DefaultRotation => _defaultRotation;
 
         public struct MonaBodyForce
         {
@@ -80,6 +73,7 @@ namespace Mona.SDK.Core.Body
         public bool UpdateEnabled => _updateEnabled;
 
         public MonaBodyNetworkSyncType SyncType;
+        public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
@@ -194,26 +188,6 @@ namespace Mona.SDK.Core.Body
             CacheComponents();
             InitializeTags();
             AddDelegates();
-            CacheDefault();
-        }
-
-        private void CacheDefault()
-        {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
-            {
-                _defaultPosition = ActiveRigidbody.position;
-                _defaultRotation = ActiveRigidbody.rotation;
-            }
-            else
-            {
-                _defaultPosition = ActiveTransform.position;
-                _defaultRotation = ActiveTransform.rotation;
-            }
-        }
-
-        public void SetPin()
-        {
-            _setPin = true;
         }
 
         private void CacheComponents()
@@ -223,7 +197,10 @@ namespace Mona.SDK.Core.Body
             if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
                 if (_rigidbody == null)
-                    _rigidbody.AddComponent<Rigidbody>();
+                {
+                    _rigidbody = gameObject.AddComponent<Rigidbody>();
+                    _rigidbody.isKinematic = true;
+                }
                 if(gameObject.GetComponent<DontGoThroughThings>() == null)
                     gameObject.AddComponent<DontGoThroughThings>();
             }
@@ -246,7 +223,7 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        private void InitializeTags()
+        public void InitializeTags()
         {
             _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
             _monaTagged.Remove(this);
@@ -408,8 +385,6 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-
-            ApplyPin();
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
@@ -425,7 +400,6 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-            ApplyPin();
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
@@ -447,20 +421,8 @@ namespace Mona.SDK.Core.Body
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
 
-                ApplyPin();
-
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 _hasInput = false;
-            }
-        }
-
-        private void ApplyPin()
-        {
-            if (_setPin)
-            {
-                CacheDefault();
-                _setPin = false;
-                //Debug.Log($"{nameof(ApplyPin)} {_defaultPosition}");
             }
         }
 
@@ -468,7 +430,12 @@ namespace Mona.SDK.Core.Body
         private void ApplyPosition()
         {
             if (_positionDeltas.Count == 0) return;
-            _applyPosition = _defaultPosition;
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                _applyPosition = ActiveRigidbody.position;
+            else
+                _applyPosition = ActiveTransform.position;
+
             for (var i = 0; i < _positionDeltas.Count; i++)
             {
                 var position = _positionDeltas[i];
@@ -491,7 +458,12 @@ namespace Mona.SDK.Core.Body
         private void ApplyRotation()
         {
             if (_rotationDeltas.Count == 0) return;
-            _applyRotation = Quaternion.identity;
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                _applyRotation = ActiveRigidbody.rotation;
+            else
+                _applyRotation = ActiveTransform.rotation;
+
             for (var i = 0; i < _rotationDeltas.Count; i++)
             {
                 var rotation = _rotationDeltas[i];
@@ -576,8 +548,6 @@ namespace Mona.SDK.Core.Body
                     if(Physics.Raycast(ActiveRigidbody.position, -Vector3.up, out hit, maximumExtent+0.01f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
                     {
                         _grounded = true;
-                        if (_applyPinOnGrounded)
-                            SetPin();
                     }
 
                     if(!_grounded)
@@ -782,10 +752,13 @@ namespace Mona.SDK.Core.Body
 
         public void SetPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
         {
-            AddPosition(position - _defaultPosition, isKinematic, isNetworked);
+            Vector3 currentPosition = ActiveTransform.position;
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                currentPosition = ActiveRigidbody.position;
+            AddPosition(position - currentPosition, isKinematic, isNetworked);
         }
 
-        private void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
+        public void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {

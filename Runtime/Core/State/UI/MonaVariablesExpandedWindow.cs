@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using Mona.SDK.Core.State.Structs;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -10,6 +12,7 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
+#if UNITY_EDITOR
     public class MonaVariablesExpandedWindow : EditorWindow
     {
         private IMonaVariablesValue _variable;
@@ -270,5 +273,6 @@ namespace Mona.SDK.Core.State.UIElements
             sv.Add(_numberDisplay);
         }
     }
+#endif
 }
 
