@@ -11,8 +11,15 @@ namespace Mona.SDK.Core.EasyUI
         public GameObject[] _prerequisitParents;
         public EasyUIImageSettings _primaryImageSettings;
         public EasyUIImageSettings _backgroundImageSettings;
-        public EasyUIImageSettings _borderImageSettings;
+        public EasyUIImageSettings _foregroundImageSettings;
         public EasyUITextSettings _textSettings;
+    }
+
+    [System.Serializable]
+    public class EasyUIMultiIconCounter
+    {
+        public GameObject[] _requiredParents;
+        [SerializeField] private GameObject _iconCounter;
     }
 
     public class EasyUIVariableDisplayElement : MonoBehaviour
@@ -22,7 +29,7 @@ namespace Mona.SDK.Core.EasyUI
         [SerializeField] private EasyUIVisualElement _primaryIcon;
         [SerializeField] private EasyUIVisualElement _horizontalGauge;
         [SerializeField] private EasyUIVisualElement _highVolumeCounter;
-        [SerializeField] private EasyUIVisualElement _textDisplay;
-        [SerializeField] private GameObject _iconCounter;
+        [SerializeField] private EasyUITextSettings _textDisplay;
+        [SerializeField] private EasyUIMultiIconCounter _iconCounter;
     }
 }
