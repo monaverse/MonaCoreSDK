@@ -22,6 +22,7 @@ namespace Mona.SDK.Core.Body
         bool LocalOnly { get; }
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
+        bool Grounded { get; }
 
         void CacheColliders();
         void InitializeTags();
@@ -59,7 +60,6 @@ namespace Mona.SDK.Core.Body
         void SetBounce(float bounce);
         void SetUseGravity(bool useGravity);
         void SetOnlyApplyDragWhenGrounded(bool apply);
-        void SetApplyPinOnGrounded(bool apply);
 
         void SetAnimator(Animator animator);
 

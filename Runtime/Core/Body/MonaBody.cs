@@ -48,6 +48,9 @@ namespace Mona.SDK.Core.Body
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
 
+        private bool _grounded;
+        public bool Grounded => _grounded;
+
         public struct MonaBodyForce
         {
             public Vector3 Force;
@@ -529,7 +532,6 @@ namespace Mona.SDK.Core.Body
             return false;
         }
 
-        private bool _grounded;
         private void ApplyDrag()
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
@@ -545,7 +547,7 @@ namespace Mona.SDK.Core.Body
 
                     _grounded = false;
                     RaycastHit hit;
-                    if(Physics.Raycast(ActiveRigidbody.position, -Vector3.up, out hit, maximumExtent+0.01f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
+                    if(Physics.Raycast(ActiveRigidbody.position+Vector3.up*0.01f, -Vector3.up, out hit, 0.02f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
                     {
                         _grounded = true;
                     }
