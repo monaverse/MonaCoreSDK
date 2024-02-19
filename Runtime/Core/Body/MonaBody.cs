@@ -47,6 +47,7 @@ namespace Mona.SDK.Core.Body
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
+        public Animator Animator => _animator;
 
         private bool _grounded;
         public bool Grounded => _grounded;

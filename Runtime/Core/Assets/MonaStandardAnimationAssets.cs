@@ -51,6 +51,7 @@ namespace Mona.SDK.Core.Assets
 
         public override List<string> DefaultNames => new List<string>()
         {
+            MonaAnimationAssets.TPOSE,
             WALK_FORWARD,
             RUN_FORWARD,
             WALK_BACKWARD,

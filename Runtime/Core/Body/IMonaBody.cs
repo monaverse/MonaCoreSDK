@@ -23,6 +23,7 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
         bool Grounded { get; }
+        Animator Animator { get; }
 
         void CacheColliders();
         void InitializeTags();

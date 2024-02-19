@@ -12,8 +12,8 @@ using Mona.SDK.Core.Assets.ScriptableObjects;
 namespace Mona.SDK.Core.UIEditors
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(MonaBodyAssetsDefinition))]
-    public class MonaBodyAssetEditor : Editor
+    [CustomEditor(typeof(MonaWearableAssetsDefinition))]
+    public class MonaWearableAssetEditor : Editor
     {
         private VisualElement _root;
         private MonaAssetsVisualElement _assetsEditor;
@@ -21,7 +21,7 @@ namespace Mona.SDK.Core.UIEditors
         public override VisualElement CreateInspectorGUI()
         {
             _root = new VisualElement();
-            _assetsEditor = new MonaBodyAssetsVisualElement();
+            _assetsEditor = new MonaWearableAssetsVisualElement();
             _assetsEditor.SetMonaAssets(((MonaAssetsDefinition)target).MonaAsset);
             _assetsEditor.TrackSerializedObjectValue(serializedObject, HandleCallback);
             _root.Add(_assetsEditor);

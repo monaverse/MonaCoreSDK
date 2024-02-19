@@ -23,9 +23,12 @@ namespace Mona.SDK.Core.UIElements
         protected TextField _nameField;
 #if UNITY_EDITOR
         protected ObjectField _objectField;
+        protected ObjectField _wearableField;
         protected ObjectField _audioField;
         protected ObjectField _animationField;
 #endif
+        private IntegerField _animationLayer;
+        private FloatField _animationLayerWeight;
 
         protected Toggle _toggleField;
 
@@ -77,6 +80,13 @@ namespace Mona.SDK.Core.UIElements
                 ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Value = (MonaBody)evt.newValue;
             });
 
+            _wearableField = new ObjectField();
+            _wearableField.style.flexGrow = 1;
+            _wearableField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaWearableAssetItem)_assets.AllAssets[_index]).Value = (GameObject)evt.newValue;
+            });
+
             _audioField = new ObjectField();
             _audioField.style.flexGrow = 1;
             _audioField.RegisterValueChangedCallback((evt) =>
@@ -91,26 +101,24 @@ namespace Mona.SDK.Core.UIElements
             {
                 ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Value = (AnimationClip)evt.newValue;
             });
+
+            _animationLayer = new IntegerField();
+            _animationLayer.style.width = 30;
+            _animationLayer.tooltip = "Layer";
+            _animationLayer.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Layer = (int)evt.newValue;
+            });
+
+            _animationLayerWeight = new FloatField();
+            _animationLayerWeight.style.width = 30;
+            _animationLayerWeight.tooltip = "Layer Weight";
+            _animationLayerWeight.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).LayerWeight = (float)evt.newValue;
+            });
 #endif
 
-        }
-
-        public void CreateValue(string value)
-        {
-            var name = (_assets.AllAssets[_index] != null) ? _assets.AllAssets[_index].PrefabId : "Default";
-            switch (value)
-            {
-                case MonaCoreConstants.BODY_TYPE_LABEL:
-                    _assets.CreateAsset(name, typeof(MonaBodyAsset), _index);
-                    break;
-                case MonaCoreConstants.AUDIO_TYPE_LABEL:
-                    _assets.CreateAsset(name, typeof(MonaAudioAsset), _index);
-                    break;
-                case MonaCoreConstants.ANIMATION_TYPE_LABEL:
-                    _assets.CreateAsset(name, typeof(MonaAnimationAsset), _index);
-                    break;
-            }
-            Refresh();
         }
 
         public virtual void Refresh()
@@ -138,6 +146,12 @@ namespace Mona.SDK.Core.UIElements
                 _objectField.objectType = typeof(MonaBody);
                 _objectField.value = (MonaBody)((IMonaBodyAssetItem)value).Value;
             }
+            else if (value is IMonaWearableAssetItem)
+            {
+                Add(_wearableField);
+                _wearableField.objectType = typeof(GameObject);
+                _wearableField.value = (GameObject)((IMonaWearableAssetItem)value).Value;
+            }
             else if (value is IMonaAudioAssetItem)
             {            
                 Add(_audioField);
@@ -150,6 +164,12 @@ namespace Mona.SDK.Core.UIElements
                 Add(_animationField);
                 _animationField.objectType = typeof(AnimationClip);
                 _animationField.value = ((IMonaAnimationAssetItem)value).Value;
+
+                Add(_animationLayer);
+                _animationLayer.value = ((IMonaAnimationAssetItem)value).Layer;
+
+                Add(_animationLayerWeight);
+                _animationLayerWeight.value = ((IMonaAnimationAssetItem)value).LayerWeight;
             }
 #endif
         }
