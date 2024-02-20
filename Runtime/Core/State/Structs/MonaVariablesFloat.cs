@@ -152,9 +152,7 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private EasyUIFillType _fillType = EasyUIFillType.LeftToRight;
         [SerializeField] private EasyUICompoundSpriteDisplay _horizontalGaugeVisual = new EasyUICompoundSpriteDisplay();
         [SerializeField] private EasyUIStringDisplay _numberDisplay = new EasyUIStringDisplay();
-        [SerializeField] private MinMaxNumericalFormatting _minMaxFormatting = MinMaxNumericalFormatting.None;
-        [SerializeField] private string _numberPrefix;
-        [SerializeField] private string _numberSuffix;
+        [SerializeField] private EasyUINumericalFormattingDisplay _numericalFormatting = new EasyUINumericalFormattingDisplay();
 
         public EasyUIStringDisplay DisplayName { get => _displayName; set => _displayName = value; }
         public EasyUIStringDisplay Tooltip { get => _tooltip; set => _tooltip = value; }
@@ -164,9 +162,7 @@ namespace Mona.SDK.Core.State.Structs
         public EasyUIFillType FillType { get => _fillType; set => _fillType = value; }
         public EasyUICompoundSpriteDisplay HorizontalGaugeVisual { get => _horizontalGaugeVisual; set => _horizontalGaugeVisual = value; }
         public EasyUIStringDisplay NumberDisplay { get => _numberDisplay; set => _numberDisplay = value; }
-        public MinMaxNumericalFormatting MinMaxFormatting { get => _minMaxFormatting; set => _minMaxFormatting = value; }
-        public string NumberPrefix { get => _numberPrefix; set => _numberPrefix = value; }
-        public string NumberSuffix { get => _numberSuffix; set => _numberSuffix = value; }
+        public EasyUINumericalFormattingDisplay NumericalFormatting { get => _numericalFormatting; set => _numericalFormatting = value; }
         public bool DisplayAsGauge => ValueDisplayType == EasyUINumericalLayoutType.GaugeFill;
         public bool UseHorizontalGauge => DisplayAsGauge && (FillType == EasyUIFillType.LeftToRight || FillType == EasyUIFillType.RightToLeft);
 
@@ -183,15 +179,7 @@ namespace Mona.SDK.Core.State.Structs
         }
 
         // Number formatting
-
-        [SerializeField] private EasyUINumericalBaseFormatType _numberFormatType = EasyUINumericalBaseFormatType.Default;
-        [SerializeField] private EasyUINumericalSeparatorType _thousandthPlaceSepartorType = EasyUINumericalSeparatorType.Default;
-        [SerializeField] private EasyUINumericalSeparatorType _decimalPlaceSepartorType = EasyUINumericalSeparatorType.Default;
-
-        public EasyUINumericalBaseFormatType NumberFormatType { get => _numberFormatType; set => _numberFormatType = value; }
-        public EasyUINumericalSeparatorType ThousandthPlaceSepartorType { get => _thousandthPlaceSepartorType; set => _thousandthPlaceSepartorType = value; }
-        public EasyUINumericalSeparatorType DecimalPlaceSepartorType { get => _decimalPlaceSepartorType; set => _decimalPlaceSepartorType = value; }
-        // Needs full implementation of formatting
+       
         public string FormattedNumber
         {
             get
@@ -201,13 +189,13 @@ namespace Mona.SDK.Core.State.Structs
 
                 if (UseMinMax)
                 {
-                    min = _minMaxFormatting == MinMaxNumericalFormatting.ShowMin || _minMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        _numberPrefix + FormatNumber(_min) + _numberSuffix + " / " : string.Empty;
-                    max = _minMaxFormatting == MinMaxNumericalFormatting.ShowMax || _minMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        " / " + _numberPrefix + FormatNumber(_max) + NumberSuffix : string.Empty;                    
+                    min = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        _numericalFormatting.NumberPrefix + FormatNumber(_min) + _numericalFormatting.NumberSuffix + " / " : string.Empty;
+                    max = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        " / " + _numericalFormatting.NumberPrefix + FormatNumber(_max) + _numericalFormatting.NumberSuffix : string.Empty;                    
                 }
 
-                return min + _numberPrefix + FormatNumber(_value) + _numberSuffix + max;
+                return min + _numericalFormatting.NumberPrefix + FormatNumber(_value) + _numericalFormatting.NumberSuffix + max;
             }
         }
 
@@ -228,7 +216,7 @@ namespace Mona.SDK.Core.State.Structs
             CultureInfo cultureInfo = CultureInfo.CurrentCulture;
             NumberFormatInfo numberFormatInfo = (NumberFormatInfo)cultureInfo.NumberFormat.Clone();
 
-            switch (_thousandthPlaceSepartorType)
+            switch (_numericalFormatting.ThousandthPlaceSeparatorType)
             {
                 case EasyUINumericalSeparatorType.None:
                     numberFormatInfo.NumberGroupSeparator = string.Empty;
@@ -244,10 +232,10 @@ namespace Mona.SDK.Core.State.Structs
                     break;
             }
 
-            switch (_decimalPlaceSepartorType)
+            switch (_numericalFormatting.DecimalPlaceSeparatorType)
             {
                 case EasyUINumericalSeparatorType.None:
-                    numberFormatInfo.NumberGroupSeparator = _numberFormatType == EasyUINumericalBaseFormatType.Currency ?
+                    numberFormatInfo.NumberGroupSeparator = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency ?
                         "." : string.Empty;
                     break;
                 case EasyUINumericalSeparatorType.UseSpaces:
@@ -261,7 +249,7 @@ namespace Mona.SDK.Core.State.Structs
                     break;
             }
 
-            if (_numberFormatType == EasyUINumericalBaseFormatType.Currency)
+            if (_numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency)
                 return string.Format(numberFormatInfo, "{0:C2}", numberToFormat);
 
             string format = (Value % 1 == 0) ? "{0:N0}" : "{0:N}";

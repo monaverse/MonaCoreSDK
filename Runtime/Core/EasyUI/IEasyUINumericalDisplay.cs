@@ -79,12 +79,16 @@ namespace Mona.SDK.Core.EasyUI
         float GaugeFillAmount { get; }
 
         EasyUIStringDisplay NumberDisplay { get; set; }
-        MinMaxNumericalFormatting MinMaxFormatting { get; set; }
-        string NumberPrefix { get; set; }
-        string NumberSuffix { get; set; }
-        EasyUINumericalBaseFormatType NumberFormatType { get; set; }
-        EasyUINumericalSeparatorType ThousandthPlaceSepartorType { get; set; }
-        EasyUINumericalSeparatorType DecimalPlaceSepartorType { get; set; }
+        EasyUINumericalFormattingDisplay NumericalFormatting { get; set; }
+        //MinMaxNumericalFormatting MinMaxFormatting { get; set; }
+        //string NumberPrefix { get; set; }
+        //string NumberSuffix { get; set; }
+        //EasyUINumericalBaseFormatType NumberFormatType { get; set; }
+        //EasyUINumericalSeparatorType ThousandthPlaceSeparatorType { get; set; }
+        //EasyUIElementDisplayType DecimalOverrideType { get; set; }
+        //int CustomDecimalPlaces { get; set; }
+        //EasyUINumericalSeparatorType DecimalPlaceSeparatorType { get; set; }
+        
         string FormattedNumber { get; }
 
         /// <summary>
