@@ -20,11 +20,8 @@ namespace Mona.SDK.Core.EasyUI
 
         public void AddVariable(IEasyUINumericalDisplay variable)
         {
-            foreach (EasyUIVariableDisplayElement element in _variableDisplayElements)
-            {
-                if (element.VariableReference == variable)
-                    return;
-            }
+            if (variable.DisplayElementReference != null)
+                return;
 
             GameObject variableDisplayObject = GameObject.Instantiate(_variablePrefab, gameObject.transform);
             EasyUIVariableDisplayElement variableDisplayElement = variableDisplayObject.GetComponent<EasyUIVariableDisplayElement>();
