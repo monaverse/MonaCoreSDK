@@ -529,7 +529,7 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
-                if (Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
+                if (bodyCollider != null && Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
                     return true;
             }
             return false;
@@ -540,7 +540,7 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
-                if (bodyCollider.bounds.Intersects(collider.bounds))
+                if (bodyCollider != null && bodyCollider.bounds.Intersects(collider.bounds))
                     return true;
             }
             return false;

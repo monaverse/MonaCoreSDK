@@ -20,6 +20,7 @@
         public const string INPUT_EVENT = "OnMonaInputTickEvent";
         public const string INPUTS_EVENT = "OnMonaInputsTickEvent";
         public const string REGISTER_NETWORK_SETTINGS_EVENT = "OnMonaRegisterNetworkSettignsEvent";
+        public const string ON_PLAYER_CHANGE_AVATAR_EVENT = "OnPlayerChangeAvatar";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
