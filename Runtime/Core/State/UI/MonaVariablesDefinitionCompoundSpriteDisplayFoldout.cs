@@ -10,14 +10,15 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
+    [Serializable]
     public class MonaVariablesDefinitionCompoundSpriteDisplayFoldout : Foldout
     {
-        private EasyUICompoundSpriteDisplay _compoundDisplayElement;
+        [SerializeField] private EasyUICompoundSpriteDisplay _compoundDisplayElement;
 
-        private MonaVariablesDefinitionSpriteDisplayFoldout _primarySprite;
-        private MonaVariablesDefinitionSpriteDisplayFoldout _backgroundSprite;
-        private MonaVariablesDefinitionSpriteDisplayFoldout _foregroundSprite;
-        private MonaVariablesDefinitionStringDisplayFoldout _textDisplay;
+        [SerializeField] private MonaVariablesDefinitionSpriteDisplayFoldout _primarySprite;
+        [SerializeField] private MonaVariablesDefinitionSpriteDisplayFoldout _backgroundSprite;
+        [SerializeField] private MonaVariablesDefinitionSpriteDisplayFoldout _foregroundSprite;
+        [SerializeField] private MonaVariablesDefinitionStringDisplayFoldout _textDisplay;
 
         public void SetDisplay(EasyUICompoundSpriteDisplay newDisplayElement, string labelName)
         {

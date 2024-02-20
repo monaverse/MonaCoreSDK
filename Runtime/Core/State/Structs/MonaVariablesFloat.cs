@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Mona.SDK.Core.EasyUI;
+using System.Globalization;
 
 namespace Mona.SDK.Core.State.Structs
 {
@@ -34,6 +35,7 @@ namespace Mona.SDK.Core.State.Structs
                 if (!UseMinMax)
                 {
                     _value = value;
+                    UpdateUIDisplay();
                     return;
                 }
 
@@ -56,6 +58,8 @@ namespace Mona.SDK.Core.State.Structs
                         _value = value;
                         break;
                 }
+
+                UpdateUIDisplay();
             }
         }
 
@@ -75,6 +79,8 @@ namespace Mona.SDK.Core.State.Structs
 
                 if (UseMinMax && _value < _min)
                     _value = _min;
+
+                UpdateUIDisplay();
             }
         }
 
@@ -94,12 +100,17 @@ namespace Mona.SDK.Core.State.Structs
 
                 if (UseMinMax && _value > _max)
                     _value = _max;
+
+                UpdateUIDisplay();
             }
         }
 
         // ------ UI Related Values ------ //
 
         // General Display and UI Placement
+
+        private EasyUIVariableDisplayElement _displayElementReference = null;
+        public EasyUIVariableDisplayElement DisplayElementReference { get => _displayElementReference; set => _displayElementReference = value; }
 
         [SerializeField] private bool _allowUIDisplay = false;
         [SerializeField] private bool _displayInUI = false;
@@ -109,11 +120,27 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private int _priority = 10;
 
         public bool AllowUIDisplay { get => _allowUIDisplay; set => _allowUIDisplay = value; }
-        public bool DisplayInUI { get => _displayInUI; set => _displayInUI = value; }
+        public bool DisplayInUI
+        {
+            get => _displayInUI;
+            set
+            {
+                _displayInUI = value;
+                UpdateUIDisplay();
+            }
+        }
         public EasyUIDisplaySpace DisplaySpace { get => _displaySpace; set => _displaySpace = value; }
         public EasyUIScreenPosition ScreenPosition { get => _screenPosition; set => _screenPosition = value; }
         public EasyUIObjectPosition ObjectPosition { get => _objectPosition; set => _objectPosition = value; }
-        public int Priority { get => _priority; set => _priority = value; }
+        public int Priority
+        {
+            get => _priority;
+            set
+            {
+                _priority = value;
+                UpdateUIDisplay();
+            }
+        }
 
         // Display Element definitions
 
@@ -125,6 +152,7 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private EasyUIFillType _fillType = EasyUIFillType.LeftToRight;
         [SerializeField] private EasyUICompoundSpriteDisplay _horizontalGaugeVisual = new EasyUICompoundSpriteDisplay();
         [SerializeField] private EasyUIStringDisplay _numberDisplay = new EasyUIStringDisplay();
+        [SerializeField] private MinMaxNumericalFormatting _minMaxFormatting = MinMaxNumericalFormatting.None;
         [SerializeField] private string _numberPrefix;
         [SerializeField] private string _numberSuffix;
 
@@ -136,10 +164,23 @@ namespace Mona.SDK.Core.State.Structs
         public EasyUIFillType FillType { get => _fillType; set => _fillType = value; }
         public EasyUICompoundSpriteDisplay HorizontalGaugeVisual { get => _horizontalGaugeVisual; set => _horizontalGaugeVisual = value; }
         public EasyUIStringDisplay NumberDisplay { get => _numberDisplay; set => _numberDisplay = value; }
+        public MinMaxNumericalFormatting MinMaxFormatting { get => _minMaxFormatting; set => _minMaxFormatting = value; }
         public string NumberPrefix { get => _numberPrefix; set => _numberPrefix = value; }
         public string NumberSuffix { get => _numberSuffix; set => _numberSuffix = value; }
         public bool DisplayAsGauge => ValueDisplayType == EasyUINumericalLayoutType.GaugeFill;
         public bool UseHorizontalGauge => DisplayAsGauge && (FillType == EasyUIFillType.LeftToRight || FillType == EasyUIFillType.RightToLeft);
+
+        public float GaugeFillAmount
+        {
+            get
+            {
+                if (!UseMinMax || _max - _min == 0f)
+                    return 0f;
+
+                return (_value - _min) / (_max - _min);
+
+            }
+        }
 
         // Number formatting
 
@@ -151,41 +192,22 @@ namespace Mona.SDK.Core.State.Structs
         public EasyUINumericalSeparatorType ThousandthPlaceSepartorType { get => _thousandthPlaceSepartorType; set => _thousandthPlaceSepartorType = value; }
         public EasyUINumericalSeparatorType DecimalPlaceSepartorType { get => _decimalPlaceSepartorType; set => _decimalPlaceSepartorType = value; }
         // Needs full implementation of formatting
-        public string FormattedNumber { get => _numberPrefix + _value.ToString() + _numberSuffix; }
+        public string FormattedNumber
+        {
+            get
+            {
+                string min = string.Empty;
+                string max = string.Empty;
 
-        public string ThousandthPlaceSeparator
-        {
-            get
-            {
-                switch (_thousandthPlaceSepartorType) // Need to implement default (regional detection)
+                if (UseMinMax)
                 {
-                    case EasyUINumericalSeparatorType.None:
-                        return string.Empty;
-                    case EasyUINumericalSeparatorType.UseSpaces:
-                        return " ";
-                    case EasyUINumericalSeparatorType.UsePeriods:
-                        return ".";
-                    default:
-                        return ",";
+                    min = _minMaxFormatting == MinMaxNumericalFormatting.ShowMin || _minMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        _numberPrefix + FormatNumber(_min) + _numberSuffix + " / " : string.Empty;
+                    max = _minMaxFormatting == MinMaxNumericalFormatting.ShowMax || _minMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        " / " + _numberPrefix + FormatNumber(_max) + NumberSuffix : string.Empty;                    
                 }
-            }
-        }
-        
-        public string DecimalPlaceSeparator
-        {
-            get
-            {
-                switch (_decimalPlaceSepartorType) // Need to implement default (regional detection)
-                {
-                    case EasyUINumericalSeparatorType.None:
-                        return string.Empty;
-                    case EasyUINumericalSeparatorType.UseSpaces:
-                        return " ";
-                    case EasyUINumericalSeparatorType.UsePeriods:
-                        return ".";
-                    default:
-                        return ",";
-                }
+
+                return min + _numberPrefix + FormatNumber(_value) + _numberSuffix + max;
             }
         }
 
@@ -200,5 +222,86 @@ namespace Mona.SDK.Core.State.Structs
         public float PulseFrequency { get => _pulseFrequency; set => _pulseFrequency = value; }
 
         public MonaVariablesFloat() { }
+
+        public string FormatNumber(float numberToFormat)
+        {
+            CultureInfo cultureInfo = CultureInfo.CurrentCulture;
+            NumberFormatInfo numberFormatInfo = (NumberFormatInfo)cultureInfo.NumberFormat.Clone();
+
+            switch (_thousandthPlaceSepartorType)
+            {
+                case EasyUINumericalSeparatorType.None:
+                    numberFormatInfo.NumberGroupSeparator = string.Empty;
+                    break;
+                case EasyUINumericalSeparatorType.UseSpaces:
+                    numberFormatInfo.NumberGroupSeparator = " ";
+                    break;
+                case EasyUINumericalSeparatorType.UseCommas:
+                    numberFormatInfo.NumberGroupSeparator = ",";
+                    break;
+                case EasyUINumericalSeparatorType.UsePeriods:
+                    numberFormatInfo.NumberGroupSeparator = ".";
+                    break;
+            }
+
+            switch (_decimalPlaceSepartorType)
+            {
+                case EasyUINumericalSeparatorType.None:
+                    numberFormatInfo.NumberGroupSeparator = _numberFormatType == EasyUINumericalBaseFormatType.Currency ?
+                        "." : string.Empty;
+                    break;
+                case EasyUINumericalSeparatorType.UseSpaces:
+                    numberFormatInfo.NumberDecimalSeparator = " ";
+                    break;
+                case EasyUINumericalSeparatorType.UseCommas:
+                    numberFormatInfo.NumberDecimalSeparator = ",";
+                    break;
+                case EasyUINumericalSeparatorType.UsePeriods:
+                    numberFormatInfo.NumberDecimalSeparator = ".";
+                    break;
+            }
+
+            if (_numberFormatType == EasyUINumericalBaseFormatType.Currency)
+                return string.Format(numberFormatInfo, "{0:C2}", numberToFormat);
+
+            string format = (Value % 1 == 0) ? "{0:N0}" : "{0:N}";
+            return string.Format(numberFormatInfo, format, numberToFormat);
+        }
+
+        public void ChangeIconSprite(Sprite newSprite)
+        {
+            _primaryIcon.PrimarySprite.ElementSprite = newSprite;
+            UpdateUIDisplay();
+        }
+
+        public void ChangeIconColor(Color newColor)
+        {
+            _primaryIcon.PrimarySprite.ElementColor = newColor;
+            UpdateUIDisplay();
+        }
+
+        public void ChangeGaugeColor(Color newColor)
+        {
+            switch (_fillType)
+            {
+                case EasyUIFillType.LeftToRight:
+                    _horizontalGaugeVisual.PrimarySprite.ElementColor = newColor;
+                    break;
+                case EasyUIFillType.RightToLeft:
+                    _horizontalGaugeVisual.PrimarySprite.ElementColor = newColor;
+                    break;
+                default:
+                    _primaryIcon.PrimarySprite.ElementColor = newColor;
+                    break;
+            }
+
+            UpdateUIDisplay();
+        }
+
+        public void UpdateUIDisplay()
+        {
+            if (_displayElementReference != null)
+                _displayElementReference.UpdateDisplay(this);
+        }
     }
 }

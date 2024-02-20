@@ -41,7 +41,7 @@ namespace Mona.SDK.Core.EasyUI
     [System.Serializable]
     public enum EasyUINumericalLayoutType
     {
-        NumberDisplay,
+        None,
         GaugeFill,
         ObjectCounter
     }
@@ -86,6 +86,15 @@ namespace Mona.SDK.Core.EasyUI
         Default,
         Currency,
         Percentage
+    }
+
+    [System.Serializable]
+    public enum MinMaxNumericalFormatting
+    {
+        None,
+        ShowMax,
+        ShowMin,
+        ShowMinAndMax
     }
 
     public enum EasyUINumericalSeparatorType

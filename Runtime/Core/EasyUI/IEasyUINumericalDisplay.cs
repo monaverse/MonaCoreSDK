@@ -6,6 +6,8 @@ namespace Mona.SDK.Core.EasyUI
 {
     public interface IEasyUINumericalDisplay
     {
+        EasyUIVariableDisplayElement DisplayElementReference { get; set; }
+
         /// <summary>
         /// Can this Value be displayed as a UI element? This can not be set at run-time.
         /// </summary>
@@ -74,15 +76,15 @@ namespace Mona.SDK.Core.EasyUI
 
         bool DisplayAsGauge { get; }
         bool UseHorizontalGauge { get; }
+        float GaugeFillAmount { get; }
 
         EasyUIStringDisplay NumberDisplay { get; set; }
+        MinMaxNumericalFormatting MinMaxFormatting { get; set; }
         string NumberPrefix { get; set; }
         string NumberSuffix { get; set; }
         EasyUINumericalBaseFormatType NumberFormatType { get; set; }
         EasyUINumericalSeparatorType ThousandthPlaceSepartorType { get; set; }
-        string ThousandthPlaceSeparator { get; }
         EasyUINumericalSeparatorType DecimalPlaceSepartorType { get; set; }
-        string DecimalPlaceSeparator { get; }
         string FormattedNumber { get; }
 
         /// <summary>
@@ -91,5 +93,11 @@ namespace Mona.SDK.Core.EasyUI
         EasyUIPulseType PulseType { get; set; }
         float PulseStartValue { get; set; }
         float PulseFrequency { get; set; }
+
+        string FormatNumber(float numberToFormat);
+        void ChangeIconSprite(Sprite newIcon);
+        void ChangeIconColor(Color color);
+        void ChangeGaugeColor(Color color);
+        void UpdateUIDisplay();
     }
 }

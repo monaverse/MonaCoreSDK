@@ -10,16 +10,17 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
+    [Serializable]
     public class MonaVariablesDefinitionCoreDisplayVisualElement : VisualElement
     {
-        private IEasyUICommonElementDisplay _commonDisplayElement;
+        [SerializeField] private IEasyUICommonElementDisplay _commonDisplayElement;
         public Toggle _displayElement;
         public EnumField _elementType;
 
 #if UNITY_EDITOR
         public ColorField _elementColor;
 #endif
-        public Toggle _useShadow;
+        public EnumField _shadowType;
         public Vector2Field _shadowOffset;
 
         public void SetDisplay(IEasyUICommonElementDisplay newCommonDisplayElement)
@@ -32,7 +33,7 @@ namespace Mona.SDK.Core.State.UIElements
         {
             _displayElement = new Toggle("Display This Element");
             _elementType = new EnumField("Display Type", EasyUIElementDisplayType.Default);
-            _useShadow = new Toggle("Use Shadow");
+            _shadowType = new EnumField("Shadow Type", EasyUIElementDisplayType.Default);
             _shadowOffset = new Vector2Field("Shadow Offset");
 
             _displayElement.RegisterValueChangedCallback((evt) =>
@@ -47,9 +48,9 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
-            _useShadow.RegisterValueChangedCallback((evt) =>
+            _shadowType.RegisterValueChangedCallback((evt) =>
             {
-                _commonDisplayElement.UseShadow = evt.newValue;
+                _commonDisplayElement.ShadowType = (EasyUIElementDisplayType)evt.newValue;
                 Refresh();
             });
 
@@ -72,7 +73,7 @@ namespace Mona.SDK.Core.State.UIElements
             Add(_elementColor);
 #endif
 
-            Add(_useShadow);
+            Add(_shadowType);
             Add(_shadowOffset);
         }
 
@@ -83,7 +84,7 @@ namespace Mona.SDK.Core.State.UIElements
 
             _displayElement.value = _commonDisplayElement.DisplayElement;
             _elementType.value = _commonDisplayElement.ElementType;
-            _useShadow.value = _commonDisplayElement.UseShadow;
+            _shadowType.value = _commonDisplayElement.ShadowType;
             _shadowOffset.value = _commonDisplayElement.ShadowOffset;
 
             _displayElement.style.display = DisplayStyle.Flex;
@@ -91,20 +92,20 @@ namespace Mona.SDK.Core.State.UIElements
             if (_commonDisplayElement.DisplayElement)
             {
                 _elementType.style.display = DisplayStyle.Flex;
-                _useShadow.style.display = DisplayStyle.Flex;
-                _shadowOffset.style.display = _commonDisplayElement.UseShadow ?
+                _shadowType.style.display = DisplayStyle.Flex;
+                _shadowOffset.style.display = _commonDisplayElement.ShadowType == EasyUIElementDisplayType.Custom ?
                     DisplayStyle.Flex : DisplayStyle.None;
             }
             else
             {
                 _elementType.style.display = DisplayStyle.None;
-                _useShadow.style.display = DisplayStyle.None;
+                _shadowType.style.display = DisplayStyle.None;
                 _shadowOffset.style.display = DisplayStyle.None;
             }
 
 #if UNITY_EDITOR
             _elementColor.value = _commonDisplayElement.ElementColor;
-            _elementColor.style.display = _commonDisplayElement.DisplayElement ?
+            _elementColor.style.display = _commonDisplayElement.DisplayElement && _commonDisplayElement.ElementType == EasyUIElementDisplayType.Custom ?
                 DisplayStyle.Flex : DisplayStyle.None;
 #endif
         }

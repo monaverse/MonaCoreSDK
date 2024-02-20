@@ -9,9 +9,15 @@ namespace Mona.SDK.Core.EasyUI
 
         [SerializeField] private EasyUIScreenZone[] _screenZones;
 
-        [SerializeField] private GameObject _variableDisplayElement;
-        [SerializeField] private GameObject _variableDisplayPlaceholder;
-        [SerializeField] private GameObject _radarDisplay;
-        [SerializeField] private GameObject _mapDisplay;
+        public void PlaceElementInHUD(IEasyUINumericalDisplay variable)
+        {
+            foreach (EasyUIScreenZone screenzone in _screenZones)
+            {
+                if (screenzone.Placement == variable.ScreenPosition)
+                {
+                    screenzone.AddVariable(variable);
+                }
+            }
+        }
     }
 }

@@ -10,10 +10,11 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
+    [Serializable]
     public class MonaVariablesDefinitionStringDisplayFoldout : Foldout
     {
-        private EasyUIStringDisplay _stringDisplayElement;
-        private MonaVariablesDefinitionCoreDisplayVisualElement _coreElement;
+        [SerializeField] private EasyUIStringDisplay _stringDisplayElement;
+        [SerializeField] private MonaVariablesDefinitionCoreDisplayVisualElement _coreElement;
         public TextField _elementText;
         public EnumField _fontType;
         public EnumField _textAlignment;

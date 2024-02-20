@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4550367174268669509}
   - component: {fileID: 7091092163564556269}
   - component: {fileID: 2939968162845343181}
+  - component: {fileID: -8244267911274624237}
   m_Layer: 0
   m_Name: VariableDisplayPlaceholder
   m_TagString: Untagged
@@ -75,3 +76,110 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-8244267911274624237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4497672472671337411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f30cd613b8164606abad2a2b2e52ab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlaceholder: 1
+  _iconCounterElementPrefab: {fileID: 0}
+  _elementBackground:
+    _useImage: 0
+    _image: {fileID: 0}
+    _useShadow: 0
+    _elementShadow: {fileID: 0}
+    _requiredParents: []
+  _primaryIcon:
+    _prerequisitParents: []
+    _primaryImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _backgroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _foregroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _textSettings:
+      _useText: 0
+      _textArea: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+  _horizontalGauge:
+    _prerequisitParents: []
+    _primaryImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _backgroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _foregroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _textSettings:
+      _useText: 0
+      _textArea: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+  _highVolumeCounter:
+    _prerequisitParents: []
+    _primaryImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _backgroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _foregroundImageSettings:
+      _useImage: 0
+      _image: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+    _textSettings:
+      _useText: 0
+      _textArea: {fileID: 0}
+      _useShadow: 0
+      _elementShadow: {fileID: 0}
+      _requiredParents: []
+  _textDisplay:
+    _useText: 0
+    _textArea: {fileID: 0}
+    _useShadow: 0
+    _elementShadow: {fileID: 0}
+    _requiredParents: []
+  _iconCounter:
+    _requiredParents: []
+    _iconCounter: {fileID: 0}

@@ -8,45 +8,71 @@ namespace Mona.SDK.Core.EasyUI
     [System.Serializable]
     public class EasyUIImageSettings
     {
-        public bool _useImage;
-        public Image _image;
-        public bool _useShadow;
-        public Shadow _elementShadow;
-        public GameObject[] _requiredParents;
+        [SerializeField] private GameObject[] _requiredParents;
+        [SerializeField] private Image _image;
+        [SerializeField] private Color _defaultColor = Color.white;
+        [SerializeField] private Shadow _elementShadow;
+        [SerializeField] private bool _shadowOnByDefault;
+        [SerializeField] private Vector2 _defaultShadowOffset = new Vector2(-3, -3);
 
-        private Vector2 defaultShadowOffset = new Vector2(-3, -3);
+        private bool _imageInitialized = false;
+        private bool _gaugeInitialized = false;
 
-        public void InitializeImage(Sprite sprite, Color color)
+        public void SetImage(EasyUISpriteDisplay spriteDisplay)
         {
-            InitializeImage(sprite, color, defaultShadowOffset);
-        }
-
-        public void InitializeImage(Sprite sprite, Color color, Vector2 shadowOffset)
-        {
-            if (!_useImage || !_image)
+            if (!_image || !spriteDisplay.DisplayElement)
                 return;
 
             foreach (GameObject go in _requiredParents)
                 go.SetActive(true);
 
-            if (_useShadow && _elementShadow)
+            if (_elementShadow)
             {
-                _elementShadow.gameObject.SetActive(_useShadow);
-                _elementShadow.effectDistance = shadowOffset;
+                switch (spriteDisplay.ShadowType)
+                {
+                    case EasyUIElementDisplayType.None:
+                        _elementShadow.enabled = false;
+                        break;
+                    case EasyUIElementDisplayType.Custom:
+                        _elementShadow.enabled = true;
+                        _elementShadow.effectDistance = spriteDisplay.ShadowOffset;
+                        break;
+                    default:
+                        _elementShadow.enabled = _shadowOnByDefault;
+                        _elementShadow.effectDistance = _defaultShadowOffset;
+                        break;
+                }
             }
 
             _image.gameObject.SetActive(true);
-            SetSprite(sprite);
-            SetColor(color);
+            _image.sprite = spriteDisplay.ElementSprite;
+
+            switch (spriteDisplay.ElementType)
+            {
+                case EasyUIElementDisplayType.Custom:
+                    _image.color = spriteDisplay.ElementColor;
+                    break;
+                default:
+                    _image.color = _defaultColor;
+                    break;
+            }
+
+            _imageInitialized = true;
         }
 
-        public void InitializeGauge(EasyUIFillType filltype, float fillAmount)
+        public void SetGauge(EasyUIFillType filltype, float fillAmount)
         {
-            if (!_useImage || !_image)
+            if (!_image)
                 return;
 
+            if (_gaugeInitialized)
+            {
+                SetGauge(fillAmount);
+                return;
+            }
+
             _image.type = Image.Type.Filled;
-            SetGaugeFill(fillAmount);
+            
 
             switch (filltype)
             {
@@ -71,6 +97,9 @@ namespace Mona.SDK.Core.EasyUI
                     _image.fillOrigin = (int)Image.Origin360.Top;
                     break;
             }
+
+            SetGauge(fillAmount);
+            _gaugeInitialized = true;
         }
 
         public void SetSprite(Sprite sprite)
@@ -85,7 +114,7 @@ namespace Mona.SDK.Core.EasyUI
                 _image.color = color;
         }
 
-        public void SetGaugeFill(float fillAmount)
+        public void SetGauge(float fillAmount)
         {
             if (_image)
                 _image.fillAmount = fillAmount;

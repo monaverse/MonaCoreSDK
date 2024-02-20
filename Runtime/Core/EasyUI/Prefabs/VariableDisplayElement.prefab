@@ -102,13 +102,14 @@ GameObject:
   - component: {fileID: 4524472657728830957}
   - component: {fileID: 5119996867232410887}
   - component: {fileID: 8438255662733009930}
+  - component: {fileID: 4703814020297523805}
   m_Layer: 0
   m_Name: ContentBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4524472657728830957
 RectTransform:
   m_ObjectHideFlags: 0
@@ -166,6 +167,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4703814020297523805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1574214999154081639}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: -3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1607676681959612570
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +198,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2741170130485566136
 RectTransform:
   m_ObjectHideFlags: 0
@@ -198,9 +214,9 @@ RectTransform:
   - {fileID: 8107635237881188619}
   m_Father: {fileID: 2606831601252938126}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3625002121096797082
@@ -1203,7 +1219,7 @@ GameObject:
   - component: {fileID: 1186895247868134310}
   - component: {fileID: 1881136399124367694}
   m_Layer: 0
-  m_Name: TextDisplay
+  m_Name: NumberTextDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1390,119 +1406,145 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f30cd613b8164606abad2a2b2e52ab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPlaceholder: 0
   _iconCounterElementPrefab: {fileID: 928920744644979257, guid: 382686ce2c749402097f9c17f5f92de9, type: 3}
+  _iconAnchorOffset: 0.2
+  _informationAreaRect: {fileID: 2606831601252938126}
   _elementBackground:
-    _useImage: 0
-    _image: {fileID: 8438255662733009930}
-    _useShadow: 0
-    _elementShadow: {fileID: 0}
     _requiredParents: []
+    _image: {fileID: 8438255662733009930}
+    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    _elementShadow: {fileID: 4703814020297523805}
+    _shadowOnByDefault: 0
+    _defaultShadowOffset: {x: -3, y: -3}
   _primaryIcon:
     _prerequisitParents:
     - {fileID: 7896186163946783706}
-    - {fileID: 1466554055631547223}
     _primaryImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 1466554055631547223}
+      - {fileID: 6785689677185049861}
       _image: {fileID: 6764119075617059693}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 2317637774257828300}
-      _requiredParents:
-      - {fileID: 1466554055631547223}
-      - {fileID: 6785689677185049861}
+      _shadowOnByDefault: 1
+      _defaultShadowOffset: {x: -3, y: -3}
     _backgroundImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 1466554055631547223}
+      - {fileID: 6785689677185049861}
       _image: {fileID: 5855311121950231521}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 0}
-      _requiredParents:
-      - {fileID: 1466554055631547223}
-      - {fileID: 6785689677185049861}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _foregroundImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 1466554055631547223}
+      - {fileID: 6785689677185049861}
       _image: {fileID: 650290101553177785}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 3088018746125645103}
-      _requiredParents:
-      - {fileID: 1466554055631547223}
-      - {fileID: 6785689677185049861}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _textSettings:
-      _useText: 0
-      _textArea: {fileID: 4101341245321037311}
-      _useShadow: 0
-      _elementShadow: {fileID: 6941360685930380047}
       _requiredParents:
       - {fileID: 1466554055631547223}
       - {fileID: 6785689677185049861}
+      _textArea: {fileID: 4101341245321037311}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+      _elementShadow: {fileID: 6941360685930380047}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
+  _nameDisplay:
+    _requiredParents:
+    - {fileID: 1607676681959612570}
+    - {fileID: 7513851702505489146}
+    _textArea: {fileID: 8518085433696367423}
+    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    _elementShadow: {fileID: 6888345831835503169}
+    _shadowOnByDefault: 1
+    _defaultShadowOffset: {x: -3, y: -3}
   _horizontalGauge:
     _prerequisitParents:
     - {fileID: 8676015915484335609}
     _primaryImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 7740214976552735400}
       _image: {fileID: 7738158279282719326}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 6565780254381216147}
-      _requiredParents:
-      - {fileID: 7740214976552735400}
+      _shadowOnByDefault: 1
+      _defaultShadowOffset: {x: -3, y: -3}
     _backgroundImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 7740214976552735400}
       _image: {fileID: 7081154269744259912}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 0}
-      _requiredParents:
-      - {fileID: 7740214976552735400}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _foregroundImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 7740214976552735400}
       _image: {fileID: 4271410079457945206}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 8717005208060240759}
-      _requiredParents:
-      - {fileID: 7740214976552735400}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _textSettings:
-      _useText: 0
-      _textArea: {fileID: 424183179302395235}
-      _useShadow: 0
-      _elementShadow: {fileID: 5249155683851531636}
       _requiredParents:
       - {fileID: 7740214976552735400}
+      _textArea: {fileID: 424183179302395235}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+      _elementShadow: {fileID: 5249155683851531636}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
   _highVolumeCounter:
     _prerequisitParents:
     - {fileID: 2291580868811127543}
     - {fileID: 453569051623370399}
     _primaryImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 3145582305900935460}
       _image: {fileID: 5648481793318736213}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 4065469395081120785}
-      _requiredParents:
-      - {fileID: 3145582305900935460}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _backgroundImageSettings:
-      _useImage: 0
+      _requiredParents:
+      - {fileID: 3145582305900935460}
       _image: {fileID: 4047029985718374936}
-      _useShadow: 0
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _elementShadow: {fileID: 0}
-      _requiredParents:
-      - {fileID: 3145582305900935460}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _foregroundImageSettings:
-      _useImage: 0
-      _image: {fileID: 2612408290604017321}
-      _useShadow: 0
-      _elementShadow: {fileID: 7264364754957798562}
       _requiredParents:
       - {fileID: 3145582305900935460}
+      _image: {fileID: 2612408290604017321}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+      _elementShadow: {fileID: 7264364754957798562}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
     _textSettings:
-      _useText: 0
-      _textArea: {fileID: 2983440778637555415}
-      _useShadow: 0
-      _elementShadow: {fileID: 0}
       _requiredParents:
       - {fileID: 6250087381804366368}
-  _textDisplay:
-    _useText: 0
-    _textArea: {fileID: 6338888930230449803}
-    _useShadow: 0
-    _elementShadow: {fileID: 5096334699487594558}
+      _textArea: {fileID: 2983440778637555415}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+      _elementShadow: {fileID: 0}
+      _shadowOnByDefault: 0
+      _defaultShadowOffset: {x: -3, y: -3}
+  _numberDisplay:
     _requiredParents:
+    - {fileID: 8676015915484335609}
     - {fileID: 4351765990131914469}
+    _textArea: {fileID: 6338888930230449803}
+    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    _elementShadow: {fileID: 5096334699487594558}
+    _shadowOnByDefault: 1
+    _defaultShadowOffset: {x: -3, y: -3}
   _iconCounter:
     _requiredParents:
     - {fileID: 8676015915484335609}
@@ -1521,7 +1563,7 @@ GameObject:
   - component: {fileID: 6338888930230449803}
   - component: {fileID: 5096334699487594558}
   m_Layer: 0
-  m_Name: TextElement
+  m_Name: NumberTextElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1824,7 +1866,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -3.4856987, y: 0}
+  m_SizeDelta: {x: -8, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7372933113682338840
 CanvasRenderer:

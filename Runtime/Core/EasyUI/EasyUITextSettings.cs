@@ -8,39 +8,73 @@ namespace Mona.SDK.Core.EasyUI
     [System.Serializable]
     public class EasyUITextSettings
     {
-        public bool _useText;
-        public Text _textArea;
-        public bool _useShadow;
-        public Shadow _elementShadow;
-        public GameObject[] _requiredParents;
+        [SerializeField] private GameObject[] _requiredParents;
+        [SerializeField] private Text _textArea;
+        [SerializeField] private Color _defaultColor = Color.white;
+        [SerializeField] private Shadow _elementShadow;
+        [SerializeField] private bool _shadowOnByDefault;
+        [SerializeField] private Vector2 _defaultShadowOffset = new Vector2(-3, -3);
 
-        private Vector2 defaultShadowOffset = new Vector2(-3, -3);
+        private bool _initialized = false;
 
-        public void InitializeText(string textString, Color color, Font font, EasyUITextAlignment alignment)
+        public void SetText(EasyUIStringDisplay stringDisplay)
         {
-            InitializeText(textString, color, font, alignment, defaultShadowOffset);
+            SetText(stringDisplay, stringDisplay.ElementText);
         }
 
-        public void InitializeText(string textString, Color color, Font font, EasyUITextAlignment alignment, Vector2 shadowOffset)
+        public void SetText(EasyUIStringDisplay stringDisplay, string newString)
         {
-            if (!_useText || !_textArea)
+            if (!stringDisplay.DisplayElement || !_textArea)
                 return;
+
+            if (_initialized)
+            {
+                SetText(newString);
+                return;
+            }
 
             foreach (GameObject go in _requiredParents)
                 go.SetActive(true);
 
-            if (_useShadow && _elementShadow)
+            if (_elementShadow)
             {
-                _elementShadow.gameObject.SetActive(_useShadow);
-                _elementShadow.effectDistance = shadowOffset;
+                switch (stringDisplay.ShadowType)
+                {
+                    case EasyUIElementDisplayType.None:
+                        _elementShadow.enabled = false;
+                        break;
+                    case EasyUIElementDisplayType.Custom:
+                        _elementShadow.enabled = true;
+                        _elementShadow.effectDistance = stringDisplay.ShadowOffset;
+                        break;
+                    default:
+                        _elementShadow.enabled = _shadowOnByDefault;
+                        _elementShadow.effectDistance = _defaultShadowOffset;
+                        break;
+                }
             }
 
             _textArea.gameObject.SetActive(true);
-            _textArea.text = textString;
-            _textArea.color = color;
-            _textArea.font = font;
+            SetText(newString);
 
-            switch (alignment)
+            switch (stringDisplay.ElementType)
+            {
+                case EasyUIElementDisplayType.Custom:
+                    _textArea.color = stringDisplay.ElementColor;
+                    break;
+                default:
+                    _textArea.color = _defaultColor;
+                    break;
+            }
+
+            switch (stringDisplay.FontType)
+            {
+                case EasyUIElementDisplayDefaultOrCustom.Custom:
+                    _textArea.font = stringDisplay.ElementFont;
+                    break;
+            }
+
+            switch (stringDisplay.TextAlignment)
             {
                 case EasyUITextAlignment.Left:
                     _textArea.alignment = TextAnchor.MiddleLeft;
@@ -52,13 +86,12 @@ namespace Mona.SDK.Core.EasyUI
                     _textArea.alignment = TextAnchor.MiddleRight;
                     break;
             }
+
+            _initialized = true;
         }
 
-        public void SetText(string newString)
+        private void SetText(string newString)
         {
-            if (!_useText || !_textArea)
-                return;
-
             _textArea.text = newString;
         }
     }

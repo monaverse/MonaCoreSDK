@@ -10,6 +10,7 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
+    [Serializable]
     public class MonaVariablesDefinitionSpriteDisplayFoldout : Foldout
     {
 
@@ -17,8 +18,8 @@ namespace Mona.SDK.Core.State.UIElements
         public ObjectField _elementSprite;
 #endif
 
-        private EasyUISpriteDisplay _spriteDisplayElement;
-        private MonaVariablesDefinitionCoreDisplayVisualElement _coreElement;
+        [SerializeField] private EasyUISpriteDisplay _spriteDisplayElement;
+        [SerializeField] private MonaVariablesDefinitionCoreDisplayVisualElement _coreElement;
         
         public void SetDisplay(EasyUISpriteDisplay newSpriteDisplay, string labelName)
         {
@@ -58,6 +59,7 @@ namespace Mona.SDK.Core.State.UIElements
 
 #if UNITY_EDITOR
             _elementSprite.style.display = DisplayStyle.Flex;
+            _elementSprite.value = _spriteDisplayElement.ElementSprite;
 #endif
 
             _coreElement.SetDisplay(_spriteDisplayElement);

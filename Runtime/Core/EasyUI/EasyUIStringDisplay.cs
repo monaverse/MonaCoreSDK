@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Mona.SDK.Core.EasyUI
 {
+    [System.Serializable]
     public class EasyUIStringDisplay : IEasyUICommonElementDisplay
     {
         [SerializeField] private string _elementText;
@@ -29,8 +30,8 @@ namespace Mona.SDK.Core.EasyUI
         [SerializeField] private Color _elementColor;
         public Color ElementColor { get => _elementColor; set => _elementColor = value; }
 
-        [SerializeField] private bool _useShadow;
-        public bool UseShadow { get => _useShadow; set => _useShadow = value; }
+        [SerializeField] private EasyUIElementDisplayType _shadowType;
+        public EasyUIElementDisplayType ShadowType { get => _shadowType; set => _shadowType = value; }
 
         [SerializeField] private Vector2 _shadowOffset;
         public Vector2 ShadowOffset { get => _shadowOffset; set => _shadowOffset = value; }
