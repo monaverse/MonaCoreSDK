@@ -1,12 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
-using UnityEditor;
 using UnityEditor.UIElements;
 #endif
-using Mona.SDK.Core.State.Structs;
 using UnityEngine.UIElements;
 
 
@@ -14,7 +9,6 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    [Serializable]
     public class MonaVariablesDefinitionCoreDisplayVisualElement : VisualElement
     {
         [SerializeField] private IEasyUICommonElementDisplay _commonDisplayElement;

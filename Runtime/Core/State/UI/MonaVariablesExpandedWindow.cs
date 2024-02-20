@@ -1,11 +1,10 @@
-using System;  
+using System;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using Mona.SDK.Core.State.Structs;
 using UnityEngine.UIElements;
-
 using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
@@ -37,9 +36,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected EnumField _fillType;
         [SerializeField] protected MonaVariablesDefinitionCompoundSpriteDisplayFoldout _horizontalGaugeVisual;
         [SerializeField] protected MonaVariablesDefinitionStringDisplayFoldout _numberDisplay;
-        [SerializeField] protected EnumField _minMaxFormatting;
-        [SerializeField] protected TextField _numberDisplayPrefix;
-        [SerializeField] protected TextField _numberDisplaySuffix;
+        [SerializeField] protected MonaVariableDefinitionNumericalDisplayFoldout _numericalFormatDisplay;
 
         public IMonaVariablesValue Variable { get => _variable; set => _variable = value; }
 
@@ -89,9 +86,7 @@ namespace Mona.SDK.Core.State.UIElements
             _fillType.value = ((IEasyUINumericalDisplay)_variable).FillType;
             _horizontalGaugeVisual.SetDisplay(((IEasyUINumericalDisplay)_variable).HorizontalGaugeVisual, "Horizontal Gauge");
             _numberDisplay.SetDisplay(((IEasyUINumericalDisplay)_variable).NumberDisplay, "Number Display");
-            _minMaxFormatting.value = ((IEasyUINumericalDisplay)_variable).MinMaxFormatting;
-            _numberDisplayPrefix.value = ((IEasyUINumericalDisplay)_variable).NumberPrefix;
-            _numberDisplaySuffix.value = ((IEasyUINumericalDisplay)_variable).NumberSuffix;
+            _numericalFormatDisplay.SetDisplay(((IEasyUINumericalDisplay)_variable).NumericalFormatting, "Numerical Formatting", ((IMonaVariablesFloatValue)_variable).UseMinMax, true);
 
             if (((IEasyUINumericalDisplay)_variable).AllowUIDisplay)
             {
@@ -123,20 +118,16 @@ namespace Mona.SDK.Core.State.UIElements
 
                     _horizontalGaugeVisual.style.display = ((IEasyUINumericalDisplay)_variable).UseHorizontalGauge ?
                         DisplayStyle.Flex : DisplayStyle.None;
-
-                    _minMaxFormatting.style.display =  DisplayStyle.Flex;
                 }
                 else
                 {
                     _valueDisplayType.style.display = DisplayStyle.None;
                     _fillType.style.display = DisplayStyle.None;
                     _horizontalGaugeVisual.style.display = DisplayStyle.None;
-                    _minMaxFormatting.style.display = DisplayStyle.None;
                 }
 
                 _numberDisplay.style.display = DisplayStyle.Flex;
-                _numberDisplayPrefix.style.display = DisplayStyle.Flex;
-                _numberDisplaySuffix.style.display = DisplayStyle.Flex;
+                _numericalFormatDisplay.style.display = DisplayStyle.Flex;
             }
             else
             {
@@ -153,9 +144,7 @@ namespace Mona.SDK.Core.State.UIElements
                 _fillType.style.display = DisplayStyle.None;
                 _horizontalGaugeVisual.style.display = DisplayStyle.None;
                 _numberDisplay.style.display = DisplayStyle.None;
-                _minMaxFormatting.style.display = DisplayStyle.None;
-                _numberDisplayPrefix.style.display = DisplayStyle.None;
-                _numberDisplaySuffix.style.display = DisplayStyle.None;
+                _numericalFormatDisplay.style.display = DisplayStyle.None;
             }
 
             
@@ -214,7 +203,7 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
-            _displaySpace = new EnumField("Display Space", EasyUIDisplaySpace.OnObject);
+            _displaySpace = new EnumField("Display Space", EasyUIDisplaySpace.HeadsUpDisplay);
             _displaySpace.RegisterValueChangedCallback((evt) =>
             {
                 ((IEasyUINumericalDisplay)_variable).DisplaySpace = (EasyUIDisplaySpace)evt.newValue;
@@ -265,28 +254,7 @@ namespace Mona.SDK.Core.State.UIElements
             _uiBackground = new MonaVariablesDefinitionSpriteDisplayFoldout();
             _horizontalGaugeVisual = new MonaVariablesDefinitionCompoundSpriteDisplayFoldout();
             _numberDisplay = new MonaVariablesDefinitionStringDisplayFoldout();
-
-            _minMaxFormatting = new EnumField("Min/Max Display", MinMaxNumericalFormatting.ShowMax);
-            _minMaxFormatting.RegisterValueChangedCallback((evt) =>
-            {
-                ((IEasyUINumericalDisplay)_variable).MinMaxFormatting = (MinMaxNumericalFormatting)evt.newValue;
-                callback?.Invoke();
-                Refresh();
-            });
-
-            _numberDisplayPrefix = new TextField("Number Prefix");
-            _numberDisplayPrefix.RegisterValueChangedCallback((evt) =>
-            {
-                ((IEasyUINumericalDisplay)_variable).NumberPrefix = evt.newValue;
-                callback?.Invoke();
-            });
-
-            _numberDisplaySuffix = new TextField("Number Suffix");
-            _numberDisplaySuffix.RegisterValueChangedCallback((evt) =>
-            {
-                ((IEasyUINumericalDisplay)_variable).NumberSuffix = evt.newValue;
-                callback?.Invoke();
-            });
+            _numericalFormatDisplay = new MonaVariableDefinitionNumericalDisplayFoldout();
 
             ScrollView sv = new ScrollView();
 
@@ -305,9 +273,7 @@ namespace Mona.SDK.Core.State.UIElements
             sv.Add(_fillType);
             sv.Add(_horizontalGaugeVisual);
             sv.Add(_numberDisplay);
-            sv.Add(_minMaxFormatting);
-            sv.Add(_numberDisplayPrefix);
-            sv.Add(_numberDisplaySuffix);
+            sv.Add(_numericalFormatDisplay);
         }
     }
 #endif

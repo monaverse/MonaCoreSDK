@@ -5,7 +5,6 @@ using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    [Serializable]
     public class MonaVariablesDefinitionCompoundSpriteDisplayFoldout : Foldout
     {
         [SerializeField] private EasyUICompoundSpriteDisplay _compoundDisplayElement;

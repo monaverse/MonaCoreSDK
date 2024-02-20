@@ -8,7 +8,6 @@ using UnityEditor.UIElements;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    [Serializable]
     public class MonaVariablesDefinitionSpriteDisplayFoldout : Foldout
     {
 
