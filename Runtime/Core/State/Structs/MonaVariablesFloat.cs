@@ -197,7 +197,7 @@ namespace Mona.SDK.Core.State.Structs
                     float minValue = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
                         0f : _min;
                     float maxValue = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
-                        100f : _min;
+                        100f : _max;
 
                     minString = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
                         _numericalFormatting.NumberPrefix + FormatNumber(minValue) + percentageString + _numericalFormatting.NumberSuffix + " / " : string.Empty;
