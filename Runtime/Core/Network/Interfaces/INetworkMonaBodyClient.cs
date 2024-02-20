@@ -20,6 +20,8 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetKinematic(bool isKinematic);
         void SetPosition(Vector3 position, bool isKinematic = false);
         void SetRotation(Quaternion rotation, bool isKinematic = false);
+        void TeleportPosition(Vector3 position, bool isKinematic = false);
+        void TeleportRotation(Quaternion rotation, bool isKinematic = false);
         void SetScale(Vector3 scale);
         void SetColor(Color color);
         void SetLayer(string layerName, bool includeChildren);

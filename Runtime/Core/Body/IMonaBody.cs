@@ -10,6 +10,7 @@ namespace Mona.SDK.Core.Body
     public interface IMonaBody
     {
         event Action OnStarted;
+        event Action<IMonaBody> OnDisabled;
         event Action OnResumed;
         event Action OnPaused;
 
@@ -39,6 +40,10 @@ namespace Mona.SDK.Core.Body
         void RotateAround(Vector3 direction, float angle, bool isKinematic, bool isNetowrked = true);
         //TODO void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true);
         void SetRotation(Quaternion rotation, bool isKinematic = true, bool isNetworked = true);
+
+        void TeleportPosition(Vector3 pos, bool isKinematic, bool isNetworked = true);
+        void TeleportRotation(Quaternion rot, bool isKinematic, bool isNetworked = true);
+
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);
         void SetColor(Color color, bool isNetworked = true);

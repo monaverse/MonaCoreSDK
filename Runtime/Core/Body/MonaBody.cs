@@ -14,6 +14,7 @@ namespace Mona.SDK.Core.Body
     public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
         public event Action OnStarted = delegate { };
+        public event Action<IMonaBody> OnDisabled = delegate { };
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
@@ -41,9 +42,9 @@ namespace Mona.SDK.Core.Body
         public IMonaBody Parent => _parent;
 
         public bool IsNetworked => _networkBody != null;
-        public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : transform;
-        public Rigidbody ActiveRigidbody => _networkBody != null ? _networkBody.NetworkRigidbody : _rigidbody;
-        public Transform Transform => transform;
+        public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : ((transform != null) ? transform : null);
+        public Rigidbody ActiveRigidbody => _networkBody != null ? _networkBody.NetworkRigidbody : ((_rigidbody != null) ? _rigidbody : null);
+        public Transform Transform => (transform != null) ? transform : null;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
@@ -51,6 +52,9 @@ namespace Mona.SDK.Core.Body
 
         private bool _grounded;
         public bool Grounded => _grounded;
+
+        private bool _setActive = true;
+        private bool _setActiveIsNetworked = true;
 
         public struct MonaBodyForce
         {
@@ -188,6 +192,7 @@ namespace Mona.SDK.Core.Body
 
         private void Awake()
         {
+            _setActive = gameObject.activeInHierarchy;
             RegisterInParents();
             CacheComponents();
             InitializeTags();
@@ -237,6 +242,7 @@ namespace Mona.SDK.Core.Body
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
             EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
 
             if (_networkBody == null)
             {
@@ -248,6 +254,7 @@ namespace Mona.SDK.Core.Body
         private void RemoveDelegates()
         {
             EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
         }
 
         private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
@@ -289,6 +296,7 @@ namespace Mona.SDK.Core.Body
         private void OnDisable()
         {
             Pause();
+            OnDisabled?.Invoke(this);
         }
 
         public void Pause(bool isNetworked = true)
@@ -309,8 +317,10 @@ namespace Mona.SDK.Core.Body
                 _networkSpawner.RegisterMonaBody(this);
         }
 
+        private bool _destroyed;
         private void OnDestroy()
         {
+            _destroyed = true;
             FireDespawnEvent();
             UnregisterInParents();
             RemoveDelegates();
@@ -389,6 +399,7 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
+            ApplySetActive();
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
@@ -404,12 +415,14 @@ namespace Mona.SDK.Core.Body
             ApplyRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
+            ApplySetActive();
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
 
         public void HandleFixedUpdate(MonaFixedTickEvent evt)
         {
+            if (_destroyed) return;
             if (_networkBody == null)
             {
                 if(_hasInput)
@@ -424,6 +437,7 @@ namespace Mona.SDK.Core.Body
                 ApplyRotation();
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
+                ApplySetActive();
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 _hasInput = false;
@@ -494,10 +508,9 @@ namespace Mona.SDK.Core.Body
                 {
                     var force = _force[i];
                     ActiveRigidbody.AddForce(force.Force, force.Mode);
+                    Debug.Log($"{nameof(ApplyAllForces)} {force.Force}");
                 }
                 _force.Clear();
-                Physics.simulationMode = SimulationMode.Script;
-                Physics.Simulate(deltaTime);
             }
         }
 
@@ -619,8 +632,21 @@ namespace Mona.SDK.Core.Body
         {
             if (ActiveTransform.gameObject.activeInHierarchy != active)
             {
-                ActiveTransform.gameObject.SetActive(active);
-                if (isNetworked) _networkBody?.SetActive(active);
+                _setActive = active;
+                _setActiveIsNetworked = isNetworked;
+                if(active)
+                {
+                    ApplySetActive();
+                }
+            }
+        }
+
+        private void ApplySetActive()
+        {
+            if (ActiveTransform != null && ActiveTransform.gameObject != null && ActiveTransform.gameObject.activeInHierarchy != _setActive)
+            { 
+                ActiveTransform.gameObject.SetActive(_setActive);
+                if (_setActiveIsNetworked) _networkBody?.SetActive(_setActive);
             }
         }
 
@@ -686,6 +712,11 @@ namespace Mona.SDK.Core.Body
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody && ActiveRigidbody.isKinematic != isKinematic)
             {
                 ActiveRigidbody.isKinematic = isKinematic;
+                if (isKinematic)
+                {
+                    ActiveRigidbody.velocity = Vector3.zero;
+                    ActiveRigidbody.angularVelocity = Vector3.zero;
+                }
                 if (isNetworked) _networkBody?.SetKinematic(isKinematic);
             }
         }
@@ -751,6 +782,28 @@ namespace Mona.SDK.Core.Body
         public void MoveDirection(Vector3 direction, bool isKinematic = false, bool isNetworked = true)
         {
             AddPosition(direction, isKinematic, isNetworked);
+        }
+
+        public void TeleportPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
+        {
+            ActiveTransform.position = position;
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+            {
+                SetKinematic(isKinematic, isNetworked);
+                ActiveRigidbody.position = position;
+            }
+            if (isNetworked) _networkBody?.TeleportPosition(position);
+        }
+
+        public void TeleportRotation(Quaternion rotation, bool isKinematic = false, bool isNetworked = true)
+        {
+            ActiveTransform.rotation = rotation;
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+            {
+                SetKinematic(isKinematic, isNetworked);
+                ActiveRigidbody.rotation = rotation;
+            }
+            if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
         public void SetPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
