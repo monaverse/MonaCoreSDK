@@ -206,7 +206,7 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
-            _displaySpace = new EnumField("Display Space", EasyUIDisplaySpace.OnObject);
+            _displaySpace = new EnumField("Display Space", EasyUIDisplaySpace.HeadsUpDisplay);
             _displaySpace.RegisterValueChangedCallback((evt) =>
             {
                 ((IEasyUINumericalDisplay)_variable).DisplaySpace = (EasyUIDisplaySpace)evt.newValue;

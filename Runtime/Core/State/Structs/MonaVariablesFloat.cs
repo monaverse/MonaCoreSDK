@@ -184,18 +184,28 @@ namespace Mona.SDK.Core.State.Structs
         {
             get
             {
-                string min = string.Empty;
-                string max = string.Empty;
+                float displayValue = UseMinMax && _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
+                    GaugeFillAmount * 100f : _value;
+
+                string minString = string.Empty;
+                string maxString = string.Empty;
+                string percentageString = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
+                    "%" : string.Empty;
 
                 if (UseMinMax)
                 {
-                    min = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        _numericalFormatting.NumberPrefix + FormatNumber(_min) + _numericalFormatting.NumberSuffix + " / " : string.Empty;
-                    max = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        " / " + _numericalFormatting.NumberPrefix + FormatNumber(_max) + _numericalFormatting.NumberSuffix : string.Empty;                    
+                    float minValue = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
+                        0f : _min;
+                    float maxValue = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
+                        100f : _min;
+
+                    minString = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        _numericalFormatting.NumberPrefix + FormatNumber(minValue) + percentageString + _numericalFormatting.NumberSuffix + " / " : string.Empty;
+                    maxString = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
+                        " / " + _numericalFormatting.NumberPrefix + FormatNumber(maxValue) + percentageString + _numericalFormatting.NumberSuffix : string.Empty;                    
                 }
 
-                return min + _numericalFormatting.NumberPrefix + FormatNumber(_value) + _numericalFormatting.NumberSuffix + max;
+                return minString + _numericalFormatting.NumberPrefix + FormatNumber(displayValue) + percentageString + _numericalFormatting.NumberSuffix + maxString;
             }
         }
 
@@ -248,6 +258,9 @@ namespace Mona.SDK.Core.State.Structs
                     numberFormatInfo.NumberDecimalSeparator = ".";
                     break;
             }
+
+            if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Custom)
+                return numberToFormat.ToString("N" + _numericalFormatting.CustomDecimalPlaces, numberFormatInfo);
 
             if (_numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency)
                 return string.Format(numberFormatInfo, "{0:C2}", numberToFormat);
