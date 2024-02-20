@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.UIElements;
+#endif
 using Mona.SDK.Core.State.Structs;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
+
 using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements
@@ -90,7 +93,9 @@ namespace Mona.SDK.Core.State.UIElements
 
             _elementText.value = _stringDisplayElement.ElementText;
             _fontType.value = _stringDisplayElement.FontType;
+#if UNITY_EDITOR
             _elementFont.value = _stringDisplayElement.ElementFont;
+#endif
             _textAlignment.value = _stringDisplayElement.TextAlignment;
 
             _elementText.style.display = DisplayStyle.Flex;

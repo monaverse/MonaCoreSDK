@@ -2,10 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.UIElements;
+#endif
 using Mona.SDK.Core.State.Structs;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
+
+
 using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State.UIElements

@@ -147,6 +147,7 @@ namespace Mona.SDK.Core.UIElements
 
         private void DisplayAvatarFields(bool useUrl)
         {
+#if UNITY_EDITOR
             if(_avatarField.parent == this) Remove(_avatarField);
             if (_avatarUrlField.parent == this) Remove(_avatarUrlField);
             if(useUrl)
@@ -157,6 +158,7 @@ namespace Mona.SDK.Core.UIElements
             {
                 Add(_avatarField);
             }
+#endif
         }
 
         public virtual void Refresh()
