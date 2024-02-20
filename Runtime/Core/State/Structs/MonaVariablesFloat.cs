@@ -45,14 +45,19 @@ namespace Mona.SDK.Core.State.Structs
                         _value = Mathf.Clamp(value, _min, _max);
                         break;
                     case MinMaxConstraintType.Loop:
-                        _value = _min + (value - _min) % MinMaxRange;
+                        while (value < _min)
+                        {
+                            value += MinMaxRange + 1;
+                        }
+
+                        _value = _min + (value - _min) % (MinMaxRange + 1);
                         break;
                     case MinMaxConstraintType.Bounce:
                         float adjustedValue = (value - _min) % (MinMaxRange * 2);
                         _value = _min + (adjustedValue <= MinMaxRange ? adjustedValue : MinMaxRange * 2 - adjustedValue);
                         break;
                     case MinMaxConstraintType.ReturnToDefault:
-                        _value = _defaultValue;
+                        _value = value < _min || value > _max ? _defaultValue : value;
                         break;
                     default:
                         _value = value;
