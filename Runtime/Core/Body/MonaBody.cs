@@ -44,7 +44,7 @@ namespace Mona.SDK.Core.Body
         public bool IsNetworked => _networkBody != null;
         public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : ((transform != null) ? transform : null);
         public Rigidbody ActiveRigidbody => _networkBody != null ? _networkBody.NetworkRigidbody : ((_rigidbody != null) ? _rigidbody : null);
-        public Transform Transform => (transform != null) ? transform : null;
+        public Transform Transform => (_destroyed) ? null : transform;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;

@@ -24,9 +24,12 @@ namespace Mona.SDK.Core.UIElements
 #if UNITY_EDITOR
         protected ObjectField _objectField;
         protected ObjectField _wearableField;
+        protected ObjectField _avatarField;
         protected ObjectField _audioField;
         protected ObjectField _animationField;
 #endif
+        private Toggle _avatarUseUrlField;
+        private TextField _avatarUrlField;
         private IntegerField _animationLayer;
         private FloatField _animationLayerWeight;
 
@@ -80,6 +83,27 @@ namespace Mona.SDK.Core.UIElements
                 ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Value = (MonaBody)evt.newValue;
             });
 
+            _avatarField = new ObjectField();
+            _avatarField.style.flexGrow = 1;
+            _avatarField.objectType = typeof(Animator);
+            _avatarField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaAvatarAssetItem)_assets.AllAssets[_index]).Value = (Animator)evt.newValue;
+            });
+
+            _avatarUrlField = new TextField();
+            _avatarUrlField.style.flexGrow = 1;
+            _avatarUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaAvatarAssetItem)_assets.AllAssets[_index]).Url = (string)evt.newValue;
+            });
+
+            _avatarUseUrlField = new Toggle();
+            _avatarUseUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                DisplayAvatarFields(evt.newValue);
+            });
+
             _wearableField = new ObjectField();
             _wearableField.style.flexGrow = 1;
             _wearableField.RegisterValueChangedCallback((evt) =>
@@ -121,6 +145,20 @@ namespace Mona.SDK.Core.UIElements
 
         }
 
+        private void DisplayAvatarFields(bool useUrl)
+        {
+            if(_avatarField.parent == this) Remove(_avatarField);
+            if (_avatarUrlField.parent == this) Remove(_avatarUrlField);
+            if(useUrl)
+            {
+                Add(_avatarUrlField);
+            }
+            else
+            {
+                Add(_avatarField);
+            }
+        }
+
         public virtual void Refresh()
         {
             Clear();
@@ -145,6 +183,13 @@ namespace Mona.SDK.Core.UIElements
                 Add(_objectField);
                 _objectField.objectType = typeof(MonaBody);
                 _objectField.value = (MonaBody)((IMonaBodyAssetItem)value).Value;
+            }
+            else if (value is IMonaAvatarAssetItem)
+            {
+                Add(_avatarUseUrlField);
+                DisplayAvatarFields(_avatarUseUrlField.value);
+                _avatarField.value = ((IMonaAvatarAssetItem)value).Value;
+                _avatarUrlField.value = ((IMonaAvatarAssetItem)value).Url;
             }
             else if (value is IMonaWearableAssetItem)
             {
