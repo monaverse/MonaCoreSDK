@@ -9,7 +9,18 @@ namespace Mona.SDK.Core.Body
     public class MonaBodyBase : MonoBehaviour
     {
         public SerializableGuid guid => _guid;
-        public string PrefabId => _guid;
+
+        [SerializeField] private string _prefabId;
+        public string PrefabId {
+            get {
+                if (!string.IsNullOrEmpty(_prefabId)) return _prefabId;
+                return _guid;
+            }
+            set
+            {
+                _prefabId = value;
+            }
+        }
 
         private bool _isSceneObject = true;
         public bool IsSceneObject
@@ -85,7 +96,7 @@ namespace Mona.SDK.Core.Body
                 var count = uniques.FindAll((x) => x.guid == _guid).Count;
                 if (count > 1)
                 {
-                    var suffix = ((_localPlayerId + 1) + count).ToString();
+                    var suffix = ((_localPlayerId+1) * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
                 }
@@ -113,7 +124,7 @@ namespace Mona.SDK.Core.Body
                 var count = uniques.FindIndex((x) => x.guid == _guid && x == this);
                 if (count > -1)
                 {
-                    var suffix = (_localPlayerId * 100000 + count).ToString();
+                    var suffix = ((_localPlayerId+1) * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
                     //Debug.Log($"make unique {_localId}");

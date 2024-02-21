@@ -20,6 +20,7 @@
         public const string INPUT_EVENT = "OnMonaInputTickEvent";
         public const string INPUTS_EVENT = "OnMonaInputsTickEvent";
         public const string REGISTER_NETWORK_SETTINGS_EVENT = "OnMonaRegisterNetworkSettignsEvent";
+        public const string ON_PLAYER_CHANGE_AVATAR_EVENT = "OnPlayerChangeAvatar";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
@@ -48,6 +49,8 @@
         public const string MONA_BODIES_START_EVENT = "OnMonaBodiesStartEvent";
         public const string MONA_BODIES_CLAIM_HOST_EVENT = "OnMonaBodiesClaimHostEvent";
         public const string MONA_BODY_INSTANTIATED = "OnMonaBodyInstantiated";
+        public const string MONA_ASSET_PROVIDER_ADDED = "OnMonaAssetProviderAdd";
+        public const string MONA_ASSET_PROVIDER_REMOVED = "OnMonaAssetProviderRemoved";
         public const string MONA_BODY_SPAWNED = "OnBodySpawned";
         public const string MONA_BODY_DESPAWNED = "OnBodyDespawned";
         public const string MONA_BODY_PARENT_CHANGED_EVENT = "OnMonaBodyParentChangedEvent";

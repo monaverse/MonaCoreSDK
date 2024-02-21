@@ -38,6 +38,10 @@ namespace Mona.SDK.Core.Body
         private bool _onlyApplyDragWhenGrounded = true;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
+        private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
+
+        public bool IsAttachedToRemotePlayer() => _attachType == MonaBodyAttachType.RemotePlayer;
+        public bool IsAttachedToLocalPlayer() => _attachType == MonaBodyAttachType.LocalPlayer;
 
         public IMonaBody Parent => _parent;
 
@@ -49,6 +53,7 @@ namespace Mona.SDK.Core.Body
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
         public Animator Animator => _animator;
+        public MonaBodyAttachType AttachType { get => _attachType; set => _attachType = value; }
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -359,8 +364,8 @@ namespace Mona.SDK.Core.Body
 
         public void UnregisterAsChild(IMonaBody body)
         {
-            if (!_childMonaBodies.Contains(body))
-                _childMonaBodies.Add(body);
+            if (_childMonaBodies.Contains(body))
+                _childMonaBodies.Remove(body);
         }
 
         public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
@@ -529,7 +534,7 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
-                if (Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
+                if (bodyCollider != null && Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
                     return true;
             }
             return false;
@@ -540,7 +545,7 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
-                if (bodyCollider.bounds.Intersects(collider.bounds))
+                if (bodyCollider != null && bodyCollider.bounds.Intersects(collider.bounds))
                     return true;
             }
             return false;
@@ -552,16 +557,10 @@ namespace Mona.SDK.Core.Body
             {
                 if(_onlyApplyDragWhenGrounded)
                 {
-                    float maximumExtent = 0;
-                    for (var i = 0; i < _colliders.Count; i++)
-                    {
-                        var collider = _colliders[i];
-                        maximumExtent = Mathf.Max(maximumExtent, collider.bounds.extents.y);
-                    }
-
                     _grounded = false;
                     RaycastHit hit;
-                    if(Physics.Raycast(ActiveRigidbody.position+Vector3.up*0.01f, -Vector3.up, out hit, 0.02f, ~(1<<LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A))))
+                    var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
+                    if (Physics.Raycast(ActiveRigidbody.position+Vector3.up*0.01f, -Vector3.up, out hit, 0.02f, ~layerMask))
                     {
                         _grounded = true;
                     }
@@ -630,7 +629,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked = true)
         {
-            if (ActiveTransform.gameObject.activeInHierarchy != active)
+            if (Transform.gameObject.activeInHierarchy != active)
             {
                 _setActive = active;
                 _setActiveIsNetworked = isNetworked;
@@ -643,16 +642,16 @@ namespace Mona.SDK.Core.Body
 
         private void ApplySetActive()
         {
-            if (ActiveTransform != null && ActiveTransform.gameObject != null && ActiveTransform.gameObject.activeInHierarchy != _setActive)
+            if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
             { 
-                ActiveTransform.gameObject.SetActive(_setActive);
+                Transform.gameObject.SetActive(_setActive);
                 if (_setActiveIsNetworked) _networkBody?.SetActive(_setActive);
             }
         }
 
         public bool GetActive()
         {
-            return ActiveTransform.gameObject.activeInHierarchy;
+            return Transform.gameObject.activeInHierarchy;
         }
 
 
@@ -676,6 +675,11 @@ namespace Mona.SDK.Core.Body
         public void ReleaseControl()
         {
             _networkBody?.ReleaseControl();
+        }
+
+        public void TriggerRemoteAnimation(string clipName)
+        {
+            _networkBody?.TriggerAnimation(clipName);
         }
 
         public void ResetLayer()

@@ -1,4 +1,5 @@
 using Mona.SDK.Core.Body;
+using Mona.SDK.Core.Body.Enums;
 using Mona.SDK.Core.Events;
 using System;
 using Unity.VisualScripting;
@@ -37,11 +38,13 @@ namespace Mona.SDK.Core.Mock
 
         public void TriggerLocalPlayerJoined(IMonaBody playerBody, int playerId)
         {
+            playerBody.AttachType = MonaBodyAttachType.LocalPlayer;
             EventBus.Trigger<MonaPlayerJoinedEvent>(new EventHook(MonaCoreConstants.ON_PLAYER_JOINED_EVENT), new MonaPlayerJoinedEvent(playerBody, playerId, true));
         }
 
         public void TriggerPlayerJoined(IMonaBody playerBody, int playerId)
         {
+            playerBody.AttachType = MonaBodyAttachType.RemotePlayer;
             EventBus.Trigger<MonaPlayerJoinedEvent>(new EventHook(MonaCoreConstants.ON_PLAYER_JOINED_EVENT), new MonaPlayerJoinedEvent(playerBody, playerId, false));
         }
 
