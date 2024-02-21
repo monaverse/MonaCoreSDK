@@ -25,6 +25,10 @@ namespace Mona.SDK.Core.Body
         IMonaBody Parent { get; }
         bool Grounded { get; }
         Animator Animator { get; }
+        MonaBodyAttachType AttachType { get; set; }
+
+        bool IsAttachedToRemotePlayer();
+        bool IsAttachedToLocalPlayer();
 
         void CacheColliders();
         void InitializeTags();
@@ -95,5 +99,7 @@ namespace Mona.SDK.Core.Body
         void ReleaseControl();
         void Pause(bool isNetworked = true);
         void Resume(bool isNetworked = true);
+
+        void TriggerRemoteAnimation(string clipName);
     }
 }
