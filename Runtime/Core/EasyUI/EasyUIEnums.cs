@@ -1,121 +1,163 @@
+using System;
+
 namespace Mona.SDK.Core.EasyUI
 {
-    [System.Serializable]
+    [Serializable]
     public enum EasyUINetworkDisplayType
     {
-        DisplayForAll,
-        DisplayForClientOnly,
-        HideForAll
+        DisplayForAll = 0,
+        DisplayForClientOnly = 10,
+        HideForAll = 20
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIDisplaySpace
     {
-        HeadsUpDisplay,
-        OnObject,
-        OnAvatar
+        HeadsUpDisplay = 0,
+        OnObject = 10,
+        OnAvatar = 20
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIScreenPosition
     {
-        TopLeft,
-        TopCenter,
-        TopRight,
-        BottomLeft,
-        BottomCenter,
-        BottomRight
+        TopLeft = 0,
+        TopCenter = 10,
+        TopRight = 20,
+        BottomLeft = 30,
+        BottomCenter = 40,
+        BottomRight = 50
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIObjectPosition
     {
-        Above,
-        Below
+        Above = 0,
+        Below = 10
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUINumericalLayoutType
     {
-        None,
-        GaugeFill,
-        ObjectCounter
+        None = 0,
+        GaugeFill = 10,
+        ObjectCounter = 20
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIFillType
     {
-        LeftToRight,
-        RightToLeft,
-        BottomUp,
-        TopDown,
-        Radial
+        LeftToRight = 0,
+        RightToLeft = 10,
+        BottomUp = 20,
+        TopDown = 30,
+        Radial = 40
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIGaugeValueDisplay
     {
-        None,
-        CurrentValueOutOfMax,
-        CurrentValueOnly,
-        AsPercentage
+        None = 0,
+        CurrentValueOutOfMax = 10,
+        CurrentValueOnly = 20,
+        AsPercentage = 30
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIElementDisplayType
     {
-        Default,
-        None,
-        Custom
+        Default = 0,
+        None = 10,
+        Custom = 20
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUIElementDisplayDefaultOrCustom
     {
-        Default,
-        Custom
+        Default = 0,
+        Custom = 10
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum EasyUINumericalBaseFormatType
     {
-        Default,
-        Currency,
-        Percentage
+        Default = 0,
+        Time = 10,
+        Currency = 20,
+        Percentage = 30
     }
 
-    [System.Serializable]
+    [Serializable]
     public enum MinMaxNumericalFormatting
     {
-        None,
-        ShowMax,
-        ShowMin,
-        ShowMinAndMax
+        None = 0,
+        ShowMax = 10,
+        ShowMin = 20,
+        ShowMinAndMax = 30
     }
 
+    [Serializable]
+    public enum EasyUITimeFormatting
+    {
+        Default = 0,
+        Seconds = 10,
+        SecondsCentiseconds = 20,
+        SecondsFrames = 30,
+        MinutesSeconds = 40,
+        MinutesSecondsCentiseconds = 50,
+        MinutesSecondsFrames = 60,
+        HoursMinutes = 70,
+        HoursMinutesSeconds = 80,
+        HoursMinutesSecondsCentiseconds = 90,
+        HoursMinutesSecondsFrames = 100
+    }
+
+    [Serializable]
+    public enum EasyUITimeFrameRates
+    {
+        Default = 0,
+        TwelveFPS = 12,
+        FifteenFPS = 15,
+        TwentyFourFPS = 24,
+        ThirtyFPS = 30,
+        SixtyFPS = 60,
+        SeventyTwoFPS = 72,
+        NinetyFPS = 90
+    }
+
+    [Serializable]
     public enum EasyUINumericalSeparatorType
     {
-        Default,
-        None,
-        UseSpaces,
-        UseCommas,
-        UsePeriods
+        LocalRegionFormatting = 0,
+        None = 10,
+        UseSpaces = 20,
+        UseCommas = 30,
+        UsePeriods = 40
     }
 
+    [Serializable]
+    public enum EasyUITimeSeparatorType
+    {
+        Default = 0,
+        UseSpaces = 10
+    }
+
+    [Serializable]
     public enum EasyUIPulseType
     {
-        None,
-        WhenValueLessThan,
-        WhenValueGreaterThan,
-        WhenPercentageLessThan,
-        WhenPercentageGreaterThan
+        None = 0,
+        WhenValueLessThan = 10,
+        WhenValueGreaterThan = 20,
+        WhenPercentageLessThan = 30,
+        WhenPercentageGreaterThan = 40
     }
 
+    [Serializable]
     public enum EasyUITextAlignment
     {
-        Default,
-        Left,
-        Center,
-        Right
+        Default = 0,
+        Left = 10,
+        Center = 20,
+        Right = 30
     }
 }

@@ -80,14 +80,6 @@ namespace Mona.SDK.Core.EasyUI
 
         EasyUIStringDisplay NumberDisplay { get; set; }
         EasyUINumericalFormattingDisplay NumericalFormatting { get; set; }
-        //MinMaxNumericalFormatting MinMaxFormatting { get; set; }
-        //string NumberPrefix { get; set; }
-        //string NumberSuffix { get; set; }
-        //EasyUINumericalBaseFormatType NumberFormatType { get; set; }
-        //EasyUINumericalSeparatorType ThousandthPlaceSeparatorType { get; set; }
-        //EasyUIElementDisplayType DecimalOverrideType { get; set; }
-        //int CustomDecimalPlaces { get; set; }
-        //EasyUINumericalSeparatorType DecimalPlaceSeparatorType { get; set; }
         
         string FormattedNumber { get; }
 

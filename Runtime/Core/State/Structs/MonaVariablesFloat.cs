@@ -49,7 +49,6 @@ namespace Mona.SDK.Core.State.Structs
                         {
                             value += MinMaxRange + 1;
                         }
-
                         _value = _min + (value - _min) % (MinMaxRange + 1);
                         break;
                     case MinMaxConstraintType.Bounce:
@@ -264,14 +263,89 @@ namespace Mona.SDK.Core.State.Structs
                     break;
             }
 
-            if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Custom)
-                return numberToFormat.ToString("N" + _numericalFormatting.CustomDecimalPlaces, numberFormatInfo);
+            switch (_numericalFormatting.NumberFormatType)
+            {
+                case EasyUINumericalBaseFormatType.Currency:
+                    string monetaryFormat = "{0:C" + DecimalPlaceDisplay + "}";
+                    return string.Format(numberFormatInfo, monetaryFormat, numberToFormat);
+                case EasyUINumericalBaseFormatType.Time:
+                    return TimeFormatString(numberToFormat, numberFormatInfo);
+            }
 
-            if (_numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency)
-                return string.Format(numberFormatInfo, "{0:C2}", numberToFormat);
+            if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Default)
+                return FormatNumber(numberToFormat, numberFormatInfo);
 
-            string format = (Value % 1 == 0) ? "{0:N0}" : "{0:N}";
+            string customDecimalFormat = "{0:N" + DecimalPlaceDisplay + "}";
+            return string.Format(numberFormatInfo, customDecimalFormat, numberToFormat);
+        }
+
+        private string DecimalPlaceDisplay
+        {
+            get
+            {
+                switch (_numericalFormatting.DecimalOverrideType)
+                {
+                    case EasyUIElementDisplayType.Custom:
+                        return _numericalFormatting.CustomDecimalPlaces.ToString();
+                    case EasyUIElementDisplayType.None:
+                        return "0";
+                }
+
+                return _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency ?
+                    "2" : string.Empty;
+            }
+        }
+
+        private string FormatNumber(float numberToFormat, NumberFormatInfo numberFormatInfo)
+        {
+            string format = (numberToFormat % 1 == 0) ? "{0:N0}" : "{0:N}";
             return string.Format(numberFormatInfo, format, numberToFormat);
+        }
+
+        public string TimeFormatString(float timeInSeconds, NumberFormatInfo numberFormatInfo)
+        {
+            TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
+            string primarySeparator = _numericalFormatting.TimeSeparatorType == EasyUITimeSeparatorType.Default ?
+                " : " : "   ";
+            string decimalSeparator = _numericalFormatting.TimeSeparatorType == EasyUITimeSeparatorType.Default ?
+                " . " : "   ";
+
+            switch (_numericalFormatting.TimeFormatting)
+                {
+                    case EasyUITimeFormatting.Seconds:
+                        return string.Format("{0}", FormatNumber((int)timeSpan.TotalSeconds, numberFormatInfo));
+                    case EasyUITimeFormatting.SecondsCentiseconds:
+                        return string.Format("{0}{2}{1:D2}", FormatNumber((int)timeSpan.TotalSeconds, numberFormatInfo), timeSpan.Milliseconds / 10, decimalSeparator);
+                    case EasyUITimeFormatting.SecondsFrames:
+                        return string.Format("{0}{1}", FormatNumber((int)timeSpan.TotalSeconds, numberFormatInfo), decimalSeparator) + CurrentFrameString(timeInSeconds);
+                    case EasyUITimeFormatting.MinutesSeconds:
+                        return string.Format("{0}{2}{1:D2}", FormatNumber((int)timeSpan.TotalMinutes, numberFormatInfo), timeSpan.Seconds, primarySeparator);
+                    case EasyUITimeFormatting.MinutesSecondsCentiseconds:
+                        return string.Format("{0}{3}{1:D2}{4}{2:D2}", FormatNumber((int)timeSpan.TotalMinutes, numberFormatInfo), timeSpan.Seconds, timeSpan.Milliseconds / 10, primarySeparator, decimalSeparator);
+                    case EasyUITimeFormatting.MinutesSecondsFrames:
+                        return string.Format("{0}{2}{1:D2}{3}", FormatNumber((int)timeSpan.TotalMinutes, numberFormatInfo), timeSpan.Seconds, primarySeparator, decimalSeparator) + CurrentFrameString(timeInSeconds);
+                    case EasyUITimeFormatting.HoursMinutes:
+                        return string.Format("{0}{2}{1:D2}", FormatNumber((int)timeSpan.TotalHours, numberFormatInfo), timeSpan.Minutes, primarySeparator);
+                    case EasyUITimeFormatting.HoursMinutesSeconds:
+                        return string.Format("{0}{3}{1:D2}{3}{2:D2}", FormatNumber((int)timeSpan.TotalHours, numberFormatInfo), timeSpan.Minutes, timeSpan.Seconds, primarySeparator);
+                    case EasyUITimeFormatting.HoursMinutesSecondsCentiseconds:
+                        return string.Format("{0}{4}{1:D2}{4}{2:D2}{5}{3:D2}", FormatNumber((int)timeSpan.TotalHours, numberFormatInfo), timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds / 10, primarySeparator, decimalSeparator);
+                    case EasyUITimeFormatting.HoursMinutesSecondsFrames:
+                        return string.Format("{0}{3}{1:D2}{3}{2:D2}{4}", FormatNumber((int)timeSpan.TotalHours, numberFormatInfo), timeSpan.Minutes, timeSpan.Seconds, primarySeparator, decimalSeparator) + CurrentFrameString(timeInSeconds);
+                    default:
+                        return string.Format("{0}{2}{1:D2}", FormatNumber((int)timeSpan.TotalMinutes, numberFormatInfo), timeSpan.Seconds, primarySeparator);
+            }
+        }
+
+        public string CurrentFrameString(float timeInSeconds)
+        {
+            float fps = _numericalFormatting.TimeDisplayFrameRate == EasyUITimeFrameRates.Default ?
+                60f : (int)_numericalFormatting.TimeDisplayFrameRate;
+            float hundredthsOfASecond = timeInSeconds - (float)Math.Truncate(timeInSeconds);
+
+            int currentFrame = Mathf.RoundToInt(fps * hundredthsOfASecond);
+
+            return currentFrame.ToString("D2") + "f";
         }
 
         public void ChangeIconSprite(Sprite newSprite)

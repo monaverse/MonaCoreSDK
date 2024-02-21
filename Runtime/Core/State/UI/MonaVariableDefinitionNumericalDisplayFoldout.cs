@@ -18,6 +18,9 @@ namespace Mona.SDK.Core.State.UIElements
         [SerializeField] protected TextField _numberDisplayPrefix;
         [SerializeField] protected TextField _numberDisplaySuffix;
         [SerializeField] protected EnumField _numberFormatType;
+        [SerializeField] protected EnumField _timeFormatting;
+        [SerializeField] protected EnumField _timeDisplayFrameRate;
+        [SerializeField] protected EnumField _timeSeparatorType;
         [SerializeField] protected EnumField _thousandthPlaceSeparatorType;
         [SerializeField] protected EnumField _decimalOverrideType;
         [SerializeField] protected EnumField _decimalPlaceSeparatorType;
@@ -69,7 +72,35 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
-            _thousandthPlaceSeparatorType = new EnumField("Thousandth Place Separator", EasyUINumericalSeparatorType.Default);
+            _timeFormatting = new EnumField("Time Format", EasyUITimeFormatting.Default);
+            _timeFormatting.RegisterValueChangedCallback((evt) =>
+            {
+                _numericalFormatting.TimeFormatting = (EasyUITimeFormatting)evt.newValue;
+                Refresh();
+            });
+
+            _timeDisplayFrameRate = new EnumField("Frame Rate Units", EasyUITimeFrameRates.Default);
+            _timeDisplayFrameRate.RegisterValueChangedCallback((evt) =>
+            {
+                _numericalFormatting.TimeDisplayFrameRate = (EasyUITimeFrameRates)evt.newValue;
+                Refresh();
+            });
+
+            _timeSeparatorType = new EnumField("Time Unit Separator", EasyUITimeSeparatorType.Default);
+            _timeSeparatorType.RegisterValueChangedCallback((evt) =>
+            {
+                _numericalFormatting.TimeSeparatorType = (EasyUITimeSeparatorType)evt.newValue;
+                Refresh();
+            });
+
+            _numberFormatType = new EnumField("Base Numerical Format", EasyUINumericalBaseFormatType.Default);
+            _numberFormatType.RegisterValueChangedCallback((evt) =>
+            {
+                _numericalFormatting.NumberFormatType = (EasyUINumericalBaseFormatType)evt.newValue;
+                Refresh();
+            });
+
+            _thousandthPlaceSeparatorType = new EnumField("Thousandth Place Separator", EasyUINumericalSeparatorType.LocalRegionFormatting);
             _thousandthPlaceSeparatorType.RegisterValueChangedCallback((evt) =>
             {
                 _numericalFormatting.ThousandthPlaceSeparatorType = (EasyUINumericalSeparatorType)evt.newValue;
@@ -83,7 +114,7 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
-            _decimalPlaceSeparatorType = new EnumField("Decimal Place Separator", EasyUINumericalSeparatorType.Default);
+            _decimalPlaceSeparatorType = new EnumField("Decimal Place Separator", EasyUINumericalSeparatorType.LocalRegionFormatting);
             _decimalPlaceSeparatorType.RegisterValueChangedCallback((evt) =>
             {
                 _numericalFormatting.DecimalPlaceSeparatorType = (EasyUINumericalSeparatorType)evt.newValue;
@@ -101,6 +132,9 @@ namespace Mona.SDK.Core.State.UIElements
             Add(_numberDisplayPrefix);
             Add(_numberDisplaySuffix);
             Add(_numberFormatType);
+            Add(_timeFormatting);
+            Add(_timeDisplayFrameRate);
+            Add(_timeSeparatorType);
             Add(_thousandthPlaceSeparatorType);
             Add(_decimalOverrideType);
             Add(_decimalPlaceSeparatorType);
@@ -114,6 +148,9 @@ namespace Mona.SDK.Core.State.UIElements
             _numberDisplayPrefix.value = _numericalFormatting.NumberPrefix;
             _numberDisplaySuffix.value = _numericalFormatting.NumberSuffix;
             _numberFormatType.value = _numericalFormatting.NumberFormatType;
+            _timeFormatting.value = _numericalFormatting.TimeFormatting;
+            _timeDisplayFrameRate.value = _numericalFormatting.TimeDisplayFrameRate;
+            _timeSeparatorType.value = _numericalFormatting.TimeSeparatorType;
             _thousandthPlaceSeparatorType.value = _numericalFormatting.ThousandthPlaceSeparatorType;
             _decimalOverrideType.value = _numericalFormatting.DecimalOverrideType;
             _decimalPlaceSeparatorType.value = _numericalFormatting.DecimalPlaceSeparatorType;
@@ -124,21 +161,52 @@ namespace Mona.SDK.Core.State.UIElements
             _numberDisplaySuffix.style.display = DisplayStyle.Flex;
             _numberFormatType.style.display = DisplayStyle.Flex;
 
-            _thousandthPlaceSeparatorType.style.display = _numericalFormatting.NumberFormatType != EasyUINumericalBaseFormatType.Percentage ?
+            _timeFormatting.style.display = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Time ?
                 DisplayStyle.Flex : DisplayStyle.None;
 
-            _decimalOverrideType.style.display = DisplayStyle.Flex;
-
-            if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.None)
+            switch (_numericalFormatting.TimeFormatting)
             {
-                _decimalPlaceSeparatorType.style.display = DisplayStyle.None;
-                _customDecimalPlaces.style.display = DisplayStyle.None;
+                case EasyUITimeFormatting.SecondsFrames:
+                    _timeDisplayFrameRate.style.display = DisplayStyle.Flex;
+                    break;
+                case EasyUITimeFormatting.MinutesSecondsFrames:
+                    _timeDisplayFrameRate.style.display = DisplayStyle.Flex;
+                    break;
+                case EasyUITimeFormatting.HoursMinutesSecondsFrames:
+                    _timeDisplayFrameRate.style.display = DisplayStyle.Flex;
+                    break;
+                default:
+                    _timeDisplayFrameRate.style.display = DisplayStyle.None;
+                    break;
+            }
+
+            _timeSeparatorType.style.display = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Time ?
+                DisplayStyle.Flex : DisplayStyle.None;
+
+            _thousandthPlaceSeparatorType.style.display = _numericalFormatting.NumberFormatType != EasyUINumericalBaseFormatType.Percentage ?
+                    DisplayStyle.Flex : DisplayStyle.None;
+
+            if (_numericalFormatting.NumberFormatType != EasyUINumericalBaseFormatType.Time)
+            {
+                _decimalOverrideType.style.display = DisplayStyle.Flex;
+
+                if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.None)
+                {
+                    _decimalPlaceSeparatorType.style.display = DisplayStyle.None;
+                    _customDecimalPlaces.style.display = DisplayStyle.None;
+                }
+                else
+                {
+                    _decimalPlaceSeparatorType.style.display = DisplayStyle.Flex;
+                    _customDecimalPlaces.style.display = _numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Custom ?
+                        DisplayStyle.Flex : DisplayStyle.None;
+                }
             }
             else
             {
-                _decimalPlaceSeparatorType.style.display = DisplayStyle.Flex;
-                _customDecimalPlaces.style.display = _numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Custom ?
-                    DisplayStyle.Flex : DisplayStyle.None;
+                _decimalOverrideType.style.display = DisplayStyle.None;
+                _decimalPlaceSeparatorType.style.display = DisplayStyle.None;
+                _customDecimalPlaces.style.display = DisplayStyle.None;
             }
         }
     }
