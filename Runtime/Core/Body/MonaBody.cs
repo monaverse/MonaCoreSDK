@@ -359,8 +359,8 @@ namespace Mona.SDK.Core.Body
 
         public void UnregisterAsChild(IMonaBody body)
         {
-            if (!_childMonaBodies.Contains(body))
-                _childMonaBodies.Add(body);
+            if (_childMonaBodies.Contains(body))
+                _childMonaBodies.Remove(body);
         }
 
         public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
@@ -556,6 +556,7 @@ namespace Mona.SDK.Core.Body
                     for (var i = 0; i < _colliders.Count; i++)
                     {
                         var collider = _colliders[i];
+                        if (collider == null) continue;
                         maximumExtent = Mathf.Max(maximumExtent, collider.bounds.extents.y);
                     }
 

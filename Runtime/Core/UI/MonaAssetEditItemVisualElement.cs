@@ -190,6 +190,7 @@ namespace Mona.SDK.Core.UIElements
             {
                 Add(_avatarUseUrlField);
                 DisplayAvatarFields(_avatarUseUrlField.value);
+                _avatarUseUrlField.value = !string.IsNullOrEmpty(((IMonaAvatarAssetItem)value).Url);
                 _avatarField.value = ((IMonaAvatarAssetItem)value).Value;
                 _avatarUrlField.value = ((IMonaAvatarAssetItem)value).Url;
             }
