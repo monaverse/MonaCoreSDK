@@ -645,6 +645,11 @@ namespace Mona.SDK.Core.Body
             if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
             { 
                 Transform.gameObject.SetActive(_setActive);
+                if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+                {
+                    ActiveRigidbody.isKinematic = true;
+                    ActiveRigidbody.Sleep();
+                }
                 if (_setActiveIsNetworked) _networkBody?.SetActive(_setActive);
             }
         }
