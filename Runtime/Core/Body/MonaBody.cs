@@ -334,9 +334,11 @@ namespace Mona.SDK.Core.Body
         private void RegisterInParents()
         {
             MonaBodies.Add(this);
-            var parents = GetComponentsInParent<IMonaBody>(true);
+            var parents = new List<IMonaBody>(GetComponentsInParent<IMonaBody>(true));
+            parents.Remove(this);
+            
             var foundParentBody = false;
-            for (var i = 0; i < parents.Length; i++)
+            for (var i = 0; i < parents.Count; i++)
             {
                 if(!foundParentBody && !(parents[i] is IMonaBodyPart))
                 {
@@ -351,8 +353,9 @@ namespace Mona.SDK.Core.Body
         {
             MonaBodies.Remove(this);
             _parent = null;
-            var parents = GetComponentsInParent<IMonaBody>(true);
-            for (var i = 0; i < parents.Length; i++)
+            var parents = new List<IMonaBody>(GetComponentsInParent<IMonaBody>(true));
+            parents.Remove(this);
+            for (var i = 0; i < parents.Count; i++)
                 parents[i].UnregisterAsChild(this);
         }
 
