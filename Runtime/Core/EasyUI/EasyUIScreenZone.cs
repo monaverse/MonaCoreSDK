@@ -7,14 +7,17 @@ namespace Mona.SDK.Core.EasyUI
     [System.Serializable]
     public class EasyUIScreenZone : MonoBehaviour
     {
-        [SerializeField] private EasyUIScreenPosition _placement;
+        [SerializeField] private EasyUIScreenPosition _screenPlacement;
+        [SerializeField] private EasyUIObjectPosition _objectPlacement;
         [SerializeField] private int _maxChildren;
+        [SerializeField] private bool _reverseDisplayOrder;
 
         [SerializeField] private GameObject _variablePrefab;
         [SerializeField] private GameObject _placeholderPrefab;
         private List<EasyUIVariableDisplayElement> _variableDisplayElements = new List<EasyUIVariableDisplayElement>();
 
-        public EasyUIScreenPosition Placement => _placement;
+        public EasyUIScreenPosition ScreenPlacement => _screenPlacement;
+        public EasyUIObjectPosition ObjectPlacement => _objectPlacement;
         public int MaxChildren => _maxChildren;
 
         public void AddVariable(IEasyUINumericalDisplay variable)
@@ -69,7 +72,9 @@ namespace Mona.SDK.Core.EasyUI
 
         private void ReorderElementsByPriority()
         {
-            _variableDisplayElements = _variableDisplayElements.OrderByDescending(element => element.Priority).ToList();
+            _variableDisplayElements = _reverseDisplayOrder ?
+                _variableDisplayElements.OrderBy(element => element.Priority).ToList() :
+                _variableDisplayElements.OrderByDescending(element => element.Priority).ToList();
 
             for (int i = 0; i < _variableDisplayElements.Count; i++)
             {

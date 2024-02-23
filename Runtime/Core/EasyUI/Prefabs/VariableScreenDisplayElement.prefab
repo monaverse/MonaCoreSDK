@@ -1360,7 +1360,7 @@ GameObject:
   - component: {fileID: 5311085772937865088}
   - component: {fileID: 6515577065340405683}
   m_Layer: 0
-  m_Name: VariableDisplayElement
+  m_Name: VariableScreenDisplayElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
