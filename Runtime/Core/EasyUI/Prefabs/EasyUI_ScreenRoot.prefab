@@ -58,7 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 0
+  _screenPlacement: 0
+  _objectPlacement: 0
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
@@ -146,7 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 40
+  _screenPlacement: 40
+  _objectPlacement: 10
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
@@ -364,7 +366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 50
+  _screenPlacement: 50
+  _objectPlacement: 10
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
@@ -530,7 +533,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 20
+  _screenPlacement: 20
+  _objectPlacement: 0
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
@@ -721,7 +725,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 10
+  _screenPlacement: 10
+  _objectPlacement: 0
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
@@ -809,7 +814,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430ba5c6c60c64ac7986d6dd2ba22bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _placement: 30
+  _screenPlacement: 30
+  _objectPlacement: 10
   _maxChildren: 3
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}

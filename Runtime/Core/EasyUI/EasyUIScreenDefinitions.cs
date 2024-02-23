@@ -11,7 +11,7 @@ namespace Mona.SDK.Core.EasyUI
         {
             foreach (EasyUIScreenZone screenzone in _screenZones)
             {
-                if (screenzone.Placement == variable.ScreenPosition)
+                if (screenzone.ScreenPlacement == variable.ScreenPosition)
                 {
                     screenzone.AddVariable(variable);
                 }
