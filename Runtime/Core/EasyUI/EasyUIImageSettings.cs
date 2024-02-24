@@ -14,9 +14,13 @@ namespace Mona.SDK.Core.EasyUI
         [SerializeField] private Shadow _elementShadow;
         [SerializeField] private bool _shadowOnByDefault;
         [SerializeField] private Vector2 _defaultShadowOffset = new Vector2(-3, -3);
+        [SerializeField] private bool _isObjectUI;
+        private float _objectOffsetModifier = 200f;
 
-        private bool _imageInitialized = false;
         private bool _gaugeInitialized = false;
+
+        private Vector2 DefaultShadowOffset => _isObjectUI ?
+            _defaultShadowOffset / _objectOffsetModifier : _defaultShadowOffset;
 
         public void SetImage(EasyUISpriteDisplay spriteDisplay)
         {
@@ -35,11 +39,14 @@ namespace Mona.SDK.Core.EasyUI
                         break;
                     case EasyUIElementDisplayType.Custom:
                         _elementShadow.enabled = true;
-                        _elementShadow.effectDistance = spriteDisplay.ShadowOffset;
+                        Vector2 customOffset = _isObjectUI ?
+                            spriteDisplay.ShadowOffset / _objectOffsetModifier :
+                            spriteDisplay.ShadowOffset;
+                        _elementShadow.effectDistance = customOffset;
                         break;
                     default:
                         _elementShadow.enabled = _shadowOnByDefault;
-                        _elementShadow.effectDistance = _defaultShadowOffset;
+                        _elementShadow.effectDistance = DefaultShadowOffset;
                         break;
                 }
             }
@@ -56,8 +63,6 @@ namespace Mona.SDK.Core.EasyUI
                     _image.color = _defaultColor;
                     break;
             }
-
-            _imageInitialized = true;
         }
 
         public void SetGauge(EasyUIFillType filltype, float fillAmount)

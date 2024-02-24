@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 namespace Mona.SDK.Core.EasyUI
 {
@@ -11,8 +12,8 @@ namespace Mona.SDK.Core.EasyUI
         [SerializeField] private EasyUIElementDisplayDefaultOrCustom _fontType = EasyUIElementDisplayDefaultOrCustom.Default;
         public EasyUIElementDisplayDefaultOrCustom FontType { get => _fontType; set => _fontType = value; }
 
-        [SerializeField] private Font _elementFont;
-        public Font ElementFont { get => _elementFont; set => _elementFont = value; }
+        [SerializeField] private TMP_FontAsset _elementFont;
+        public TMP_FontAsset ElementFont { get => _elementFont; set => _elementFont = value; }
 
         [SerializeField] EasyUITextAlignment _textAlignment = EasyUITextAlignment.Default;
         public EasyUITextAlignment TextAlignment { get => _textAlignment; set => _textAlignment = value; }

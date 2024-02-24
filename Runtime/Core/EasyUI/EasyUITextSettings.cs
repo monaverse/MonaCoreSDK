@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Mona.SDK.Core.EasyUI
 {
@@ -9,11 +10,16 @@ namespace Mona.SDK.Core.EasyUI
     public class EasyUITextSettings
     {
         [SerializeField] private GameObject[] _requiredParents;
-        [SerializeField] private Text _textArea;
         [SerializeField] private Color _defaultColor = Color.white;
-        [SerializeField] private Shadow _elementShadow;
+        [SerializeField] private TMP_Text _tmpText;
+        [SerializeField] private TMP_Text _tmpShadowText;
         [SerializeField] private bool _shadowOnByDefault;
         [SerializeField] private Vector2 _defaultShadowOffset = new Vector2(-3, -3);
+        [SerializeField] private bool _isObjectUI;
+        private float _objectOffsetModifier = 200f;
+
+        private Vector2 DefaultShadowOffset => _isObjectUI ?
+            _defaultShadowOffset / _objectOffsetModifier : _defaultShadowOffset;
 
         private bool _initialized = false;
 
@@ -24,75 +30,103 @@ namespace Mona.SDK.Core.EasyUI
 
         public void SetText(EasyUIStringDisplay stringDisplay, string newString)
         {
-            if (!stringDisplay.DisplayElement || !_textArea)
+            if (!stringDisplay.DisplayElement || !_tmpText)
                 return;
 
             if (_initialized)
             {
-                SetText(newString);
+                SetText(_tmpText, newString);
+                SetText(_tmpShadowText, newString);
                 return;
             }
 
             foreach (GameObject go in _requiredParents)
                 go.SetActive(true);
 
-            if (_elementShadow)
+            if (_tmpShadowText)
             {
                 switch (stringDisplay.ShadowType)
                 {
                     case EasyUIElementDisplayType.None:
-                        _elementShadow.enabled = false;
+                        _tmpShadowText.gameObject.SetActive(false);
                         break;
                     case EasyUIElementDisplayType.Custom:
-                        _elementShadow.enabled = true;
-                        _elementShadow.effectDistance = stringDisplay.ShadowOffset;
+                        _tmpShadowText.gameObject.SetActive(true);
+                        Vector2 customOffset =_isObjectUI ?
+                            stringDisplay.ShadowOffset / _objectOffsetModifier :
+                            stringDisplay.ShadowOffset;
+
+                        _tmpShadowText.rectTransform.offsetMin = customOffset;
+                        _tmpShadowText.rectTransform.offsetMax = customOffset;
                         break;
                     default:
-                        _elementShadow.enabled = _shadowOnByDefault;
-                        _elementShadow.effectDistance = _defaultShadowOffset;
+                        _tmpShadowText.gameObject.SetActive(_shadowOnByDefault);
+                        _tmpShadowText.rectTransform.offsetMin = DefaultShadowOffset;
+                        _tmpShadowText.rectTransform.offsetMax = DefaultShadowOffset;
                         break;
                 }
             }
 
-            _textArea.gameObject.SetActive(true);
-            SetText(newString);
+            _tmpText.gameObject.SetActive(true);
+
+            SetText(_tmpText, newString);
+            SetText(_tmpShadowText, newString);
 
             switch (stringDisplay.ElementType)
             {
                 case EasyUIElementDisplayType.Custom:
-                    _textArea.color = stringDisplay.ElementColor;
+                    _tmpText.color = stringDisplay.ElementColor;
                     break;
                 default:
-                    _textArea.color = _defaultColor;
+                    _tmpText.color = _defaultColor;
                     break;
             }
 
-            switch (stringDisplay.FontType)
+            if (stringDisplay.FontType == EasyUIElementDisplayDefaultOrCustom.Custom)
             {
-                case EasyUIElementDisplayDefaultOrCustom.Custom:
-                    _textArea.font = stringDisplay.ElementFont;
-                    break;
+                SetFont(_tmpText, stringDisplay.ElementFont);
+                SetFont(_tmpShadowText, stringDisplay.ElementFont);
             }
 
-            switch (stringDisplay.TextAlignment)
-            {
-                case EasyUITextAlignment.Left:
-                    _textArea.alignment = TextAnchor.MiddleLeft;
-                    break;
-                case EasyUITextAlignment.Center:
-                    _textArea.alignment = TextAnchor.MiddleCenter;
-                    break;
-                case EasyUITextAlignment.Right:
-                    _textArea.alignment = TextAnchor.MiddleRight;
-                    break;
-            }
+            AlignText(_tmpText, stringDisplay.TextAlignment);
+            AlignText(_tmpShadowText, stringDisplay.TextAlignment);
 
             _initialized = true;
         }
 
-        private void SetText(string newString)
+        private void SetFont(TMP_Text tmpElement, TMP_FontAsset font)
         {
-            _textArea.text = newString;
+            if (!tmpElement)
+                return;
+
+            tmpElement.font = font;
+        }
+
+        private void AlignText(TMP_Text tmpElement, EasyUITextAlignment alignment)
+        {
+            if (!tmpElement)
+                return;
+
+            switch (alignment)
+            {
+                case EasyUITextAlignment.Left:
+                    tmpElement.alignment = TextAlignmentOptions.Left;
+                    break;
+                case EasyUITextAlignment.Center:
+                    tmpElement.alignment = TextAlignmentOptions.Center;
+                    break;
+                case EasyUITextAlignment.Right:
+                    tmpElement.alignment = TextAlignmentOptions.Right;
+                    break;
+            }
+        }
+
+        private void SetText(TMP_Text tmpElement, string newString)
+        {
+            if (!tmpElement)
+                return;
+
+            tmpElement.text = newString;
         }
     }
 }

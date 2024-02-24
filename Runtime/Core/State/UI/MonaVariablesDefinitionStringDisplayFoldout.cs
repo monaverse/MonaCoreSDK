@@ -3,8 +3,8 @@ using UnityEngine;
 using UnityEditor.UIElements;
 #endif
 using UnityEngine.UIElements;
-
 using Mona.SDK.Core.EasyUI;
+using TMPro;
 
 namespace Mona.SDK.Core.State.UIElements
 {
@@ -62,10 +62,10 @@ namespace Mona.SDK.Core.State.UIElements
 
 #if UNITY_EDITOR
             _elementFont = new ObjectField("Font");
-            _elementFont.objectType = typeof(Font);
+            _elementFont.objectType = typeof(TMP_FontAsset);
             _elementFont.RegisterValueChangedCallback((evt) =>
             {
-                _stringDisplayElement.ElementFont = (Font)evt.newValue;
+                _stringDisplayElement.ElementFont = (TMP_FontAsset)evt.newValue;
                 Refresh();
             });
 
