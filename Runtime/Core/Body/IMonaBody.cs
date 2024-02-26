@@ -27,6 +27,10 @@ namespace Mona.SDK.Core.Body
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
 
+        void AddRigidbody();
+        bool HasCollider();
+        void AddCollider();
+
         bool IsAttachedToRemotePlayer();
         bool IsAttachedToLocalPlayer();
 
@@ -80,6 +84,7 @@ namespace Mona.SDK.Core.Body
         Quaternion GetRotation();
         Transform GetTransformParent();
         Vector3 GetScale();
+        Vector3 GetVelocity();
         int GetLayer();
 
         IMonaBody FindChildByTag(string tag);
