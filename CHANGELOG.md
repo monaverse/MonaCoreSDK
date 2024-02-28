@@ -1,28 +1,16 @@
 # MonaCoreSDK 0.2.0
 
 ### Bug Fixes
-- `SetColor(Color color)` on `MonaBody` now sets color on all child `Renderer` objects of a `MonaBodyBase`.
-- Move NetworkSpawner event listener to `Awake()` from `Start()` on `MonaBody`
+- Fixes to `MonaBody`
 
 ### New Code
 - Allow firing of  `OnPause()` / `OnResume()` events on `IMonaBody`
-- Expose `SetActive(bool active)` to `IMonaBody`
-- Add `SetVisible(bool visible)`/`GetVisible()` to `IMonaBody`
-- Allow `GameObject` with `MockEventBus` to simulate local player join
-- Add `Children()` method to `IMonaBody` to return child `IMonaBody`
-- Add `GetParent()` method to `IMonaBody`
+- Exposed a number of new methods in `MonaBody` for use by the brains sdk and visuals cripting. Full list in the `IMonaBody` interface
 - Added `DontGoThroughThings` to NetworkedRigidbody `MonaBody` objects to protect against collider passthrough with fast moving objects
-- Added `ResetLayer()` to `IMonaBody` to reset a layer to its default layer ("PhysicsGroupA" for NetworkedRigidbodies and "Default" for the rest)
-- Added `ApplyForce(Vector3 force, ForceMode forceMode)` to `IMonaBody`
-- Added `SetDragType(DragType dragType)` to `IMonaBody`
-- Added `SetDrag(float drag)` to `IMonaBody`
-- Added `SetAngularDrag(float drag)` to `IMonaBody`
-- Added `SetVelocity(Vector3 velocity)` to `IMonaBody`
-- Added `SetAngularVelocity(Vector3 velocity)` to `IMonaBody`
-- Added `SetFriction(float friction)` to `IMonaBody`
-- Added `SetBounce(float bounce)` to `IMonaBody`
-- Added `SetUseGravity(bool useGravity)` to `IMonaBody`
-- Added `SetOnlyApplyDragWhenGrounded(bool apply)` to `IMonaBody`
+- Mona Body Variables now has EasyUI support. Numbers can be exposed as UI elements with constraints and on screen and in world positioning.
+- Allow for remote animation triggers over the network.
+- Introduced Asset system for exposing Audio / Animations / Avatars and Prefabs to the Mona Brains SDK and managing them in the Unity Editor via scriptable objects
+
 
 # MonaCoreSDK 0.1.0
 
