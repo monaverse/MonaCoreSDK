@@ -59,8 +59,8 @@ namespace Mona.SDK.Core.Body
         void SetActive(bool active, bool isNetworked = true);
         void SetTransformParent(Transform parent);
 
-        bool Intersects(SphereCollider collider);
-        bool Intersects(Collider collider);
+        bool Intersects(SphereCollider collider, bool includeTriggers = false);
+        bool Intersects(Collider collider, bool includeTriggers = false);
 
 
         void SetLocalInput(MonaInput input);

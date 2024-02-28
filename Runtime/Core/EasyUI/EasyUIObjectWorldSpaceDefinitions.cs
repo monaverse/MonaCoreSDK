@@ -140,11 +140,18 @@ namespace Mona.SDK.Core.EasyUI
 
                 _mainCamera = cameraComponent;
 
-                if (_canvas)
-                    _canvas.worldCamera = _mainCamera;
-
                 break;
             }
+
+            if (_mainCamera == null)
+                _mainCamera = Camera.main;
+
+            if (_mainCamera == null)
+                _mainCamera = FindObjectOfType<Camera>();
+
+            if (_canvas)
+                _canvas.worldCamera = _mainCamera;
+
         }
     }
 }

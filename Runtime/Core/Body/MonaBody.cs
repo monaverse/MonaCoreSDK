@@ -29,6 +29,7 @@ namespace Mona.SDK.Core.Body
         private bool _visible = true;
         private DragType _dragType = DragType.Linear;
         private List<Collider> _colliders;
+        private List<Collider> _triggers;
         private float _drag;
         private float _angularDrag;
         private float _dragDivisor = 1;
@@ -242,13 +243,17 @@ namespace Mona.SDK.Core.Body
         public void CacheColliders()
         {
             _colliders = new List<Collider>();
+            _triggers = new List<Collider>();
             var colliders = GetComponentsInChildren<Collider>();
             for (var i = 0; i < colliders.Length; i++)
             {
                 var collider = colliders[i];
-                if (collider != null && !collider.isTrigger)
+                if (collider != null)
                 {
-                    _colliders.Add(collider);
+                    if (collider.isTrigger)
+                        _triggers.Add(collider);
+                    else
+                        _colliders.Add(collider);
                 }
             }
         }
@@ -572,9 +577,9 @@ namespace Mona.SDK.Core.Body
             EventBus.Trigger(new EventHook(MonaCoreConstants.INPUTS_EVENT, (IMonaBody)this), new MonaInputsEvent(inputs));
         }
 
-        public bool Intersects(SphereCollider collider)
+        public bool Intersects(SphereCollider collider, bool includeTriggers = false)
         {
-            return Intersects((Collider)collider);
+            return Intersects((Collider)collider, includeTriggers);
             /*for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
@@ -584,13 +589,23 @@ namespace Mona.SDK.Core.Body
             return false;*/
         }
 
-        public bool Intersects(Collider collider)
+        public bool Intersects(Collider collider, bool includeTriggers = false)
         {
             for (var i = 0; i < _colliders.Count; i++)
             {
                 var bodyCollider = _colliders[i];
                 if (bodyCollider != null && bodyCollider.bounds.Intersects(collider.bounds))
                     return true;
+            }
+
+            if(includeTriggers)
+            {
+                for (var i = 0; i < _triggers.Count; i++)
+                {
+                    var bodyCollider = _triggers[i];
+                    if (bodyCollider != null && bodyCollider.bounds.Intersects(collider.bounds))
+                        return true;
+                }
             }
             return false;
         }
