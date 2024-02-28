@@ -561,7 +561,7 @@ namespace Mona.SDK.Core.Body
                 {
                     var force = _force[i];
                     ActiveRigidbody.AddForce(force.Force, force.Mode);
-                    Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
+                    //Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
                 }
                 _force.Clear();
             }
@@ -839,7 +839,7 @@ namespace Mona.SDK.Core.Body
         {
             if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
             {
-                Debug.Log($"{nameof(ApplyForce)} {direction} {mode}");
+                //Debug.Log($"{nameof(ApplyForce)} {direction} {mode}");
                 AddForce(direction, mode);
             }
         }
