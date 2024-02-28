@@ -47,7 +47,8 @@ namespace Mona.SDK.Core.EasyUI
         void Start()
         {
             _canvas = GetComponent<Canvas>();
-            _objectRenderer = GetComponentInParent<Renderer>();
+
+            SetObjectRenderer();
 
             if (_rootPanelTransform)
                 _initialRootScale = _rootPanelTransform.localScale;
@@ -85,6 +86,24 @@ namespace Mona.SDK.Core.EasyUI
             _rootPanelTransform.localScale = _initialRootScale * distance * _rootScaleModifier;
         }
 
+        private void SetObjectRenderer()
+        {
+            IMonaBody monaBody = GetComponentInParent<IMonaBody>();
+
+            if (monaBody == null)
+                return;
+
+            Transform bodyTF = monaBody.Transform;
+
+            if (bodyTF == null)
+                return;
+
+            _objectRenderer = bodyTF.GetComponent<Renderer>();
+
+            if (_objectRenderer == null)
+                _objectRenderer = bodyTF.GetComponentInChildren<Renderer>();
+        }
+
         private void SetDisplayOffsets()
         {
             _oldObjectSize = ObjectSize;
@@ -98,7 +117,7 @@ namespace Mona.SDK.Core.EasyUI
         private void SetCanvasPositionToObjectCenter()
         {
             if (!_objectRenderer)
-                return;
+                return;  
 
             Vector3 center = _objectRenderer.bounds.center;
             Vector3 localCenter = transform.InverseTransformPoint(center);
