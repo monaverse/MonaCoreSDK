@@ -8,5 +8,6 @@
         bool UseMinMax { get; }
         float Min { get; set; }
         float Max { get; set; }
+        bool ReturnRandomValueFromMinMax { get; set; }
     }
 }

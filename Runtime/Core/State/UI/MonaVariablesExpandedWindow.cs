@@ -20,6 +20,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected EnumField _minMaxType;
         protected FloatField _min;
         protected FloatField _max;
+        protected Toggle _returnRandomValueFromMinMax;
 
         protected Toggle _allowUIDisplay;
         protected EnumField _displaySpace;
@@ -60,16 +61,19 @@ namespace Mona.SDK.Core.State.UIElements
             _minMaxType.value = ((IMonaVariablesFloatValue)_variable).MinMaxType;
             _min.value = ((IMonaVariablesFloatValue)_variable).Min;
             _max.value = ((IMonaVariablesFloatValue)_variable).Max;
+            _returnRandomValueFromMinMax.value = ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax;
 
             if (((IMonaVariablesFloatValue)_variable).UseMinMax)
             {
                 _min.style.display = DisplayStyle.Flex;
                 _max.style.display = DisplayStyle.Flex;
+                _returnRandomValueFromMinMax.style.display = DisplayStyle.Flex;
             }
             else
             {
                 _min.style.display = DisplayStyle.None;
                 _max.style.display = DisplayStyle.None;
+                _returnRandomValueFromMinMax.style.display = DisplayStyle.None;
             }
 
             _allowUIDisplay.value = ((IEasyUINumericalDisplay)_variable).AllowUIDisplay;
@@ -189,11 +193,19 @@ namespace Mona.SDK.Core.State.UIElements
                 callback?.Invoke();
             });
 
+            _returnRandomValueFromMinMax = new Toggle("Return Random From Min/Max");
+            _returnRandomValueFromMinMax.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax = evt.newValue;
+                callback?.Invoke();
+            });
+
             rootVisualElement.Add(_name);
             rootVisualElement.Add(_value);
             rootVisualElement.Add(_minMaxType);
             rootVisualElement.Add(_min);
             rootVisualElement.Add(_max);
+            rootVisualElement.Add(_returnRandomValueFromMinMax);
 
             _allowUIDisplay = new Toggle("Allow UI Display");
             _allowUIDisplay.RegisterValueChangedCallback((evt) =>
