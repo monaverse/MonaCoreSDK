@@ -83,7 +83,7 @@ namespace Mona.SDK.Core.Body
                 RaycastHit hitInfo;
 
                 //check for obstructions we might have missed
-                if (UnityEngine.Physics.Raycast(_previousPosition, movementThisStep.normalized, out hitInfo, _minimumExtent))
+                if (UnityEngine.Physics.Raycast(_previousPosition, movementThisStep.normalized, out hitInfo, _minimumExtent, ~0, QueryTriggerInteraction.Ignore))
                 {
                     if (hitInfo.collider != null && hitInfo.collider.attachedRigidbody != _body.ActiveRigidbody)
                     {
