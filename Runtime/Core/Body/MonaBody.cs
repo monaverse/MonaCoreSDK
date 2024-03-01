@@ -104,7 +104,7 @@ namespace Mona.SDK.Core.Body
         private List<IMonaBody> _childMonaBodies = new List<IMonaBody>();
 
         private bool _hasInput;
-        private MonaInput _monaInput;
+        private List<MonaInput> _monaInputs = new List<MonaInput>();
 
         private List<IMonaTagged> _monaTagged = new List<IMonaTagged>();
 
@@ -499,10 +499,12 @@ namespace Mona.SDK.Core.Body
             if (_destroyed) return;
             if (_networkBody == null)
             {
+                _hasInput = _monaInputs.Count > 0;
                 if(_hasInput)
                 {
                     //Debug.Log($"{nameof(HandleFixedUpdate)} {_monaInput.MoveValue}");
-                    ApplyInput(_monaInput);
+                    ApplyInput(_monaInputs[0]);
+                    _monaInputs.RemoveAt(0);
                 }
 
                 FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
@@ -515,7 +517,7 @@ namespace Mona.SDK.Core.Body
                 CalculateVelocity();
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
-                _hasInput = false;
+                //_hasInput = false;
             }
         }
 
@@ -672,13 +674,15 @@ namespace Mona.SDK.Core.Body
 
         public void SetLocalInput(MonaInput input)
         {
-            _hasInput = true;
+            if(_monaInputs.Count == 0 || !_monaInputs[_monaInputs.Count-1].Equals(input))
+            {
+                _monaInputs.Add(input);
+            }
 
-            //Debug.Log($"{nameof(SetLocalInput)} {input.MoveValue}");
-            _monaInput = input;
 
-            if (_networkBody != null)
-                _networkBody.SetLocalInput(_monaInput);
+            //TODO shared hosted networking
+            //if (_networkBody != null)
+            //    _networkBody.SetLocalInput(input);
         }
 
         private void FireSpawnEvent()
