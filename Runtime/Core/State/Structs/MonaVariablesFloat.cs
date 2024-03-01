@@ -21,14 +21,15 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
         [SerializeField] private bool _returnRandomValueFromMinMax;
+        [SerializeField] private NumberRoundingType _randomRoundingType;
 
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
         public bool UseMinMax { get => _minMaxType != MinMaxConstraintType.None; }
         public MinMaxConstraintType MinMaxType { get => _minMaxType; set => _minMaxType = value; }
         public bool ReturnRandomValueFromMinMax { get => _returnRandomValueFromMinMax; set => _returnRandomValueFromMinMax = value; }
+        public NumberRoundingType RandomRoundingType { get => _randomRoundingType; set => _randomRoundingType = value; }
         private float MinMaxRange => _max - _min;
-        
 
         public float Value
         {
@@ -36,7 +37,8 @@ namespace Mona.SDK.Core.State.Structs
             {
                 if (_returnRandomValueFromMinMax && UseMinMax)
                 {
-                    _value = UnityEngine.Random.Range(_min, _max);
+                    float randomValue = UnityEngine.Random.Range(_min, _max);
+                    _value = _randomRoundingType == NumberRoundingType.None ? randomValue : Mathf.Round(randomValue); 
                     UpdateUIDisplay();
                 }
 

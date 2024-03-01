@@ -10,4 +10,12 @@ namespace Mona.SDK.Core.State.Structs
         Bounce = 30,
         ReturnToDefault = 40
     }
+
+
+    [System.Serializable]
+    public enum NumberRoundingType
+    {
+        None = 0,
+        WholeNumbers = 10
+    }
 }

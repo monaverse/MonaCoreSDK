@@ -21,6 +21,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected FloatField _min;
         protected FloatField _max;
         protected Toggle _returnRandomValueFromMinMax;
+        protected EnumField _randomRoundType;
 
         protected Toggle _allowUIDisplay;
         protected EnumField _displaySpace;
@@ -62,18 +63,21 @@ namespace Mona.SDK.Core.State.UIElements
             _min.value = ((IMonaVariablesFloatValue)_variable).Min;
             _max.value = ((IMonaVariablesFloatValue)_variable).Max;
             _returnRandomValueFromMinMax.value = ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax;
+            _randomRoundType.value = ((IMonaVariablesFloatValue)_variable).RandomRoundingType;
 
             if (((IMonaVariablesFloatValue)_variable).UseMinMax)
             {
                 _min.style.display = DisplayStyle.Flex;
                 _max.style.display = DisplayStyle.Flex;
                 _returnRandomValueFromMinMax.style.display = DisplayStyle.Flex;
+                _randomRoundType.style.display = DisplayStyle.Flex;
             }
             else
             {
                 _min.style.display = DisplayStyle.None;
                 _max.style.display = DisplayStyle.None;
                 _returnRandomValueFromMinMax.style.display = DisplayStyle.None;
+                _randomRoundType.style.display = DisplayStyle.None;
             }
 
             _allowUIDisplay.value = ((IEasyUINumericalDisplay)_variable).AllowUIDisplay;
@@ -200,12 +204,21 @@ namespace Mona.SDK.Core.State.UIElements
                 callback?.Invoke();
             });
 
+            _randomRoundType = new EnumField("Random Rounding Type", NumberRoundingType.None);
+            _randomRoundType.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaVariablesFloatValue)_variable).RandomRoundingType = (NumberRoundingType)evt.newValue;
+                callback?.Invoke();
+                Refresh();
+            });
+
             rootVisualElement.Add(_name);
             rootVisualElement.Add(_value);
             rootVisualElement.Add(_minMaxType);
             rootVisualElement.Add(_min);
             rootVisualElement.Add(_max);
             rootVisualElement.Add(_returnRandomValueFromMinMax);
+            rootVisualElement.Add(_randomRoundType);
 
             _allowUIDisplay = new Toggle("Allow UI Display");
             _allowUIDisplay.RegisterValueChangedCallback((evt) =>
