@@ -81,6 +81,7 @@ namespace Mona.SDK.Core.Body
         bool GetVisible();
         bool GetActive();
         Vector3 GetPosition();
+        Vector3 GetCenter();
         Quaternion GetRotation();
         Transform GetTransformParent();
         Vector3 GetScale();

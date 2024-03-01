@@ -1,3 +1,6 @@
+using Mona.SDK.Core.Body.Enums;
+using Mona.SDK.Core.Events;
+using Unity.VisualScripting;
 using UnityEngine;
 
 ///taken from http://wiki.unity3d.com/index.php?title=DontGoThroughThings#C.23_-_DontGoThroughThings.cs
@@ -18,6 +21,8 @@ namespace Mona.SDK.Core.Body
         private Vector3 _previousPosition;
         private Collider _myCollider;
         private IMonaBody _body;
+
+        public bool debug;
 
         private void Awake()
         {
@@ -47,37 +52,38 @@ namespace Mona.SDK.Core.Body
 
         private void HandleStarted()
         {
-            _previousPosition = transform.position;
+            _previousPosition = _body.GetCenter();
         }
 
         private void Start()
         {
             //_myCollider = _item.skin.skinCollider;
             if (_myCollider == null) return;
-            _previousPosition = _body.ActiveRigidbody.position;
+            _previousPosition = _body.GetCenter();
             _minimumExtent = Mathf.Min(Mathf.Min(_myCollider.bounds.extents.x, _myCollider.bounds.extents.y), _myCollider.bounds.extents.z);
             _partialExtent = _minimumExtent * (1.0f - skinWidth);
-            _sqrMinimumExtent = _minimumExtent * _minimumExtent;
+            _sqrMinimumExtent = (_minimumExtent * .1f) * (_minimumExtent * .1f);
         }
 
         private void FixedUpdate()
         {
             if (_body.ActiveRigidbody.isKinematic)
             {
-                _previousPosition = _body.ActiveRigidbody.position;
-                return;
+                //_previousPosition = _body.ActiveRigidbody.position;
+                //return;
             }
             //have we moved more than our minimum extent?
-            Vector3 movementThisStep = _body.ActiveRigidbody.position - _previousPosition;
+            Vector3 movementThisStep = _body.GetCenter() - _previousPosition;
             float movementSqrMagnitude = movementThisStep.sqrMagnitude;
 
-            if (movementSqrMagnitude > _sqrMinimumExtent)
+            if(debug && movementSqrMagnitude > 0) Debug.Log($"{nameof(DontGoThroughThings)} {movementSqrMagnitude} {_sqrMinimumExtent}");
+            if (movementThisStep.magnitude > Mathf.Epsilon)
             {
                 float movementMagnitude = Mathf.Sqrt(movementSqrMagnitude);
                 RaycastHit hitInfo;
 
                 //check for obstructions we might have missed
-                if (UnityEngine.Physics.Raycast(_previousPosition, movementThisStep, out hitInfo, movementMagnitude, layerMask.value))
+                if (UnityEngine.Physics.Raycast(_previousPosition, movementThisStep.normalized, out hitInfo, _minimumExtent))
                 {
                     if (hitInfo.collider != null && hitInfo.collider.attachedRigidbody != _body.ActiveRigidbody)
                     {
@@ -86,8 +92,17 @@ namespace Mona.SDK.Core.Body
 
                         if (!hitInfo.collider.isTrigger)
                         {
-                            //Debug.Log($"Travelled through collider {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
-                            _body.ActiveRigidbody.position = hitInfo.point - (movementThisStep / movementMagnitude) * _partialExtent;
+                            var point = hitInfo.point;
+                            if (movementThisStep.y == 0f)
+                                point.y = _body.ActiveRigidbody.position.y;
+                            if (movementThisStep.x == 0f)
+                                point.x = _body.ActiveRigidbody.position.x;
+                            if (movementThisStep.z == 0f)
+                                point.z = _body.ActiveRigidbody.position.z;
+
+                            Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousPosition} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
+                            EventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_EVENT, _body), new MonaBodyEvent(MonaBodyEventType.OnStop));
+                            _body.ActiveTransform.position = (point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
                         }
                     }
                 }
@@ -103,7 +118,7 @@ namespace Mona.SDK.Core.Body
                 }*/
             }
 
-            _previousPosition = _body.ActiveRigidbody.position;
+            _previousPosition = _body.GetCenter();
         }
     }
 }

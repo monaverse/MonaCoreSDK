@@ -54,6 +54,7 @@
         public const string MONA_BODY_SPAWNED = "OnBodySpawned";
         public const string MONA_BODY_DESPAWNED = "OnBodyDespawned";
         public const string MONA_BODY_PARENT_CHANGED_EVENT = "OnMonaBodyParentChangedEvent";
+        public const string MONA_BODY_EVENT = "OnMonaBodyEvent";
 
     }
 }

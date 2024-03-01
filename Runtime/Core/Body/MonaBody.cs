@@ -273,6 +273,28 @@ namespace Mona.SDK.Core.Body
             CacheColliders();
         }
 
+        public Vector3 GetCenter()
+        {
+            Vector3 pos = Vector3.zero;
+            if (_renderers.Length > 0)
+            {
+                for (var i = 0; i < _renderers.Length; i++)
+                {
+                    pos += _renderers[i].bounds.center;
+                }
+                return pos / _renderers.Length;
+            }
+            else if(_colliders.Count > 0)
+            {
+                for (var i = 0; i < _colliders.Count; i++)
+                {
+                    pos += _colliders[i].bounds.center;
+                }
+                return pos / _colliders.Count;
+            }
+            return GetPosition();
+        }
+
         public void InitializeTags()
         {
             _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
