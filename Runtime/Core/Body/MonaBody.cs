@@ -353,12 +353,12 @@ namespace Mona.SDK.Core.Body
                 RegisterWithNetwork();
                 _registerWhenEnabled = false;
             }
-            Resume();
+            //Resume();
         }
 
         private void OnDisable()
         {
-            Pause();
+            //Pause();
             OnDisabled?.Invoke(this);
         }
 
