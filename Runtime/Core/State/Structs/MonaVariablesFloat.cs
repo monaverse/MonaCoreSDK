@@ -20,16 +20,28 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private MinMaxConstraintType _minMaxType = MinMaxConstraintType.None;
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
+        [SerializeField] private bool _returnRandomValueFromMinMax;
 
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
         public bool UseMinMax { get => _minMaxType != MinMaxConstraintType.None; }
         public MinMaxConstraintType MinMaxType { get => _minMaxType; set => _minMaxType = value; }
+        public bool ReturnRandomValueFromMinMax { get => _returnRandomValueFromMinMax; set => _returnRandomValueFromMinMax = value; }
         private float MinMaxRange => _max - _min;
+        
 
         public float Value
         {
-            get { return _value; }
+            get
+            {
+                if (_returnRandomValueFromMinMax && UseMinMax)
+                {
+                    _value = UnityEngine.Random.Range(_min, _max);
+                    UpdateUIDisplay();
+                }
+
+                return _value;
+            }
             set
             {
                 if (!UseMinMax)
