@@ -21,7 +21,7 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
         [SerializeField] private bool _returnRandomValueFromMinMax;
-        [SerializeField] private NumberRoundingType _randomRoundingType;
+        [SerializeField] private NumberRoundingType _randomRoundingType = NumberRoundingType.None;
 
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
