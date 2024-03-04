@@ -875,47 +875,41 @@ namespace Mona.SDK.Core.Body
             _force.Add(new MonaBodyForce() { Force = force, Mode = mode });
         }
 
-        public void MoveDirection(Vector3 direction, bool isKinematic = false, bool isNetworked = true)
+        public void MoveDirection(Vector3 direction, bool isNetworked = true)
         {
-            AddPosition(direction, isKinematic, isNetworked);
+            AddPosition(direction, isNetworked);
         }
 
-        public void TeleportPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
+        public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
             ActiveTransform.position = position;
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
             {
-                SetKinematic(isKinematic, isNetworked);
                 ActiveRigidbody.position = position;
             }
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
-        public void TeleportRotation(Quaternion rotation, bool isKinematic = false, bool isNetworked = true)
+        public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
             ActiveTransform.rotation = rotation;
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
             {
-                SetKinematic(isKinematic, isNetworked);
                 ActiveRigidbody.rotation = rotation;
             }
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
-        public void SetPosition(Vector3 position, bool isKinematic = false, bool isNetworked = true)
+        public void SetPosition(Vector3 position, bool isNetworked = true)
         {
             Vector3 currentPosition = ActiveTransform.position;
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
                 currentPosition = ActiveRigidbody.position;
-            AddPosition(position - currentPosition, isKinematic, isNetworked);
+            AddPosition(position - currentPosition, isNetworked);
         }
 
-        public void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true)
+        public void AddPosition(Vector3 dir, bool isNetworked = true)
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
-            {
-                ActiveRigidbody.isKinematic = isKinematic;
-            }
             _positionDeltas.Add(new MonaBodyDirection() { Direction = dir });
         }
 
@@ -948,24 +942,20 @@ namespace Mona.SDK.Core.Body
         }
         */
 
-        public void RotateAround(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true)
+        public void RotateAround(Vector3 direction, float angle, bool isNetworked = true)
         {
             if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
             {
-                SetRotation(Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
+                SetRotation(Quaternion.AngleAxis(angle, direction), isNetworked);
             }
             else
             {
-                SetRotation(Quaternion.AngleAxis(angle, direction), isKinematic, isNetworked);
+                SetRotation(Quaternion.AngleAxis(angle, direction), isNetworked);
             }
         }
 
-        public void SetRotation(Quaternion rotation, bool isKinematic = false, bool isNetworked = true)
+        public void SetRotation(Quaternion rotation, bool isNetworked = true)
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
-            {
-                ActiveRigidbody.isKinematic = isKinematic;
-            }
             _rotationDeltas.Add(new MonaBodyRotation() { Rotation = rotation });
         }
 

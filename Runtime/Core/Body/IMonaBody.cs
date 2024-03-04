@@ -42,15 +42,15 @@ namespace Mona.SDK.Core.Body
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void ResetLayer();
         void ApplyForce(Vector3 force, ForceMode forceMode, bool isNetworked = true);
-        void MoveDirection(Vector3 direction, bool isKinematic = true, bool isNetworked = true);
-        void SetPosition(Vector3 position, bool isKinematic = true, bool isNetworked = true);
-        void AddPosition(Vector3 dir, bool isKinematic, bool isNetworked = true);
-        void RotateAround(Vector3 direction, float angle, bool isKinematic, bool isNetowrked = true);
+        void MoveDirection(Vector3 direction, bool isNetworked = true);
+        void SetPosition(Vector3 position, bool isNetworked = true);
+        void AddPosition(Vector3 dir, bool isNetworked = true);
+        void RotateAround(Vector3 direction, float angle, bool isNetowrked = true);
         //TODO void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true);
-        void SetRotation(Quaternion rotation, bool isKinematic = true, bool isNetworked = true);
+        void SetRotation(Quaternion rotation, bool isNetworked = true);
 
-        void TeleportPosition(Vector3 pos, bool isKinematic, bool isNetworked = true);
-        void TeleportRotation(Quaternion rot, bool isKinematic, bool isNetworked = true);
+        void TeleportPosition(Vector3 pos, bool isNetworked = true);
+        void TeleportRotation(Quaternion rot, bool isNetworked = true);
 
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);
