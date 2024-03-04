@@ -29,6 +29,41 @@ namespace Mona.SDK.Core.Input
         public MonaInputState OpenChat;
         public MonaInputState ToggleMouseCapture;
 
+        public override bool Equals(object obj)
+        {
+            var other = (MonaInput)obj;
+            return Move.Equals(other.Move)
+                && Look.Equals(other.Look)
+                && Jump.Equals(other.Jump)
+                && Action.Equals(other.Action)
+                && Sprint.Equals(other.Sprint)
+                && SwitchCamera.Equals(other.SwitchCamera)
+                && Respawn.Equals(other.Respawn)
+                && Debug.Equals(other.Debug)
+                && ToggleUI.Equals(other.ToggleUI)
+                && EmoteWheel.Equals(other.EmoteWheel)
+                && EmojiTray.Equals(other.EmojiTray)
+                && ToggleNametags.Equals(other.ToggleNametags)
+                && Escape.Equals(other.Escape)
+                && OpenChat.Equals(other.OpenChat)
+                && ToggleMouseCapture.Equals(other.ToggleMouseCapture)
+                && Key0.Equals(Key0)
+                && Key1.Equals(Key1)
+                && Key2.Equals(Key2)
+                && Key3.Equals(Key3)
+                && Key4.Equals(Key4)
+                && Key5.Equals(Key5)
+                && Key6.Equals(Key6)
+                && Key7.Equals(Key7)
+                && Key8.Equals(Key8)
+                && Key9.Equals(Key9)
+                && Key10.Equals(Key10)
+                && MoveValue.Equals(other.MoveValue)
+                && LookValue.Equals(other.LookValue)
+                && Origin.Equals(other.Origin)
+                && Direction.Equals(other.Direction);
+        }
+
         public MonaInputState GetButton(MonaInputType type)
         {
             switch (type)
