@@ -41,7 +41,7 @@ namespace Mona.SDK.Core.State.UIElements
             {
                 foreach (var e in items)
                 {
-                    var variable = _state.CreateVariable("Default", typeof(MonaVariablesString), e);
+                    var variable = _state.CreateVariable("Default", typeof(MonaVariablesFloat), e);
                     var regex = new Regex("\\d+");
                     var count = _state.VariableList.FindAll(x => regex.Replace(x.Name, "") == "Default");
                         count.Remove(variable);
