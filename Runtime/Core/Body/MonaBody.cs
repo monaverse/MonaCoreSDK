@@ -923,6 +923,16 @@ namespace Mona.SDK.Core.Body
             AddPosition(position - currentPosition, isNetworked);
         }
 
+        public void TeleportScale(Vector3 scale, bool isNetworked = true)
+        {
+            ActiveTransform.localScale = scale;
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            {
+                ActiveRigidbody.transform.localScale = scale;
+            }
+            if (isNetworked) _networkBody?.TeleportScale(scale);
+        }
+
         public void AddPosition(Vector3 dir, bool isNetworked = true)
         {
             _positionDeltas.Add(new MonaBodyDirection() { Direction = dir });
