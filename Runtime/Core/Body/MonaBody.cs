@@ -543,7 +543,7 @@ namespace Mona.SDK.Core.Body
         {
             if (_positionDeltas.Count == 0) return;
 
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 _applyPosition = ActiveRigidbody.position;
             else
                 _applyPosition = ActiveTransform.position;
@@ -555,7 +555,7 @@ namespace Mona.SDK.Core.Body
             }
             _positionDeltas.Clear();
 
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 ActiveRigidbody.MovePosition(_applyPosition);
             else
                 ActiveTransform.position = _applyPosition;
@@ -571,7 +571,7 @@ namespace Mona.SDK.Core.Body
         {
             if (_rotationDeltas.Count == 0) return;
 
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 _applyRotation = ActiveRigidbody.rotation;
             else
                 _applyRotation = ActiveTransform.rotation;
@@ -583,7 +583,7 @@ namespace Mona.SDK.Core.Body
             }
             _rotationDeltas.Clear();
 
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 ActiveRigidbody.MoveRotation(_applyRotation);
             else
                 ActiveTransform.rotation = _applyRotation;
@@ -596,7 +596,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyAllForces(float deltaTime)
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 for (var i = 0; i < _force.Count; i++)
                 {
@@ -653,7 +653,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyDrag()
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 if(_onlyApplyDragWhenGrounded)
                 {
@@ -695,11 +695,9 @@ namespace Mona.SDK.Core.Body
             {
                 _monaInputs.Add(input);
             }
-
-
-            //TODO shared hosted networking
-            //if (_networkBody != null)
-            //    _networkBody.SetLocalInput(input);
+            
+            if (_networkBody != null)
+                _networkBody.SetLocalInput(input);
         }
 
         private void FireSpawnEvent()
@@ -748,7 +746,7 @@ namespace Mona.SDK.Core.Body
             if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
             { 
                 Transform.gameObject.SetActive(_setActive);
-                if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+                if (ActiveRigidbody != null)
                 {
                     ActiveRigidbody.isKinematic = true;
                     ActiveRigidbody.Sleep();
@@ -792,7 +790,7 @@ namespace Mona.SDK.Core.Body
 
         public void ResetLayer()
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 SetLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A, true);
             else
                 SetLayer(MonaCoreConstants.LAYER_DEFAULT, true);
@@ -821,7 +819,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetKinematic(bool isKinematic, bool isNetworked = true)
         {
-            if ((SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null) && ActiveRigidbody.isKinematic != isKinematic)
+            if (ActiveRigidbody != null && ActiveRigidbody.isKinematic != isKinematic)
             {
                 ActiveRigidbody.isKinematic = isKinematic;
                 if (isKinematic)
@@ -880,7 +878,7 @@ namespace Mona.SDK.Core.Body
 
         public void ApplyForce(Vector3 direction, ForceMode mode, bool isNetworked = true)
         {
-            if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if(ActiveRigidbody != null)
             {
                 //Debug.Log($"{nameof(ApplyForce)} {direction} {mode}");
                 AddForce(direction, mode);
@@ -900,7 +898,7 @@ namespace Mona.SDK.Core.Body
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
             ActiveTransform.position = position;
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.position = position;
             }
@@ -910,7 +908,7 @@ namespace Mona.SDK.Core.Body
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
             ActiveTransform.rotation = rotation;
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.rotation = rotation;
             }
@@ -920,7 +918,7 @@ namespace Mona.SDK.Core.Body
         public void SetPosition(Vector3 position, bool isNetworked = true)
         {
             Vector3 currentPosition = ActiveTransform.position;
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 currentPosition = ActiveRigidbody.position;
             AddPosition(position - currentPosition, isNetworked);
         }
@@ -932,7 +930,7 @@ namespace Mona.SDK.Core.Body
 
         public Vector3 GetPosition()
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 return ActiveRigidbody.position;
             else
                 return ActiveTransform.position;
@@ -940,7 +938,7 @@ namespace Mona.SDK.Core.Body
 
         public Quaternion GetRotation()
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
                 return ActiveRigidbody.rotation;
             else
                 return ActiveTransform.rotation;
@@ -961,7 +959,7 @@ namespace Mona.SDK.Core.Body
 
         public void RotateAround(Vector3 direction, float angle, bool isNetworked = true)
         {
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 SetRotation(Quaternion.AngleAxis(angle, direction), isNetworked);
             }
