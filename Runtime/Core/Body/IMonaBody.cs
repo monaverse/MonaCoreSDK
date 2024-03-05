@@ -27,6 +27,12 @@ namespace Mona.SDK.Core.Body
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
 
+        Vector3 InitialPosition { get; }
+        Vector3 InitialLocalPosition { get; }
+        Quaternion InitialRotation { get; }
+        Quaternion InitialLocalRotation { get; }
+        Vector3 InitialScale { get; }
+
         void AddRigidbody();
         void RemoveRigidbody();
         bool HasCollider();

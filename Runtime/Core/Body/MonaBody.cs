@@ -41,6 +41,12 @@ namespace Mona.SDK.Core.Body
         private IMonaBody _parent;
         private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
 
+        private Vector3 _initialPosition = Vector3.zero;
+        private Vector3 _initialLocalPosition = Vector3.zero;
+        private Quaternion _initialRotation = Quaternion.identity;
+        private Quaternion _initialLocalRotation = Quaternion.identity;
+        private Vector3 _initialScale = Vector3.one;
+
         public bool IsAttachedToRemotePlayer() => _attachType == MonaBodyAttachType.RemotePlayer;
         public bool IsAttachedToLocalPlayer() => _attachType == MonaBodyAttachType.LocalPlayer;
 
@@ -55,6 +61,12 @@ namespace Mona.SDK.Core.Body
         public INetworkMonaBodyClient NetworkBody => _networkBody;
         public Animator Animator => _animator;
         public MonaBodyAttachType AttachType { get => _attachType; set => _attachType = value; }
+
+        public Vector3 InitialPosition => _initialPosition;
+        public Vector3 InitialLocalPosition => _initialLocalPosition;
+        public Quaternion InitialRotation => _initialRotation;
+        public Quaternion InitialLocalRotation => _initialLocalRotation;
+        public Vector3 InitialScale => _initialScale;
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -213,6 +225,7 @@ namespace Mona.SDK.Core.Body
             CacheComponents();
             InitializeTags();
             AddDelegates();
+            SetInitialTransforms();
         }
 
         private void CacheComponents()
@@ -324,6 +337,15 @@ namespace Mona.SDK.Core.Body
                 OnFixedUpdate = HandleFixedUpdate;
                 EventBus.Register(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
             }
+        }
+
+        private void SetInitialTransforms()
+        {
+            _initialPosition = transform.position;
+            _initialLocalPosition = transform.localPosition;
+            _initialRotation = transform.rotation;
+            _initialLocalRotation = transform.localRotation;
+            _initialScale = transform.localScale;
         }
 
         private void RemoveDelegates()
