@@ -28,6 +28,7 @@ namespace Mona.SDK.Core.Body
         MonaBodyAttachType AttachType { get; set; }
 
         void AddRigidbody();
+        void RemoveRigidbody();
         bool HasCollider();
         void AddCollider();
 

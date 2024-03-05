@@ -240,6 +240,16 @@ namespace Mona.SDK.Core.Body
                 gameObject.AddComponent<DontGoThroughThings>();
         }
 
+        public void RemoveRigidbody()
+        {
+            if(_rigidbody != null)
+            {
+                Destroy(_rigidbody);
+                Destroy(gameObject.GetComponent<DontGoThroughThings>());
+                _rigidbody = null;
+            }
+        }
+
         public void CacheColliders()
         {
             _colliders = new List<Collider>();
@@ -280,6 +290,7 @@ namespace Mona.SDK.Core.Body
             {
                 for (var i = 0; i < _renderers.Length; i++)
                 {
+                    if (_renderers[i] == null) continue;
                     pos += _renderers[i].bounds.center;
                 }
                 return pos / _renderers.Length;
@@ -288,6 +299,7 @@ namespace Mona.SDK.Core.Body
             {
                 for (var i = 0; i < _colliders.Count; i++)
                 {
+                    if (_colliders[i] == null) continue;
                     pos += _colliders[i].bounds.center;
                 }
                 return pos / _colliders.Count;
@@ -377,7 +389,12 @@ namespace Mona.SDK.Core.Body
         private void RegisterWithNetwork()
         {
             if (_networkSpawner != null && gameObject != null)
+            {
+                if(_rigidbody != null)
+                    SyncType = MonaBodyNetworkSyncType.NetworkRigidbody;
+
                 _networkSpawner.RegisterMonaBody(this);
+            }
         }
 
         private bool _destroyed;
