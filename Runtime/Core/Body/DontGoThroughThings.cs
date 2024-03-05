@@ -67,9 +67,10 @@ namespace Mona.SDK.Core.Body
 
         private void FixedUpdate()
         {
+
             if (_body.ActiveRigidbody == null) return;
 
-            if (_body.ActiveRigidbody.isKinematic)
+            if (_body.ActiveRigidbody != null && _body.ActiveRigidbody.isKinematic)
             {
                 //_previousPosition = _body.ActiveRigidbody.position;
                 //return;
