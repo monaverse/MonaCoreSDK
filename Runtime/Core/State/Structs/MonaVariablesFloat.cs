@@ -188,7 +188,7 @@ namespace Mona.SDK.Core.State.Structs
         {
             get
             {
-                if (!UseMinMax || _max - _min == 0f)
+                if (!UseMinMax || Mathf.Approximately(_max - _min, 0f))
                     return 0f;
 
                 return (_value - _min) / (_max - _min);

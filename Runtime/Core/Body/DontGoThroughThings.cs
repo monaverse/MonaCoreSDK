@@ -93,11 +93,11 @@ namespace Mona.SDK.Core.Body
                         if (!hitInfo.collider.isTrigger)
                         {
                             var point = hitInfo.point;
-                            if (movementThisStep.y == 0f)
+                            if (Mathf.Approximately(movementThisStep.y, 0f))
                                 point.y = _body.ActiveRigidbody.position.y;
-                            if (movementThisStep.x == 0f)
+                            if (Mathf.Approximately(movementThisStep.x, 0f))
                                 point.x = _body.ActiveRigidbody.position.x;
-                            if (movementThisStep.z == 0f)
+                            if (Mathf.Approximately(movementThisStep.z, 0f))
                                 point.z = _body.ActiveRigidbody.position.z;
 
                             Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousPosition} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
