@@ -101,7 +101,7 @@ namespace Mona.SDK.Core.Body
 
         public bool UpdateEnabled => _updateEnabled;
 
-        public MonaBodyNetworkSyncType SyncType;
+        public MonaBodyNetworkSyncType SyncType = MonaBodyNetworkSyncType.NetworkTransform;
         public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
 
@@ -243,6 +243,8 @@ namespace Mona.SDK.Core.Body
 
         public void AddRigidbody()
         {
+            if(SyncType != MonaBodyNetworkSyncType.NotNetworked)
+                SyncType = MonaBodyNetworkSyncType.NetworkRigidbody;
             if (_rigidbody == null)
             {
                 _rigidbody = gameObject.AddComponent<Rigidbody>();
@@ -255,7 +257,9 @@ namespace Mona.SDK.Core.Body
 
         public void RemoveRigidbody()
         {
-            if(_rigidbody != null)
+            if (SyncType != MonaBodyNetworkSyncType.NotNetworked)
+                SyncType = MonaBodyNetworkSyncType.NetworkTransform;
+            if (_rigidbody != null)
             {
                 Destroy(_rigidbody);
                 Destroy(gameObject.GetComponent<DontGoThroughThings>());
@@ -412,9 +416,6 @@ namespace Mona.SDK.Core.Body
         {
             if (_networkSpawner != null && gameObject != null)
             {
-                if(_rigidbody != null)
-                    SyncType = MonaBodyNetworkSyncType.NetworkRigidbody;
-
                 _networkSpawner.RegisterMonaBody(this);
             }
         }
@@ -643,13 +644,6 @@ namespace Mona.SDK.Core.Body
         public bool Intersects(SphereCollider collider, bool includeTriggers = false)
         {
             return Intersects((Collider)collider, includeTriggers);
-            /*for (var i = 0; i < _colliders.Count; i++)
-            {
-                var bodyCollider = _colliders[i];
-                if (bodyCollider != null && Vector3.Distance(collider.transform.position, bodyCollider.ClosestPoint(collider.transform.position)) < collider.radius)
-                    return true;
-            }
-            return false;*/
         }
 
         public bool Intersects(Collider collider, bool includeTriggers = false)
@@ -669,6 +663,21 @@ namespace Mona.SDK.Core.Body
                     if (bodyCollider != null && bodyCollider.bounds.Intersects(collider.bounds))
                         return true;
                 }
+            }
+            return false;
+        }
+
+        public bool WithinRadius(IMonaBody body, float radius = 1f)
+        {
+            for (var i = 0; i < _colliders.Count; i++)
+            {
+                var myCollider = _colliders[i];
+                var myPosition = GetPosition();
+                var otherPosition = body.GetPosition();
+                var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
+                //Debug.Log($"{nameof(WithinRadius)} {Transform.name} other {body.Transform.name} radius {radius} pos {myPosition} other {otherPosition} closestPoint {Vector3.Distance(otherPosition, closestPointToOtherPosition)} dist {Vector3.Distance(myPosition, otherPosition)} ");
+                if (myCollider != null && (Vector3.Distance(otherPosition, closestPointToOtherPosition) < radius || Vector3.Distance(myPosition, otherPosition) < radius))
+                    return true;
             }
             return false;
         }
