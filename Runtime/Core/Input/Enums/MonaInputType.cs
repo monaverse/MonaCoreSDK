@@ -21,4 +21,21 @@
         ToggleMouseCapture = 16,
         Key = 17
     }
+
+    public enum MonaInputMoveType
+    {
+        AllDirections=0,
+        EightWay = 1,
+        FourWay = 2,
+        Horizontal = 3,
+        Vertical = 4,
+        Up = 5,
+        Down = 6,
+        Left = 7,
+        Right = 8,
+        UpLeft = 9,
+        UpRight = 10,
+        DownLeft = 11,
+        DownRight = 12
+    }
 }
