@@ -542,9 +542,10 @@ namespace Mona.SDK.Core.Body
                 _hasInput = _monaInputs.Count > 0;
                 if(_hasInput)
                 {
-                    //Debug.Log($"{nameof(HandleFixedUpdate)} {_monaInput.MoveValue}");
-                    ApplyInput(_monaInputs[0]);
+                    if(_monaInputs.Count > 1) Debug.Log($"mona inputs count {_monaInputs.Count}");
+                    var input = _monaInputs[0];
                     _monaInputs.RemoveAt(0);
+                    ApplyInput(input);
                 }
 
                 FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
@@ -720,10 +721,12 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private MonaInput _lastInput;
         public void SetLocalInput(MonaInput input)
         {
-            if(_monaInputs.Count == 0 || !_monaInputs[_monaInputs.Count-1].Equals(input))
+            if(_monaInputs.Count == 0 || !_lastInput.Equals(input))
             {
+                _lastInput = input;
                 _monaInputs.Add(input);
             }
             
