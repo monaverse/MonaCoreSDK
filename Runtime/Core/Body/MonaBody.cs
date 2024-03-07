@@ -501,8 +501,7 @@ namespace Mona.SDK.Core.Body
 
             FireFixedUpdateEvent(deltaTime, hasInput);
 
-            ApplyPosition();
-            ApplyRotation();
+            ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplySetActive();
@@ -518,8 +517,7 @@ namespace Mona.SDK.Core.Body
 
             FireFixedUpdateEvent(deltaTime, hasInput);
 
-            ApplyPosition();
-            ApplyRotation();
+            ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplySetActive();
@@ -550,8 +548,7 @@ namespace Mona.SDK.Core.Body
 
                 FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
 
-                ApplyPosition();
-                ApplyRotation();
+                ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
                 ApplySetActive();
@@ -563,37 +560,16 @@ namespace Mona.SDK.Core.Body
         }
 
         private Vector3 _applyPosition;
-        private void ApplyPosition()
-        {
-            if (_positionDeltas.Count == 0) return;
-
-            if (ActiveRigidbody != null)
-                _applyPosition = ActiveRigidbody.position;
-            else
-                _applyPosition = ActiveTransform.position;
-
-            for (var i = 0; i < _positionDeltas.Count; i++)
-            {
-                var position = _positionDeltas[i];
-                ApplyAddPosition(position.Direction);
-            }
-            _positionDeltas.Clear();
-
-            if (ActiveRigidbody != null)
-                ActiveRigidbody.MovePosition(_applyPosition);
-            else
-                ActiveTransform.position = _applyPosition;
-        }
-
+        
         private void ApplyAddPosition(Vector3 delta)
         {
             _applyPosition += delta;
         }
 
         private Quaternion _applyRotation;
-        private void ApplyRotation()
+        private void ApplyPositionAndRotation()
         {
-            if (_rotationDeltas.Count == 0) return;
+            if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0) return;
 
             if (ActiveRigidbody != null)
                 _applyRotation = ActiveRigidbody.rotation;
@@ -607,10 +583,28 @@ namespace Mona.SDK.Core.Body
             }
             _rotationDeltas.Clear();
 
+
             if (ActiveRigidbody != null)
-                ActiveRigidbody.MoveRotation(_applyRotation);
+                _applyPosition = ActiveRigidbody.position;
             else
+                _applyPosition = ActiveTransform.position;
+
+            for (var i = 0; i < _positionDeltas.Count; i++)
+            {
+                var position = _positionDeltas[i];
+                ApplyAddPosition(position.Direction);
+            }
+            _positionDeltas.Clear();
+
+            if(ActiveRigidbody != null)
+            {
+                ActiveRigidbody.Move(_applyPosition, _applyRotation);
+            }
+            else
+            {
+                ActiveTransform.position = _applyPosition;
                 ActiveTransform.rotation = _applyRotation;
+            }
         }
 
         private void ApplyAddRotation(Quaternion delta)
@@ -931,20 +925,26 @@ namespace Mona.SDK.Core.Body
 
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
-            ActiveTransform.position = position;
             if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.position = position;
+            }
+            else
+            {
+                ActiveTransform.position = position;
             }
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
-            ActiveTransform.rotation = rotation;
             if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.rotation = rotation;
+            }
+            else
+            {
+                ActiveTransform.rotation = rotation;
             }
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
