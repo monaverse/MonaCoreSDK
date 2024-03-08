@@ -600,7 +600,15 @@ namespace Mona.SDK.Core.Body
 
             if(ActiveRigidbody != null)
             {
-                ActiveRigidbody.Move(_applyPosition, _applyRotation);
+                if (ActiveRigidbody.isKinematic)
+                {
+                    ActiveRigidbody.Move(_applyPosition, _applyRotation);
+                }
+                else
+                {
+                    ActiveRigidbody.position = _applyPosition;
+                    ActiveRigidbody.rotation = _applyRotation;
+                }
             }
             else
             {
