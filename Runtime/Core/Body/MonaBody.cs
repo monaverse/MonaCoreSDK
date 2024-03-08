@@ -247,7 +247,9 @@ namespace Mona.SDK.Core.Body
                 SyncType = MonaBodyNetworkSyncType.NetworkRigidbody;
             if (_rigidbody == null)
             {
-                _rigidbody = gameObject.AddComponent<Rigidbody>();
+                _rigidbody = GetComponent<Rigidbody>();
+                if(_rigidbody == null)
+                    _rigidbody = gameObject.AddComponent<Rigidbody>();
                 _rigidbody.isKinematic = true;
                 _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             }
