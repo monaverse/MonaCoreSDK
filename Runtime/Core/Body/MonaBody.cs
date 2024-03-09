@@ -11,7 +11,7 @@ using Mona.SDK.Core.Input;
 
 namespace Mona.SDK.Core.Body
 {
-    public partial class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
+    public class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
         public event Action OnStarted = delegate { };
         public event Action<IMonaBody> OnDisabled = delegate { };
