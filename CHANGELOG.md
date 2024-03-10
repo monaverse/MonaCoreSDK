@@ -1,3 +1,10 @@
+# MonaCoreSDK 0.3.0
+
+### Bug Fixes
+- adjust non kinematic movement to rigidbody.position vs rigidbody.Move for kinematic
+- null check on mock player
+- null check on rigidbody
+
 # MonaCoreSDK 0.2.0
 
 ### Bug Fixes
