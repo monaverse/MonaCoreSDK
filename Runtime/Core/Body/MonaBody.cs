@@ -941,27 +941,14 @@ namespace Mona.SDK.Core.Body
 
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
-            if (ActiveRigidbody != null)
-            {
-                ActiveRigidbody.position = position;
-            }
-            else
-            {
-                ActiveTransform.position = position;
-            }
+            position = PositionBounds.BindValue(position);
+            ActiveTransform.position = position;
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
-            if (ActiveRigidbody != null)
-            {
-                ActiveRigidbody.rotation = rotation;
-            }
-            else
-            {
-                ActiveTransform.rotation = rotation;
-            }
+            ActiveTransform.rotation = rotation;
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
