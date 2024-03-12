@@ -939,6 +939,11 @@ namespace Mona.SDK.Core.Body
             AddPosition(direction, isNetworked);
         }
 
+        public void BindPosition()
+        {
+            ActiveTransform.position = PositionBounds.BindValue(ActiveTransform.position);
+        }
+
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
             position = PositionBounds.BindValue(position);

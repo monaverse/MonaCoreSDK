@@ -58,6 +58,8 @@ namespace Mona.SDK.Core.Body
         //TODO void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true);
         void SetRotation(Quaternion rotation, bool isNetworked = true);
 
+        void BindPosition();
+
         void TeleportPosition(Vector3 pos, bool isNetworked = true);
         void TeleportRotation(Quaternion rot, bool isNetworked = true);
         void TeleportScale(Vector3 scale, bool isNetworked = true);
