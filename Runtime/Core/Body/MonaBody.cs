@@ -47,6 +47,8 @@ namespace Mona.SDK.Core.Body
         private Quaternion _initialLocalRotation = Quaternion.identity;
         private Vector3 _initialScale = Vector3.one;
 
+        private MonaBodyTransformBounds _positionBounds = new MonaBodyTransformBounds();
+
         public bool IsAttachedToRemotePlayer() => _attachType == MonaBodyAttachType.RemotePlayer;
         public bool IsAttachedToLocalPlayer() => _attachType == MonaBodyAttachType.LocalPlayer;
 
@@ -67,6 +69,8 @@ namespace Mona.SDK.Core.Body
         public Quaternion InitialRotation => _initialRotation;
         public Quaternion InitialLocalRotation => _initialLocalRotation;
         public Vector3 InitialScale => _initialScale;
+
+        public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -597,6 +601,8 @@ namespace Mona.SDK.Core.Body
                 ApplyAddPosition(position.Direction);
             }
             _positionDeltas.Clear();
+
+            _applyPosition = PositionBounds.BindValue(_applyPosition);
 
             if(ActiveRigidbody != null)
             {

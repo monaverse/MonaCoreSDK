@@ -33,6 +33,8 @@ namespace Mona.SDK.Core.Body
         Quaternion InitialLocalRotation { get; }
         Vector3 InitialScale { get; }
 
+        MonaBodyTransformBounds PositionBounds { get; set; }
+
         void AddRigidbody();
         void RemoveRigidbody();
         bool HasCollider();
