@@ -176,8 +176,8 @@ namespace Mona.SDK.Core.Body
 
         public Vector3 GetVelocity()
         {
-            if (ActiveRigidbody != null)
-                return ActiveRigidbody.velocity;
+            //if (ActiveRigidbody != null)
+            //    return ActiveRigidbody.velocity;
             return _transformVelocity;
         }
 
@@ -273,11 +273,14 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private Vector3 _baseOffset;
         public void CacheColliders()
         {
             _colliders = new List<Collider>();
             _triggers = new List<Collider>();
             var colliders = GetComponentsInChildren<Collider>();
+            var pos = GetPosition() - Vector3.up * 100f;
+            _baseOffset = pos;
             for (var i = 0; i < colliders.Length; i++)
             {
                 var collider = colliders[i];
@@ -286,9 +289,17 @@ namespace Mona.SDK.Core.Body
                     if (collider.isTrigger)
                         _triggers.Add(collider);
                     else
+                    {
                         _colliders.Add(collider);
+
+                        var closest = collider.ClosestPoint(pos);
+                        if (Vector3.Distance(closest, GetPosition()) < Vector3.Distance(_baseOffset, GetPosition()))
+                            _baseOffset = closest;
+                    }
+
                 }
             }
+            _baseOffset = _baseOffset - GetPosition();
         }
 
         public bool HasCollider()
@@ -544,8 +555,8 @@ namespace Mona.SDK.Core.Body
                 _hasInput = _monaInputs.Count > 0;
                 if(_hasInput)
                 {
-                    if(_monaInputs.Count > 1) 
-                        Debug.Log($"mona inputs count {_monaInputs.Count}");
+                    //if(_monaInputs.Count > 1) 
+                    //    Debug.Log($"mona inputs count {_monaInputs.Count}");
                     ApplyInputs(_monaInputs);
                     _monaInputs.Clear();
                     _lastInput = default;
@@ -690,6 +701,13 @@ namespace Mona.SDK.Core.Body
             return false;
         }
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up*.02f);
+        }
+
+        private RaycastHit[] _results = new RaycastHit[10];
         private void ApplyDrag()
         {
             if (ActiveRigidbody != null)
@@ -697,11 +715,18 @@ namespace Mona.SDK.Core.Body
                 if(_onlyApplyDragWhenGrounded)
                 {
                     _grounded = false;
-                    RaycastHit hit;
-                    var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
-                    if (Physics.Raycast(ActiveRigidbody.position+Vector3.up*0.01f, -Vector3.up, out hit, 0.02f, ~layerMask))
+                    //var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
+                    //Debug.Log($"Raycast {_baseOffset} {GetPosition()}");
+                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f);
+                    if (hitCount > 0)
                     {
-                        _grounded = true;
+                        for(var i = 0;i < hitCount; i++)
+                        {
+                            if (!_colliders.Contains(_results[i].collider))
+                                _grounded = true;
+                        }
+                        //Debug.Log($"Raycast hit {hit.collider} {_colliders.Contains(hit.collider)}");
+                        //_grounded = true;
                     }
 
                     if(!_grounded)
@@ -950,7 +975,12 @@ namespace Mona.SDK.Core.Body
         {
             position = PositionBounds.BindValue(position);
             if (ActiveRigidbody != null)
+            {
+                var was = ActiveRigidbody.isKinematic;
+                ActiveRigidbody.isKinematic = true;
                 ActiveRigidbody.position = position;
+                ActiveRigidbody.isKinematic = was;
+            }
             else
                 ActiveTransform.position = position;
             if (isNetworked) _networkBody?.TeleportPosition(position);
@@ -959,7 +989,9 @@ namespace Mona.SDK.Core.Body
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
             if (ActiveRigidbody != null)
+            {
                 ActiveRigidbody.rotation = rotation;
+            }
             else
                 ActiveTransform.rotation = rotation;
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
