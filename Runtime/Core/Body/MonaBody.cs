@@ -688,14 +688,24 @@ namespace Mona.SDK.Core.Body
 
         public bool WithinRadius(IMonaBody body, float radius = 1f)
         {
-            for (var i = 0; i < _colliders.Count; i++)
+            if (_colliders.Count > 0)
             {
-                var myCollider = _colliders[i];
+                for (var i = 0; i < _colliders.Count; i++)
+                {
+                    var myCollider = _colliders[i];
+                    var myPosition = GetPosition();
+                    var otherPosition = body.GetPosition();
+                    var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
+                    //Debug.Log($"{nameof(WithinRadius)} {Transform.name} other {body.Transform.name} radius {radius} pos {myPosition} other {otherPosition} closestPoint {Vector3.Distance(otherPosition, closestPointToOtherPosition)} dist {Vector3.Distance(myPosition, otherPosition)} ");
+                    if (myCollider != null && (Vector3.Distance(otherPosition, closestPointToOtherPosition) < radius || Vector3.Distance(myPosition, otherPosition) < radius))
+                        return true;
+                }
+            }
+            else
+            {
                 var myPosition = GetPosition();
                 var otherPosition = body.GetPosition();
-                var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
-                //Debug.Log($"{nameof(WithinRadius)} {Transform.name} other {body.Transform.name} radius {radius} pos {myPosition} other {otherPosition} closestPoint {Vector3.Distance(otherPosition, closestPointToOtherPosition)} dist {Vector3.Distance(myPosition, otherPosition)} ");
-                if (myCollider != null && (Vector3.Distance(otherPosition, closestPointToOtherPosition) < radius || Vector3.Distance(myPosition, otherPosition) < radius))
+                if (Vector3.Distance(myPosition, otherPosition) < radius)
                     return true;
             }
             return false;
