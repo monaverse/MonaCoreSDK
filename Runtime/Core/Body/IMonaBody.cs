@@ -74,7 +74,7 @@ namespace Mona.SDK.Core.Body
         bool Intersects(SphereCollider collider, bool includeTriggers = false);
         bool Intersects(Collider collider, bool includeTriggers = false);
 
-        bool WithinRadius(IMonaBody body, float radius);
+        bool WithinRadius(IMonaBody body, float radius, bool includeTriggers = false);
 
 
         void SetLocalInput(MonaInput input);

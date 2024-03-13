@@ -686,9 +686,10 @@ namespace Mona.SDK.Core.Body
             return false;
         }
 
-        public bool WithinRadius(IMonaBody body, float radius = 1f)
+        public bool WithinRadius(IMonaBody body, float radius = 1f, bool includeTriggers = false)
         {
-            if (_colliders.Count > 0)
+            var hasColliders = _colliders.Count > 0 || (includeTriggers && _triggers.Count < 0);
+            if (hasColliders)
             {
                 for (var i = 0; i < _colliders.Count; i++)
                 {
@@ -699,6 +700,21 @@ namespace Mona.SDK.Core.Body
                     //Debug.Log($"{nameof(WithinRadius)} {Transform.name} other {body.Transform.name} radius {radius} pos {myPosition} other {otherPosition} closestPoint {Vector3.Distance(otherPosition, closestPointToOtherPosition)} dist {Vector3.Distance(myPosition, otherPosition)} ");
                     if (myCollider != null && (Vector3.Distance(otherPosition, closestPointToOtherPosition) < radius || Vector3.Distance(myPosition, otherPosition) < radius))
                         return true;
+                }
+
+                if(includeTriggers)
+                {
+                    for (var i = 0; i < _triggers.Count; i++)
+                    {
+                        var myCollider = _triggers[i];
+                        var myPosition = GetPosition();
+                        var otherPosition = body.GetPosition();
+                        var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
+                        //Debug.Log($"{nameof(WithinRadius)} {Transform.name} other {body.Transform.name} radius {radius} pos {myPosition} other {otherPosition} closestPoint {Vector3.Distance(otherPosition, closestPointToOtherPosition)} dist {Vector3.Distance(myPosition, otherPosition)} ");
+                        if (myCollider != null && (Vector3.Distance(otherPosition, closestPointToOtherPosition) < radius || Vector3.Distance(myPosition, otherPosition) < radius))
+                            return true;
+                    }
+
                 }
             }
             else
