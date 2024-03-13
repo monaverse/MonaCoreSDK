@@ -1,3 +1,10 @@
+# MonaCoreSDK 0.4.0
+
+### Bug Fixes
+- Fixed Input lag
+- Fixed grounding. now more robust. detects grounding on other objects than ground.
+- fixed Rigidbody movement behaving abnormally. Moved movement into fixedupdate context.
+
 # MonaCoreSDK 0.3.0
 
 ### Bug Fixes
