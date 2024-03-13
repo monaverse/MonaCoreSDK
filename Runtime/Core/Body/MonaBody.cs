@@ -990,6 +990,7 @@ namespace Mona.SDK.Core.Body
                 ActiveRigidbody.isKinematic = true;
                 ActiveRigidbody.position = position;
                 ActiveRigidbody.isKinematic = was;
+                ActiveTransform.position = position;
             }
             else
                 ActiveTransform.position = position;
