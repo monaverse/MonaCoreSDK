@@ -112,7 +112,7 @@ namespace Mona.SDK.Core.Body
 
         bool HasMonaTag(string tag);
 
-        void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input);
+        void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs);
 
         bool HasControl();
         void TakeControl();

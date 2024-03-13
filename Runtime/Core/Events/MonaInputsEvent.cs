@@ -5,10 +5,10 @@ namespace Mona.SDK.Core.Events
 {
     public struct MonaInputsEvent
     {
-        public List<MonaInput> Inputs;
-        public MonaInputsEvent(List<MonaInput> inputs)
+        public MonaInput Input;
+        public MonaInputsEvent(MonaInput input)
         {
-            Inputs = inputs;
+            Input = input;
         }
     }
 }

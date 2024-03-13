@@ -500,12 +500,12 @@ namespace Mona.SDK.Core.Body
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
-        public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
+        public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
         {
             if(hasInput)
-                ApplyInput(input);
+                ApplyInputs(inputs);
 
-            FireFixedUpdateEvent(deltaTime, hasInput);
+            FireFixedUpdateEvent(deltaTime, false);
 
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
@@ -514,14 +514,12 @@ namespace Mona.SDK.Core.Body
             CalculateVelocity();
         }
 
-        public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
+        public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
         {
-            if (hasInput && inputs != null)
-            {
-                ApplyInputs(inputs);
-            }
+            if (hasInput)
+                ApplyInput(input);
 
-            FireFixedUpdateEvent(deltaTime, hasInput);
+            FireFixedUpdateEvent(deltaTime, false);
 
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
@@ -546,13 +544,14 @@ namespace Mona.SDK.Core.Body
                 _hasInput = _monaInputs.Count > 0;
                 if(_hasInput)
                 {
-                    if(_monaInputs.Count > 1) Debug.Log($"mona inputs count {_monaInputs.Count}");
-                    var input = _monaInputs[0];
-                    _monaInputs.RemoveAt(0);
-                    ApplyInput(input);
+                    if(_monaInputs.Count > 1) 
+                        Debug.Log($"mona inputs count {_monaInputs.Count}");
+                    ApplyInputs(_monaInputs);
+                    _monaInputs.Clear();
+                    _lastInput = default;
                 }
-
-                FireFixedUpdateEvent(evt.DeltaTime, _hasInput);
+                
+                FireFixedUpdateEvent(evt.DeltaTime, false);
 
                 ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
@@ -577,10 +576,7 @@ namespace Mona.SDK.Core.Body
         {
             if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0) return;
 
-            if (ActiveRigidbody != null)
-                _applyRotation = ActiveRigidbody.rotation;
-            else
-                _applyRotation = ActiveTransform.rotation;
+            _applyRotation = GetRotation();
 
             for (var i = 0; i < _rotationDeltas.Count; i++)
             {
@@ -590,10 +586,7 @@ namespace Mona.SDK.Core.Body
             _rotationDeltas.Clear();
 
 
-            if (ActiveRigidbody != null)
-                _applyPosition = ActiveRigidbody.position;
-            else
-                _applyPosition = ActiveTransform.position;
+            _applyPosition = GetPosition();
 
             for (var i = 0; i < _positionDeltas.Count; i++)
             {
@@ -642,15 +635,19 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private void ApplyInputs(List<MonaInput> inputs)
+        {
+            for (var i = 0; i < _monaInputs.Count; i++)
+            {
+                ApplyInput(_monaInputs[i]);
+            }
+        }
+
         private void ApplyInput(MonaInput input)
         {
             EventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(input));
+            FireBodyHasInputEvent();
         }    
-
-        private void ApplyInputs(List<MonaInput> inputs)
-        {
-            EventBus.Trigger(new EventHook(MonaCoreConstants.INPUTS_EVENT, (IMonaBody)this), new MonaInputsEvent(inputs));
-        }
 
         public bool Intersects(SphereCollider collider, bool includeTriggers = false)
         {
@@ -734,7 +731,7 @@ namespace Mona.SDK.Core.Body
         private MonaInput _lastInput;
         public void SetLocalInput(MonaInput input)
         {
-            if(_monaInputs.Count == 0 || !_lastInput.Equals(input))
+            if(!_lastInput.Equals(input))
             {
                 _lastInput = input;
                 _monaInputs.Add(input);
@@ -752,6 +749,11 @@ namespace Mona.SDK.Core.Body
         private void FireDespawnEvent()
         {
             EventBus.Trigger<MonaBodyDespawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodyDespawnedEvent((IMonaBody)this));
+        }
+
+        private void FireBodyHasInputEvent()
+        {
+            EventBus.Trigger<MonaBodyHasInputEvent>(new EventHook(MonaCoreConstants.MONA_BODY_HAS_INPUT_EVENT, (IMonaBody)this), new MonaBodyHasInputEvent());
         }
 
         private void FireFixedUpdateEvent(float deltaTime, bool hasInput)
@@ -947,28 +949,33 @@ namespace Mona.SDK.Core.Body
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
             position = PositionBounds.BindValue(position);
-            ActiveTransform.position = position;
+            if (ActiveRigidbody != null)
+                ActiveRigidbody.position = position;
+            else
+                ActiveTransform.position = position;
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
-            ActiveTransform.rotation = rotation;
+            if (ActiveRigidbody != null)
+                ActiveRigidbody.rotation = rotation;
+            else
+                ActiveTransform.rotation = rotation;
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
         public void SetPosition(Vector3 position, bool isNetworked = true)
         {
-            Vector3 currentPosition = ActiveTransform.position;
-            if (ActiveRigidbody != null)
-                currentPosition = ActiveRigidbody.position;
+            Vector3 currentPosition = GetPosition();
+            //Debug.Log($"{nameof(MonaBody)}.{nameof(SetPosition)} {position} delta: {position - currentPosition}");
             AddPosition(position - currentPosition, isNetworked);
         }
 
         public void TeleportScale(Vector3 scale, bool isNetworked = true)
         {
             ActiveTransform.localScale = scale;
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _rigidbody != null)
+            if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.transform.localScale = scale;
             }
