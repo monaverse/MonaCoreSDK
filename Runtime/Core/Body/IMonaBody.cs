@@ -34,6 +34,7 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
 
         MonaBodyTransformBounds PositionBounds { get; set; }
+        MonaBodyTransformBounds RotationBounds { get; set; }
 
         void AddRigidbody();
         void RemoveRigidbody();
@@ -59,6 +60,7 @@ namespace Mona.SDK.Core.Body
         void SetRotation(Quaternion rotation, bool isNetworked = true);
 
         void BindPosition();
+        void BindRotation();
 
         void TeleportPosition(Vector3 pos, bool isNetworked = true);
         void TeleportRotation(Quaternion rot, bool isNetworked = true);

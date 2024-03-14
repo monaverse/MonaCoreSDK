@@ -48,6 +48,7 @@ namespace Mona.SDK.Core.Body
         private Vector3 _initialScale = Vector3.one;
 
         private MonaBodyTransformBounds _positionBounds = new MonaBodyTransformBounds();
+        private MonaBodyTransformBounds _rotationBounds = new MonaBodyTransformBounds();
 
         public bool IsAttachedToRemotePlayer() => _attachType == MonaBodyAttachType.RemotePlayer;
         public bool IsAttachedToLocalPlayer() => _attachType == MonaBodyAttachType.LocalPlayer;
@@ -71,6 +72,7 @@ namespace Mona.SDK.Core.Body
         public Vector3 InitialScale => _initialScale;
 
         public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
+        public MonaBodyTransformBounds RotationBounds { get => _rotationBounds; set => _rotationBounds = value; }
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -606,7 +608,8 @@ namespace Mona.SDK.Core.Body
             }
             _positionDeltas.Clear();
 
-            _applyPosition = PositionBounds.BindValue(_applyPosition);
+            _applyPosition = _positionBounds.BindValue(_applyPosition);
+            _applyRotation = _rotationBounds.BindValue(_applyRotation, ActiveTransform);
 
             if(ActiveRigidbody != null)
             {
@@ -994,12 +997,17 @@ namespace Mona.SDK.Core.Body
 
         public void BindPosition()
         {
-            ActiveTransform.position = PositionBounds.BindValue(ActiveTransform.position);
+            ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
+        }
+
+        public void BindRotation()
+        {
+            ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
         }
 
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
-            position = PositionBounds.BindValue(position);
+            position = _positionBounds.BindValue(position);
             if (ActiveRigidbody != null)
             {
                 var was = ActiveRigidbody.isKinematic;
@@ -1015,6 +1023,7 @@ namespace Mona.SDK.Core.Body
 
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
+            rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
             if (ActiveRigidbody != null)
             {
                 ActiveRigidbody.rotation = rotation;

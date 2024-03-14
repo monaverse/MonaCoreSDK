@@ -122,6 +122,8 @@ namespace Mona.SDK.Core.Body
             }
 
             _body.BindPosition();
+            _body.BindRotation();
+            
             _previousPosition = _body.GetCenter();
         }
     }
