@@ -70,6 +70,7 @@ namespace Mona.SDK.Core.Body
         public Quaternion InitialRotation => _initialRotation;
         public Quaternion InitialLocalRotation => _initialLocalRotation;
         public Vector3 InitialScale => _initialScale;
+        public Vector3 CurrentVelocity => ActiveRigidbody != null && !ActiveRigidbody.isKinematic ? ActiveRigidbody.velocity : _transformVelocity;
 
         public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
         public MonaBodyTransformBounds RotationBounds { get => _rotationBounds; set => _rotationBounds = value; }
@@ -186,7 +187,7 @@ namespace Mona.SDK.Core.Body
         public void SetAngularVelocity(Vector3 velocity)
         {
             if (ActiveRigidbody != null)
-                ActiveRigidbody.velocity = velocity;
+                ActiveRigidbody.angularVelocity = velocity;
         }
 
         public void SetFriction(float friction)
@@ -520,11 +521,15 @@ namespace Mona.SDK.Core.Body
 
             FireFixedUpdateEvent(deltaTime, false);
 
+            SetGroundedState();
+            CalculateVelocity(deltaTime, false);
+            ApplyGroundingObjectVelocity();
+
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplySetActive();
-            CalculateVelocity();
+            CalculateVelocity(deltaTime, true);
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
@@ -534,17 +539,16 @@ namespace Mona.SDK.Core.Body
 
             FireFixedUpdateEvent(deltaTime, false);
 
+            SetGroundedState();
+            CalculateVelocity(deltaTime, false);
+            ApplyGroundingObjectVelocity();
+
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
+            ApplyGroundingObjectVelocity();
             ApplySetActive();
-            CalculateVelocity();
-        }
-
-        private void CalculateVelocity()
-        {
-            _transformVelocity = GetPosition() - _lastPosition;
-            _lastPosition = GetPosition();
+            CalculateVelocity(deltaTime, true);
         }
 
         public void StateAuthorityChanged() => FireStateAuthorityChanged();
@@ -563,18 +567,73 @@ namespace Mona.SDK.Core.Body
                     _monaInputs.Clear();
                     _lastInput = default;
                 }
-                
+
                 FireFixedUpdateEvent(evt.DeltaTime, false);
+
+                SetGroundedState();
+                CalculateVelocity(evt.DeltaTime, false);
+                ApplyGroundingObjectVelocity();
 
                 ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
+
                 ApplySetActive();
-                CalculateVelocity();
+                CalculateVelocity(evt.DeltaTime, true);
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
             }
+        }
+
+        private void CalculateVelocity(float deltaTime, bool setLastPosition)
+        {
+            _transformVelocity = (GetPosition() - _lastPosition) / deltaTime;
+
+            if (setLastPosition)
+                _lastPosition = GetPosition();
+        }
+
+        private void SetGroundedState()
+        {
+            if (ActiveRigidbody == null)
+                return;
+
+            _grounded = false;
+
+            var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f);
+
+            if (hitCount > 0)
+            {
+                for (var i = 0; i < hitCount; i++)
+                {
+                    if (!_colliders.Contains(_results[i].collider))
+                    {
+                        _grounded = true;
+
+                        if (_cachedGroundingObject.transform != _results[i].collider.transform)
+                            _cachedGroundingObject.Initialize(_results[i].collider.transform, this);
+
+                        break;
+                    }
+                }
+            }
+
+            if (!_grounded && _cachedGroundingObject.TrackingObject)
+                _cachedGroundingObject = new GroundingObject();
+        }
+
+        private void ApplyGroundingObjectVelocity()
+        {
+            if (!_grounded || !_cachedGroundingObject.TrackingObject)
+                return;
+
+            Vector3 adjustedVelocity = _cachedGroundingObject.AdjustedRiderVelocity;
+
+            if (Mathf.Approximately(adjustedVelocity.magnitude, 0f))
+                return;
+
+            ActiveRigidbody.velocity = adjustedVelocity;
         }
 
         private Vector3 _applyPosition;
@@ -620,7 +679,7 @@ namespace Mona.SDK.Core.Body
                 else
                 {
                     ActiveRigidbody.position = _applyPosition;
-                    ActiveRigidbody.rotation = _applyRotation;
+                    ActiveRigidbody.rotation = _applyRotation.normalized;
                 }
             }
             else
@@ -737,34 +796,17 @@ namespace Mona.SDK.Core.Body
         }
 
         private RaycastHit[] _results = new RaycastHit[10];
+        private GroundingObject _cachedGroundingObject = new GroundingObject();
+
         private void ApplyDrag()
         {
             if (ActiveRigidbody != null)
             {
-                if(_onlyApplyDragWhenGrounded)
+                if(_onlyApplyDragWhenGrounded && !_grounded)
                 {
-                    _grounded = false;
-                    //var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
-                    //Debug.Log($"Raycast {_baseOffset} {GetPosition()}");
-                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f);
-                    if (hitCount > 0)
-                    {
-                        for(var i = 0;i < hitCount; i++)
-                        {
-                            if (!_colliders.Contains(_results[i].collider))
-                                _grounded = true;
-                        }
-                        //Debug.Log($"Raycast hit {hit.collider} {_colliders.Contains(hit.collider)}");
-                        //_grounded = true;
-                    }
-
-                    if(!_grounded)
-                    {
-                        ActiveRigidbody.drag = 0;
-                        ActiveRigidbody.angularDrag = 0;
-                        //Debug.Log($"no drag");
-                        return;
-                    }
+                    ActiveRigidbody.drag = 0;
+                    ActiveRigidbody.angularDrag = 0;
+                    return;
                 }
 
                 if (_dragType == DragType.Linear)

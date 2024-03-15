@@ -32,6 +32,7 @@ namespace Mona.SDK.Core.Body
         Quaternion InitialRotation { get; }
         Quaternion InitialLocalRotation { get; }
         Vector3 InitialScale { get; }
+        Vector3 CurrentVelocity { get; }
 
         MonaBodyTransformBounds PositionBounds { get; set; }
         MonaBodyTransformBounds RotationBounds { get; set; }

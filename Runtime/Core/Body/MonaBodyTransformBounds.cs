@@ -134,18 +134,17 @@ namespace Mona.SDK.Core.Body
 
         private float GetAdjustedAngle(float angle)
         {
-            return angle % 360f;
-            //angle = angle % 360;
-            //
-            //if (angle < -180)
-            //{
-            //    angle += 360;
-            //}
-            //if (angle > 180)
-            //{
-            //    angle -= 360;
-            //}
-            //return angle;
+            angle = angle % 360;
+
+            if (angle < -180)
+            {
+                angle += 360;
+            }
+            if (angle > 180)
+            {
+                angle -= 360;
+            }
+            return angle;
         }
     }
 }
