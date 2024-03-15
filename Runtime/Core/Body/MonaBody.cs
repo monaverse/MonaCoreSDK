@@ -185,8 +185,8 @@ namespace Mona.SDK.Core.Body
 
         public void SetAngularVelocity(Vector3 velocity)
         {
-            if (ActiveRigidbody != null)
-                ActiveRigidbody.velocity = velocity;
+            if (ActiveRigidbody != null && !ActiveRigidbody.isKinematic)
+                ActiveRigidbody.angularVelocity = velocity;
         }
 
         public void SetFriction(float friction)
@@ -276,13 +276,16 @@ namespace Mona.SDK.Core.Body
         }
 
         private Vector3 _baseOffset;
+        private bool _hasCharacterController;
         public void CacheColliders()
         {
             _colliders = new List<Collider>();
             _triggers = new List<Collider>();
             var colliders = GetComponentsInChildren<Collider>();
-            var pos = GetPosition() - Vector3.up * 100f;
-            _baseOffset = pos;
+            var referencePosition = GetPosition() - Vector3.up * 100f;
+            _baseOffset = referencePosition;
+            _hasCharacterController = false;
+            var closestDistance = Mathf.Infinity;
             for (var i = 0; i < colliders.Length; i++)
             {
                 var collider = colliders[i];
@@ -294,9 +297,17 @@ namespace Mona.SDK.Core.Body
                     {
                         _colliders.Add(collider);
 
-                        var closest = collider.ClosestPoint(pos);
-                        if (Vector3.Distance(closest, GetPosition()) < Vector3.Distance(_baseOffset, GetPosition()))
+                        if (collider is CharacterController)
+                            _hasCharacterController = true;
+
+                        var radius = (collider is CharacterController) ? ((CharacterController)collider).radius : 0f;
+                        var closest = collider.ClosestPoint(referencePosition) - Vector3.up*radius;
+                        var distanceToReference = Vector3.Distance(closest, referencePosition);
+                        if (distanceToReference < closestDistance)
+                        {
+                            closestDistance = distanceToReference;
                             _baseOffset = closest;
+                        }
                     }
 
                 }
@@ -733,26 +744,29 @@ namespace Mona.SDK.Core.Body
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up*.02f);
+            Gizmos.DrawRay(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up*.2f);
         }
 
         private RaycastHit[] _results = new RaycastHit[10];
         private void ApplyDrag()
         {
-            if (ActiveRigidbody != null)
+            if (ActiveRigidbody != null || _hasCharacterController)
             {
                 if(_onlyApplyDragWhenGrounded)
                 {
                     _grounded = false;
                     //var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
                     //Debug.Log($"Raycast {_baseOffset} {GetPosition()}");
-                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f);
+                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.2f);
                     if (hitCount > 0)
                     {
                         for(var i = 0;i < hitCount; i++)
                         {
-                            if (!_colliders.Contains(_results[i].collider))
+                            if (!_colliders.Contains(_results[i].collider) && (Mathf.Approximately(Mathf.Abs(_transformVelocity.y), 0) || _results[i].distance < 0.04f))
+                            {
                                 _grounded = true;
+                                break;
+                            }
                         }
                         //Debug.Log($"Raycast hit {hit.collider} {_colliders.Contains(hit.collider)}");
                         //_grounded = true;
@@ -760,8 +774,11 @@ namespace Mona.SDK.Core.Body
 
                     if(!_grounded)
                     {
-                        ActiveRigidbody.drag = 0;
-                        ActiveRigidbody.angularDrag = 0;
+                        if (ActiveRigidbody != null)
+                        {
+                            ActiveRigidbody.drag = 0;
+                            ActiveRigidbody.angularDrag = 0;
+                        }
                         //Debug.Log($"no drag");
                         return;
                     }
@@ -770,14 +787,20 @@ namespace Mona.SDK.Core.Body
                 if (_dragType == DragType.Linear)
                 {
                     //Debug.Log($"apply drag {_drag} {_angularDrag} {_dragDivisor} {_angularDragDivisor}");
-                    ActiveRigidbody.drag = _drag;
-                    ActiveRigidbody.angularDrag = _angularDrag;
+                    if (ActiveRigidbody != null)
+                    {
+                        ActiveRigidbody.drag = _drag;
+                        ActiveRigidbody.angularDrag = _angularDrag;
+                    }
                 }
                 else
                 {
                     //Debug.Log($"apply drag {_drag} {_angularDrag} {_dragDivisor} {_angularDragDivisor}");
-                    ActiveRigidbody.drag = _drag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _dragDivisor);
-                    ActiveRigidbody.angularDrag = _angularDrag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _angularDragDivisor);
+                    if (ActiveRigidbody != null)
+                    {
+                        ActiveRigidbody.drag = _drag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _dragDivisor);
+                        ActiveRigidbody.angularDrag = _angularDrag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _angularDragDivisor);
+                    }
                 }
             }
         }
@@ -921,12 +944,12 @@ namespace Mona.SDK.Core.Body
         {
             if (ActiveRigidbody != null && ActiveRigidbody.isKinematic != isKinematic)
             {
-                ActiveRigidbody.isKinematic = isKinematic;
-                if (isKinematic)
+                if (!ActiveRigidbody.isKinematic && isKinematic)
                 {
                     ActiveRigidbody.velocity = Vector3.zero;
                     ActiveRigidbody.angularVelocity = Vector3.zero;
                 }
+                ActiveRigidbody.isKinematic = isKinematic;
                 if (isNetworked) _networkBody?.SetKinematic(isKinematic);
             }
         }
