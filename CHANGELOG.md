@@ -1,3 +1,7 @@
+# MonaCoreSDK 0.5.0
+
+**Full Changelog**: https://github.com/monaverse/MonaCoreSDK/compare/0.4.0...0.5.0
+
 # MonaCoreSDK 0.4.0
 
 ### Bug Fixes
