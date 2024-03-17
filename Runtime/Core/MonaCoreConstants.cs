@@ -4,6 +4,7 @@
     {
         public const string TAG_PLAYER = "Player";
         public const string TAG_SPACE = "Space";
+        public const string TAG_PORTAL = "Portal";
         public const string LAYER_LOCAL_PLAYER = "LocalPlayer";
         public const string LAYER_DEFAULT = "Default";
         public const string LAYER_PHYSICS_GROUP_A = "PhysicsGroupA";
@@ -32,6 +33,8 @@
         public const string ON_PLAYER_LEFT_EVENT = "OnPlayerLeftEvent";
         public const string ON_PLAYER_NAME_EVENT = "OnPlayerNameEvent";
         public const string ON_PLAYER_INPUT_EVENT = "OnPlayerInputEvent";
+
+        public const string ON_PORTAL_CHANGE_EVENT = "OnPortalChangeEvent";
 
         public const string FLOAT_TYPE_LABEL = "Number";
         public const string STRING_TYPE_LABEL = "String";
