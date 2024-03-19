@@ -465,7 +465,7 @@ namespace Mona.SDK.Core.Body
             MonaBodies.Add(this);
             var parents = new List<IMonaBody>(GetComponentsInParent<IMonaBody>(true));
             parents.Remove(this);
-            
+
             var foundParentBody = false;
             for (var i = 0; i < parents.Count; i++)
             {
@@ -689,7 +689,12 @@ namespace Mona.SDK.Core.Body
 
             if(ActiveRigidbody != null)
             {
-                if (ActiveRigidbody.isKinematic)
+                if(Parent != null)
+                {
+                    ActiveTransform.position = _applyPosition;
+                    ActiveTransform.rotation = _applyRotation;
+                }
+                else if (ActiveRigidbody.isKinematic)
                 {
                     ActiveRigidbody.Move(_applyPosition, _applyRotation);
                 }
