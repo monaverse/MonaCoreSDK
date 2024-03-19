@@ -579,6 +579,9 @@ namespace Mona.SDK.Core.Body
                     _lastInput = default;
                 }
 
+                BindPosition();
+                BindRotation();
+
                 FireFixedUpdateEvent(evt.DeltaTime, false);
 
                 SetGroundedState();
@@ -591,6 +594,8 @@ namespace Mona.SDK.Core.Body
 
                 ApplySetActive();
                 CalculateVelocity(evt.DeltaTime, true);
+
+                
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
@@ -677,7 +682,8 @@ namespace Mona.SDK.Core.Body
                 ApplyAddPosition(position.Direction);
             }
             _positionDeltas.Clear();
-
+            
+            
             _applyPosition = _positionBounds.BindValue(_applyPosition);
             _applyRotation = _rotationBounds.BindValue(_applyRotation, ActiveTransform);
 
@@ -1081,12 +1087,18 @@ namespace Mona.SDK.Core.Body
 
         public void BindPosition()
         {
-            ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
+            if (ActiveRigidbody != null)
+                ActiveRigidbody.position = _positionBounds.BindValue(ActiveTransform.position);
+            else
+                ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
         }
 
         public void BindRotation()
         {
-            ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
+            if (ActiveRigidbody != null)
+                ActiveRigidbody.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
+            else
+                ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
         }
 
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
