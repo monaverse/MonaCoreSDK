@@ -109,6 +109,10 @@ namespace Mona.SDK.Core.Body
         Transform FindChildTransformByTag(string tag);
         List<IMonaBody> FindChildrenByTag(string tag);
         List<IMonaBody> Children();
+        List<IMonaBody> GetTagsByDistance(string tag);
+        IMonaBody GetClosestTag(string tag);
+        IMonaBody GetFurthestTag(string tag);
+        IMonaBody GetNextTag(string tag, float closestExludedDistance);
 
         void RegisterAsChild(IMonaBody body);
         void UnregisterAsChild(IMonaBody body);

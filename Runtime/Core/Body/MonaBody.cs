@@ -1216,5 +1216,49 @@ namespace Mona.SDK.Core.Body
             return ActiveTransform.localScale;
         }
 
+        public List<IMonaBody> GetTagsByDistance(string tag)
+        {
+            var tags = FindByTag(tag);
+
+            if (tags.Count < 1)
+                return tags;
+
+            tags.Sort((a, b) =>
+            {
+                var dista = Vector3.Distance(GetPosition(), a.GetPosition());
+                var distb = Vector3.Distance(GetPosition(), b.GetPosition());
+                return dista.CompareTo(distb);
+            });
+
+            return tags;
+        }
+
+        public IMonaBody GetClosestTag(string tag)
+        {
+            var tags = GetTagsByDistance(tag);
+
+            return tags.Count > 0 ? tags[1] : null;
+        }
+
+        public IMonaBody GetFurthestTag(string tag)
+        {
+            var tags = GetTagsByDistance(tag);
+            return tags.Count > 0 ? tags[tags.Count -1] : null;
+        }
+
+        public IMonaBody GetNextTag(string tag, float closestExludedDistance)
+        {
+            var tags = GetTagsByDistance(tag);
+
+            if (tags.Count < 1)
+                return null;
+
+            if (tags.Count == 1)
+                return tags[0];
+
+            float distanceToClosest = Vector3.Distance(GetPosition(), tags[0].GetPosition());
+
+            return distanceToClosest > closestExludedDistance ? tags[0] : tags[1];
+        }
     }
 }
