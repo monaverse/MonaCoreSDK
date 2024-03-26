@@ -1342,7 +1342,7 @@ namespace Mona.SDK.Core.Body
         {
             var tags = GetTagsByDistance(tag);
 
-            return tags.Count > 0 ? tags[1] : null;
+            return tags.Count > 0 ? tags[0] : null;
         }
 
         public IMonaBody GetFurthestTag(string tag)
