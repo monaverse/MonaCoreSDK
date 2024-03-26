@@ -1092,6 +1092,70 @@ namespace Mona.SDK.Core.Body
             return _color;
         }
 
+        public void SetShaderColor(string propertyName, Color color)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                _renderers[i].material.SetColor(propertyName, color);
+        }
+
+        public void SetShaderVector(string propertyName, Vector4 value)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                _renderers[i].material.SetVector(propertyName, value);
+        }
+
+        public void SetShaderVectorArray(string propertyName, Vector4[] value)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                _renderers[i].material.SetVectorArray(propertyName, value);
+        }
+
+        public void SetShaderFloat(string propertyName, float value)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                _renderers[i].material.SetFloat(propertyName, value);
+        }
+
+        public void SetShaderInteger(string propertyName, int value)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                _renderers[i].material.SetInt(propertyName, value);
+        }
+
+        public Color GetShaderColor(string propertyName)
+        {
+            if (_renderers.Length > 0)
+                return _renderers[0].material.GetColor(propertyName);
+            return Color.white;
+        }
+
+        public Vector4 GetShaderVector(string propertyName)
+        {
+            if (_renderers.Length > 0)
+                return _renderers[0].material.GetVector(propertyName);
+            return Vector4.zero;
+        }
+
+        public Vector4[] GetShaderVectorArray(string propertyName)
+        {
+            if (_renderers.Length > 0)
+                return _renderers[0].material.GetVectorArray(propertyName);
+            return new Vector4[0];
+        }
+
+        public float GetShaderFloat(string propertyName)
+        {
+            if (_renderers.Length > 0)
+                return _renderers[0].material.GetFloat(propertyName);
+            return 0f;
+        }
+
+        public int GetShaderInteger(string propertyName)
+        {
+            if (_renderers.Length > 0)
+                return _renderers[0].material.GetInteger(propertyName);
+            return 0;
+        }
 
         public void SetVisible(bool vis, bool isNetworked = true)
         {

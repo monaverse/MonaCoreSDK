@@ -102,6 +102,18 @@ namespace Mona.SDK.Core.Body
         void SetSharedMaterial(Material material, int rendererIndex, int materialIndex = -1);
         void SetTexture(Texture texture, string textureSlot, bool sharedMaterial);
 
+        void SetShaderColor(string propertyName, Color value);
+        void SetShaderVector(string propertyName, Vector4 value);
+        void SetShaderVectorArray(string propertyName, Vector4[] value);
+        void SetShaderFloat(string propertyName, float value);
+        void SetShaderInteger(string propertyName, int value);
+
+        Color GetShaderColor(string propertyName);
+        Vector4 GetShaderVector(string propertyName);
+        Vector4[] GetShaderVectorArray(string propertyName);
+        float GetShaderFloat(string propertyName);
+        int GetShaderInteger(string propertyName);
+
         Color GetColor();
         bool GetVisible();
         bool GetActive();
