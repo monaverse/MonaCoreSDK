@@ -100,6 +100,7 @@ namespace Mona.SDK.Core.Body
         void SetSharedMaterial(Material material);
         void SetMaterial(Material material, int rendererIndex, int materialIndex = -1);
         void SetSharedMaterial(Material material, int rendererIndex, int materialIndex = -1);
+        void SetTexture(Texture texture, string textureSlot, bool sharedMaterial);
 
         Color GetColor();
         bool GetVisible();

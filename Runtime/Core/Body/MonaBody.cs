@@ -491,6 +491,15 @@ namespace Mona.SDK.Core.Body
                 renderer.sharedMaterials[materialSlot] = material;
         }
 
+        public void SetTexture(Texture texture, string textureSlot, bool sharedMaterial)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+            {
+                var material = _renderers[i].sharedMaterial;
+                if (!sharedMaterial) material = _renderers[i].material;
+                material.SetTexture(textureSlot, texture);
+            }
+        }
 
         private void RegisterInParents()
         {

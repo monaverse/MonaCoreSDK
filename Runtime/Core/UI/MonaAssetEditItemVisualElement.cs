@@ -26,6 +26,7 @@ namespace Mona.SDK.Core.UIElements
         protected ObjectField _wearableField;
         protected ObjectField _avatarField;
         protected ObjectField _audioField;
+        protected ObjectField _textureField;
         protected ObjectField _materialField;
         protected ObjectField _animationField;
 #endif
@@ -128,6 +129,14 @@ namespace Mona.SDK.Core.UIElements
                     ((IMonaMaterialAssetItem)_assets.AllAssets[_index]).Value = (Material)evt.newValue;
             });
 
+            _textureField = new ObjectField();
+            _textureField.style.flexGrow = 1;
+            _textureField.RegisterValueChangedCallback((evt) =>
+            {
+                if (_assets.AllAssets[_index] is IMonaTextureAssetItem)
+                    ((IMonaTextureAssetItem)_assets.AllAssets[_index]).Value = (Texture)evt.newValue;
+            });
+
             _animationField = new ObjectField();
             _animationField.style.flexGrow = 1;
             _animationField.RegisterValueChangedCallback((evt) =>
@@ -222,6 +231,13 @@ namespace Mona.SDK.Core.UIElements
                 _materialField.objectType = typeof(Material);
                 _materialField.value = ((IMonaMaterialAssetItem)value).Value;
                 _materialField.SetEnabled(true);
+            }
+            else if (value is IMonaTextureAssetItem)
+            {
+                Add(_textureField);
+                _textureField.objectType = typeof(Texture);
+                _textureField.value = ((IMonaTextureAssetItem)value).Value;
+                _textureField.SetEnabled(true);
             }
             else if (value is IMonaAnimationAssetItem)
             {
