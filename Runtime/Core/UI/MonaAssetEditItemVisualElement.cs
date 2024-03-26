@@ -26,6 +26,7 @@ namespace Mona.SDK.Core.UIElements
         protected ObjectField _wearableField;
         protected ObjectField _avatarField;
         protected ObjectField _audioField;
+        protected ObjectField _materialField;
         protected ObjectField _animationField;
 #endif
         private Toggle _avatarUseUrlField;
@@ -119,6 +120,14 @@ namespace Mona.SDK.Core.UIElements
                     ((IMonaAudioAssetItem)_assets.AllAssets[_index]).Value = (AudioClip)evt.newValue;
             });
 
+            _materialField = new ObjectField();
+            _materialField.style.flexGrow = 1;
+            _materialField.RegisterValueChangedCallback((evt) =>
+            {
+                if (_assets.AllAssets[_index] is IMonaMaterialAssetItem)
+                    ((IMonaMaterialAssetItem)_assets.AllAssets[_index]).Value = (Material)evt.newValue;
+            });
+
             _animationField = new ObjectField();
             _animationField.style.flexGrow = 1;
             _animationField.RegisterValueChangedCallback((evt) =>
@@ -206,6 +215,13 @@ namespace Mona.SDK.Core.UIElements
                 _audioField.objectType = typeof(AudioClip);
                 _audioField.value = ((IMonaAudioAssetItem)value).Value;
                 _audioField.SetEnabled(true);
+            }
+            else if (value is IMonaMaterialAssetItem)
+            {
+                Add(_materialField);
+                _materialField.objectType = typeof(Material);
+                _materialField.value = ((IMonaMaterialAssetItem)value).Value;
+                _materialField.SetEnabled(true);
             }
             else if (value is IMonaAnimationAssetItem)
             {

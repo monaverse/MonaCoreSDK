@@ -224,6 +224,7 @@ namespace Mona.SDK.Core.Body
         private bool _mockNetwork;
 
         private Renderer[] _renderers;
+        public Renderer[] Renderers => _renderers;
 
         private void Awake()
         {
@@ -459,6 +460,37 @@ namespace Mona.SDK.Core.Body
             UnregisterInParents();
             RemoveDelegates();
         }
+
+        public void SetMaterial(Material material)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                SetMaterial(material, i);
+        }
+
+        public void SetSharedMaterial(Material material)
+        {
+            for (var i = 0; i < _renderers.Length; i++)
+                SetSharedMaterial(material, i);
+        }
+
+        public void SetMaterial(Material material, int rendererIndex, int materialSlot = -1)
+        {
+            var renderer = _renderers[rendererIndex];
+            if (materialSlot == -1)
+                renderer.material = material;
+            else
+                renderer.materials[materialSlot] = material;
+        }
+
+        public void SetSharedMaterial(Material material, int rendererIndex, int materialSlot = -1)
+        {
+            var renderer = _renderers[rendererIndex];
+            if (materialSlot == -1)
+                renderer.sharedMaterial = material;
+            else
+                renderer.sharedMaterials[materialSlot] = material;
+        }
+
 
         private void RegisterInParents()
         {

@@ -34,6 +34,8 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
         Vector3 CurrentVelocity { get; }
 
+        Renderer[] Renderers { get; }
+
         MonaBodyTransformBounds PositionBounds { get; set; }
         MonaBodyTransformBounds RotationBounds { get; set; }
 
@@ -93,6 +95,11 @@ namespace Mona.SDK.Core.Body
         void SetOnlyApplyDragWhenGrounded(bool apply);
 
         void SetAnimator(Animator animator);
+
+        void SetMaterial(Material material);
+        void SetSharedMaterial(Material material);
+        void SetMaterial(Material material, int rendererIndex, int materialIndex = -1);
+        void SetSharedMaterial(Material material, int rendererIndex, int materialIndex = -1);
 
         Color GetColor();
         bool GetVisible();
