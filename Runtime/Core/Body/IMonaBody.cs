@@ -68,6 +68,7 @@ namespace Mona.SDK.Core.Body
         void TeleportPosition(Vector3 pos, bool isNetworked = true);
         void TeleportRotation(Quaternion rot, bool isNetworked = true);
         void TeleportScale(Vector3 scale, bool isNetworked = true);
+        void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool isNetworked = true);
 
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);

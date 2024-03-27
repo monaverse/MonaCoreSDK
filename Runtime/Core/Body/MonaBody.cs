@@ -1256,6 +1256,23 @@ namespace Mona.SDK.Core.Body
             if (isNetworked) _networkBody?.TeleportScale(scale);
         }
 
+        public void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool isNetworked = true)
+        {
+            position = _positionBounds.BindValue(position);
+            rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
+
+            ActiveTransform.position = _initialLocalPosition = position;
+            ActiveTransform.rotation = _initialLocalRotation = rotation;
+            ActiveTransform.localScale = _initialScale = scale;
+
+            if (isNetworked)
+            {
+                _networkBody?.TeleportPosition(position);
+                _networkBody?.TeleportRotation(rotation);
+                _networkBody?.TeleportScale(scale);
+            }
+        }
+
         public void AddPosition(Vector3 dir, bool isNetworked = true)
         {
             _positionDeltas.Add(new MonaBodyDirection() { Direction = dir });
