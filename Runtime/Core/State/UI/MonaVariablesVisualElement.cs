@@ -28,15 +28,17 @@ namespace Mona.SDK.Core.State.UIElements
             header.Add(new Label("Value"));
             header.ElementAt(0).style.width = 80;
             header.ElementAt(0).style.marginRight = 5;
+            header.ElementAt(0).style.marginLeft = 30;
             header.ElementAt(1).style.width = 100;
             header.ElementAt(1).style.marginRight = 5;
             Add(header);
 
-            _list = new ListView(null, 28, () => new MonaVariablesItemVisualElement(callback), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));
+            _list = new ListView(null, 26, () => new MonaVariablesItemVisualElement(callback), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));
             //_list.virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight;
             _list.showFoldoutHeader = false;
             _list.showAddRemoveFooter = true;
-            _list.reorderable = false;
+            _list.reorderMode = ListViewReorderMode.Animated;
+            _list.reorderable = true;
             _list.itemsAdded += (items) =>
             {
                 foreach (var e in items)
