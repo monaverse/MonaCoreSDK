@@ -377,11 +377,11 @@ namespace Mona.SDK.Core.Body
 
         private void SetInitialTransforms()
         {
-            _initialPosition = transform.position;
-            _initialLocalPosition = transform.localPosition;
-            _initialRotation = transform.rotation;
-            _initialLocalRotation = transform.localRotation;
-            _initialScale = transform.localScale;
+            _initialPosition = ActiveTransform.position;
+            _initialLocalPosition = ActiveTransform.localPosition;
+            _initialRotation = ActiveTransform.rotation;
+            _initialLocalRotation = ActiveTransform.localRotation;
+            _initialScale = ActiveTransform.localScale;
         }
 
         private void RemoveDelegates()
@@ -1261,8 +1261,12 @@ namespace Mona.SDK.Core.Body
             position = _positionBounds.BindValue(position);
             rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
 
-            ActiveTransform.position = _initialLocalPosition = position;
-            ActiveTransform.rotation = _initialLocalRotation = rotation;
+            ActiveTransform.position = _initialPosition = position;
+            _initialLocalPosition = ActiveTransform.localPosition;
+
+            ActiveTransform.rotation = _initialRotation = rotation;
+            _initialLocalRotation = ActiveTransform.localRotation;
+
             ActiveTransform.localScale = _initialScale = scale;
 
             if (isNetworked)
