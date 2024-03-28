@@ -11,6 +11,7 @@ namespace Mona.SDK.Core.Assets.Interfaces
         List<IMonaAssetItem> AllAssets { get; }
         List<string> DefaultNames { get; }
         List<string> AllNames { get;  }
+        IMonaAssetItem TakeTopCardOffDeck(bool shuffleIfEmpty);
         IMonaAssetItem GetMonaAsset(string prefabId);
         IMonaAssetItem GetMonaAssetByIndex(int index);
         IMonaAssetItem CreateAsset(string name, Type type, int i);

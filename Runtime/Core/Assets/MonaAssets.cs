@@ -82,5 +82,24 @@ namespace Mona.SDK.Core.Assets
         public List<IMonaAudioAssetItem> GetMonaAudioClips() => _monaAssets.FindAll(x => x is IMonaBodyAssetItem).ConvertAll<IMonaAudioAssetItem>(x => (IMonaAudioAssetItem)x);
         public List<IMonaAnimationAssetItem> GetMonaAnimations() => _monaAssets.FindAll(x => x is IMonaBodyAssetItem).ConvertAll<IMonaAnimationAssetItem>(x => (IMonaAnimationAssetItem)x);
 
+        private List<IMonaAssetItem> _deck = new List<IMonaAssetItem>();
+        public IMonaAssetItem TakeTopCardOffDeck(bool shuffleIfEmpty)
+        {
+            if(_deck.Count == 0)
+            {
+                _deck.AddRange(_monaAssets);
+                if(shuffleIfEmpty)
+                {
+                    _deck.Sort((a, b) => UnityEngine.Random.Range(-1, 2));
+                    _deck.Sort((a, b) => UnityEngine.Random.Range(-1, 2));
+                    _deck.Sort((a, b) => UnityEngine.Random.Range(-1, 2));
+                }
+            }
+
+            var item = _deck[_deck.Count - 1];
+            _deck.RemoveAt(_deck.Count - 1);
+            return item;
+        }
+
     }
 }
