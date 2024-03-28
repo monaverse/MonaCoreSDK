@@ -375,7 +375,7 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        private void SetInitialTransforms()
+        public void SetInitialTransforms()
         {
             _initialPosition = ActiveTransform.position;
             _initialLocalPosition = ActiveTransform.localPosition;
@@ -1268,6 +1268,10 @@ namespace Mona.SDK.Core.Body
             _initialLocalRotation = ActiveTransform.localRotation;
 
             ActiveTransform.localScale = _initialScale = scale;
+
+            for (var i = 0; i < _childMonaBodies.Count; i++)
+                _childMonaBodies[i].SetInitialTransforms();
+
 
             if (isNetworked)
             {

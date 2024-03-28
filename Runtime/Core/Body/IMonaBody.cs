@@ -82,6 +82,7 @@ namespace Mona.SDK.Core.Body
 
         bool WithinRadius(IMonaBody body, float radius, bool includeTriggers = false);
 
+        void SetInitialTransforms();
 
         void SetLocalInput(MonaInput input);
 
