@@ -32,6 +32,7 @@ namespace Mona.SDK.Core.State
         IMonaBody GetBody(string variableName);
         Vector2 GetVector2(string variableName);
         Vector3 GetVector3(string variableName);
+        string GetValueAsString(string variableName);
     }
 
 }

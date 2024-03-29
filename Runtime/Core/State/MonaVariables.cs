@@ -207,6 +207,24 @@ namespace Mona.SDK.Core.State
             return ((IMonaVariablesVector3Value)prop).Value;
         }
 
+        public string GetValueAsString(string variableName)
+        {
+            var variable = GetVariable(variableName);
+
+            if (variable is IMonaVariablesFloatValue)
+                return ((IMonaVariablesFloatValue)variable).Value.ToString();
+            else if (variable is IMonaVariablesStringValue)
+                return ((IMonaVariablesStringValue)variable).Value;
+            else if (variable is IMonaVariablesBoolValue)
+                return ((IMonaVariablesBoolValue)variable).Value.ToString();
+            else if (variable is IMonaVariablesVector2Value)
+                return ((IMonaVariablesVector2Value)variable).Value.ToString();
+            else if (variable is IMonaVariablesVector3Value)
+                return ((IMonaVariablesVector3Value)variable).Value.ToString();
+
+            return string.Empty;
+        }
+
         public void SetNetworkVariables(INetworkMonaVariables state)
         {
             _networkState = state;
