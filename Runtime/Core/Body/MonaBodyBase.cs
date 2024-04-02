@@ -141,7 +141,7 @@ namespace Mona.SDK.Core.Body
             _localPlayerId = playerId;
             _localId = null;
             CalculateLocalIdOnCount();
-            Debug.Log($"{nameof(MonaBody)}.{nameof(MakeUnique)} {_localId}");
+            //Debug.Log($"{nameof(MonaBody)}.{nameof(MakeUnique)} {_localId}");
         }
 
     }
