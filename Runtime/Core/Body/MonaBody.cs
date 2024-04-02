@@ -39,6 +39,7 @@ namespace Mona.SDK.Core.Body
         private bool _onlyApplyDragWhenGrounded = true;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
+        private IMonaBody _spawner;
         private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
 
         private Vector3 _initialPosition = Vector3.zero;
@@ -54,6 +55,7 @@ namespace Mona.SDK.Core.Body
         public bool IsAttachedToLocalPlayer() => _attachType == MonaBodyAttachType.LocalPlayer;
 
         public IMonaBody Parent => _parent;
+        public IMonaBody Spawner { get => _spawner; set => _spawner = value; }
 
         public bool IsNetworked => _networkBody != null;
         public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : ((transform != null) ? transform : null);
@@ -1262,15 +1264,25 @@ namespace Mona.SDK.Core.Body
             if (isNetworked) _networkBody?.TeleportScale(scale);
         }
 
-        public void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool isNetworked = true)
+        public void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool spawnedAsChild, bool isNetworked = true)
         {
             position = _positionBounds.BindValue(position);
             rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
 
-            ActiveTransform.position = _initialPosition = position;
-            _initialLocalPosition = ActiveTransform.localPosition;
+            if (spawnedAsChild)
+            {
+                ActiveTransform.localPosition = position;
+                ActiveTransform.localRotation = rotation;
+            }
+            else
+            {
+                ActiveTransform.position = position;
+                ActiveTransform.rotation = rotation;
+            }
 
-            ActiveTransform.rotation = _initialRotation = rotation;
+            _initialPosition = ActiveTransform.position;
+            _initialRotation = ActiveTransform.rotation;
+            _initialLocalPosition = ActiveTransform.localPosition;
             _initialLocalRotation = ActiveTransform.localRotation;
 
             ActiveTransform.localScale = _initialScale = scale;

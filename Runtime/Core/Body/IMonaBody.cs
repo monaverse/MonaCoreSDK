@@ -23,6 +23,7 @@ namespace Mona.SDK.Core.Body
         bool LocalOnly { get; }
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
+        IMonaBody Spawner { get; set; }
         bool Grounded { get; }
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
@@ -68,7 +69,7 @@ namespace Mona.SDK.Core.Body
         void TeleportPosition(Vector3 pos, bool isNetworked = true);
         void TeleportRotation(Quaternion rot, bool isNetworked = true);
         void TeleportScale(Vector3 scale, bool isNetworked = true);
-        void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool isNetworked = true);
+        void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool spawnedAsChild, bool isNetworked = true);
 
         void SetScale(Vector3 scale, bool isNetworked = true);
         void SetKinematic(bool isKinematic, bool isNetworked = true);
