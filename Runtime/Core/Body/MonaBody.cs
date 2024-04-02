@@ -197,6 +197,9 @@ namespace Mona.SDK.Core.Body
                 _friction = friction;
                 for (var i = 0; i < _colliders.Count; i++)
                 {
+                    if (_colliders[i] == null)
+                        continue;
+
                     var material = _colliders[i].material;
                     if (material != null)
                         material.dynamicFriction = _friction;
@@ -211,6 +214,9 @@ namespace Mona.SDK.Core.Body
                 _bounce = bounce;
                 for (var i = 0; i < _colliders.Count; i++)
                 {
+                    if (_colliders[i] == null)
+                        continue;
+
                     var material = _colliders[i].material;
                     if (material != null)
                         material.bounciness = _bounce;
