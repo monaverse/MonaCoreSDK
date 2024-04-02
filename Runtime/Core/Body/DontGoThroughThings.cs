@@ -105,7 +105,9 @@ namespace Mona.SDK.Core.Body
 
                             //Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousPosition} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
                             EventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_EVENT, _body), new MonaBodyEvent(MonaBodyEventType.OnStop));
-                            _body.ActiveTransform.position = (point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
+
+                            if (_myCollider != null)
+                                _body.ActiveTransform.position = (point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
                         }
                     }
                 }
