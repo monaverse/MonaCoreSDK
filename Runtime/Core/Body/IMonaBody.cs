@@ -27,6 +27,7 @@ namespace Mona.SDK.Core.Body
         bool Grounded { get; }
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
+        List<Collider> Colliders { get; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }
@@ -94,6 +95,7 @@ namespace Mona.SDK.Core.Body
         void SetAngularVelocity(Vector3 velocity);
         void SetFriction(float friction);
         void SetBounce(float bounce);
+        void SetTriggerVolumeState(bool useAsTrigger);
         void SetUseGravity(bool useGravity);
         void SetOnlyApplyDragWhenGrounded(bool apply);
 

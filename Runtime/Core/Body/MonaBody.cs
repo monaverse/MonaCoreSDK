@@ -66,6 +66,7 @@ namespace Mona.SDK.Core.Body
         public INetworkMonaBodyClient NetworkBody => _networkBody;
         public Animator Animator => _animator;
         public MonaBodyAttachType AttachType { get => _attachType; set => _attachType = value; }
+        public List<Collider> Colliders => _colliders;
 
         public Vector3 InitialPosition => _initialPosition;
         public Vector3 InitialLocalPosition => _initialLocalPosition;
@@ -223,6 +224,17 @@ namespace Mona.SDK.Core.Body
                     if (material != null)
                         material.bounciness = _bounce;
                 }
+            }
+        }
+
+        public void SetTriggerVolumeState(bool useAsTrigger)
+        {
+            for (var i = 0; i < _colliders.Count; i++)
+            {
+                if (_colliders[i] == null)
+                    continue;
+
+                _colliders[i].isTrigger = useAsTrigger;
             }
         }
 
