@@ -276,10 +276,12 @@ namespace Mona.SDK.Core.Body
             if (_rigidbody == null)
             {
                 _rigidbody = GetComponent<Rigidbody>();
-                if(_rigidbody == null)
+                if (_rigidbody == null)
+                {
                     _rigidbody = gameObject.AddComponent<Rigidbody>();
+                    _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                }
                 _rigidbody.isKinematic = true;
-                _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             }
             if (gameObject.GetComponent<DontGoThroughThings>() == null)
                 gameObject.AddComponent<DontGoThroughThings>();
@@ -733,7 +735,7 @@ namespace Mona.SDK.Core.Body
                 ApplyAddRotation(rotation.Rotation);
             }
             _rotationDeltas.Clear();
-
+            //Debug.Log($"apply position {_applyPosition} {Time.frameCount}");
 
             _applyPosition = GetPosition();
 
@@ -1233,7 +1235,9 @@ namespace Mona.SDK.Core.Body
 
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
+            _positionDeltas.Clear();
             position = _positionBounds.BindValue(position);
+            Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
             if (ActiveRigidbody != null)
             {
                 var was = ActiveRigidbody.isKinematic;
