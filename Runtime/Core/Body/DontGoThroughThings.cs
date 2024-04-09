@@ -18,6 +18,7 @@ namespace Mona.SDK.Core.Body
         private float _minimumExtent;
         private float _partialExtent;
         private float _sqrMinimumExtent;
+        private Vector3 _previousCenter;
         private Vector3 _previousPosition;
         private Collider _myCollider;
         private IMonaBody _body;
@@ -52,14 +53,16 @@ namespace Mona.SDK.Core.Body
 
         private void HandleStarted()
         {
-            _previousPosition = _body.GetCenter();
+            _previousCenter = _body.GetCenter();
+            _previousPosition = _body.GetPosition();
         }
 
         private void Start()
         {
             //_myCollider = _item.skin.skinCollider;
             if (_myCollider == null) return;
-            _previousPosition = _body.GetCenter();
+            _previousCenter = _body.GetCenter();
+            _previousPosition = _body.GetPosition();
             _minimumExtent = Mathf.Min(Mathf.Min(_myCollider.bounds.extents.x, _myCollider.bounds.extents.y), _myCollider.bounds.extents.z);
             _partialExtent = _minimumExtent * (1.0f - skinWidth);
             _sqrMinimumExtent = (_minimumExtent * .1f) * (_minimumExtent * .1f);
@@ -76,7 +79,7 @@ namespace Mona.SDK.Core.Body
                 //return;
             }
             //have we moved more than our minimum extent?
-            Vector3 movementThisStep = _body.GetCenter() - _previousPosition;
+            Vector3 movementThisStep = _body.GetCenter() - _previousCenter;
             float movementSqrMagnitude = movementThisStep.sqrMagnitude;
 
             if(debug && movementSqrMagnitude > 0) Debug.Log($"{nameof(DontGoThroughThings)} {movementSqrMagnitude} {_sqrMinimumExtent}");
@@ -86,7 +89,7 @@ namespace Mona.SDK.Core.Body
                 RaycastHit hitInfo;
 
                 //check for obstructions we might have missed
-                if (UnityEngine.Physics.Raycast(_previousPosition, movementThisStep.normalized, out hitInfo, _minimumExtent, ~0, QueryTriggerInteraction.Ignore))
+                if (UnityEngine.Physics.Raycast(_previousCenter, movementThisStep.normalized, out hitInfo, _minimumExtent, ~0, QueryTriggerInteraction.Ignore))
                 {
                     if (hitInfo.collider != null && hitInfo.collider.attachedRigidbody != _body.ActiveRigidbody)
                     {
@@ -97,17 +100,17 @@ namespace Mona.SDK.Core.Body
                         {
                             var point = hitInfo.point;
                             if (Mathf.Approximately(movementThisStep.y, 0f))
-                                point.y = _body.ActiveRigidbody.position.y;
+                                point.y = _body.GetPosition().y;
                             if (Mathf.Approximately(movementThisStep.x, 0f))
-                                point.x = _body.ActiveRigidbody.position.x;
+                                point.x = _body.GetPosition().x;
                             if (Mathf.Approximately(movementThisStep.z, 0f))
-                                point.z = _body.ActiveRigidbody.position.z;
+                                point.z = _body.GetPosition().z;
 
-                            //Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousPosition} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
+                            Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousCenter} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
                             EventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_EVENT, _body), new MonaBodyEvent(MonaBodyEventType.OnStop));
 
                             if (_myCollider != null)
-                                _body.ActiveTransform.position = (point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
+                                _body.TeleportPosition(point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
                         }
                     }
                 }
@@ -123,7 +126,8 @@ namespace Mona.SDK.Core.Body
                 }*/
             }
 
-            _previousPosition = _body.GetCenter();
+            _previousCenter = _body.GetCenter();
+            _previousPosition = _body.GetPosition();
         }
     }
 }
