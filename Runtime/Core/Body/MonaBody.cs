@@ -130,7 +130,16 @@ namespace Mona.SDK.Core.Body
 
         private List<IMonaTagged> _monaTagged = new List<IMonaTagged>();
 
-        public bool HasMonaTag(string tag) => MonaTags.Contains(tag) || _monaTagged.Find(x => x.HasMonaTag(tag)) != null;
+        public bool HasMonaTag(string tag)
+        {
+            if (MonaTags.Contains(tag)) return true;
+            for(var i = 0;i < _monaTagged.Count; i++)
+            {
+                if (_monaTagged[i].HasMonaTag(tag))
+                    return true;
+            }
+            return false;
+        }
         public void AddTag(string tag)
         {
             if (!HasMonaTag(tag))
@@ -141,11 +150,60 @@ namespace Mona.SDK.Core.Body
             if (HasMonaTag(tag))
                 MonaTags.Remove(tag);
         }
-        public static List<IMonaBody> FindByTag(string tag) => MonaBodies.FindAll((x) => x.HasMonaTag(tag));
-        public static IMonaBody FindByLocalId(string localId) => MonaBodies.Find((x) => x.LocalId == localId);
-        public IMonaBody FindChildByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag));
-        public Transform FindChildTransformByTag(string tag) => _childMonaBodies.Find((x) => x.HasMonaTag(tag))?.ActiveTransform;
-        public List<IMonaBody> FindChildrenByTag(string tag) => _childMonaBodies.FindAll((x) => x.HasMonaTag(tag));
+
+        private static List<IMonaBody> _find = new List<IMonaBody>();
+        public static List<IMonaBody> FindByTag(string tag)
+        {
+            _find.Clear();
+            for(var i = 0;i < MonaBodies.Count; i++)
+            {
+                if (MonaBodies[i].HasMonaTag(tag))
+                    _find.Add(MonaBodies[i]);
+            }
+            return _find;
+        }
+
+        public static IMonaBody FindByLocalId(string localId)
+        {
+            for (var i = 0; i < MonaBodies.Count; i++)
+            {
+                if (MonaBodies[i].LocalId == localId)
+                    return MonaBodies[i];
+            }
+            return null;
+        }
+
+        public IMonaBody FindChildByTag(string tag)
+        {
+            for (var i = 0; i < _childMonaBodies.Count; i++)
+            {
+                if (_childMonaBodies[i].HasMonaTag(tag))
+                    return _childMonaBodies[i];
+            }
+            return null;
+        }
+
+        public Transform FindChildTransformByTag(string tag)
+        {
+            for (var i = 0; i < _childMonaBodies.Count; i++)
+            {
+                if (_childMonaBodies[i] != null && _childMonaBodies[i].HasMonaTag(tag))
+                    return _childMonaBodies[i]?.ActiveTransform;
+            }
+            return null;
+        }
+
+        public List<IMonaBody> FindChildrenByTag(string tag)
+        {
+            _find.Clear();
+            for (var i = 0; i < _childMonaBodies.Count; i++)
+            {
+                if (_childMonaBodies[i].HasMonaTag(tag))
+                    _find.Add(_childMonaBodies[i]);
+            }
+            return _find;
+        }
+
         public List<IMonaBody> Children() => _childMonaBodies;
 
         public Transform GetTransformParent() => ActiveTransform.parent;
