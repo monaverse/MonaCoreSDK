@@ -123,7 +123,10 @@ namespace Mona.SDK.Core.Body
         public List<string> MonaTags => _monaTags;
 
         public static List<IMonaBody> MonaBodies = new List<IMonaBody>();
+        public static Dictionary<string, List<IMonaBody>> MonaBodiesByTag = new Dictionary<string, List<IMonaBody>>();
+
         private List<IMonaBody> _childMonaBodies = new List<IMonaBody>();
+        private Dictionary<string, List<IMonaBody>> _childMonaBodiesByTag = new Dictionary<string, List<IMonaBody>>();
 
         private bool _hasInput;
         private List<MonaInput> _monaInputs = new List<MonaInput>();
@@ -140,27 +143,62 @@ namespace Mona.SDK.Core.Body
             }
             return false;
         }
+
         public void AddTag(string tag)
         {
             if (!HasMonaTag(tag))
+            {
                 MonaTags.Add(tag);
+                RegisterInTagRegistry(tag);
+            }
         }
+
+        private void RegisterInTagRegistry(string tag)
+        {
+            if (!MonaBodiesByTag.ContainsKey(tag))
+                MonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (!MonaBodiesByTag[tag].Contains(this))
+                MonaBodiesByTag[tag].Add(this);
+        }
+
+        private void RegisterInChildTagRegistry(string tag, IMonaBody body)
+        {
+            if (!_childMonaBodiesByTag.ContainsKey(tag))
+                _childMonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (!_childMonaBodiesByTag[tag].Contains(body))
+                _childMonaBodiesByTag[tag].Add(body);
+        }
+
         public void RemoveTag(string tag)
         {
             if (HasMonaTag(tag))
+            {
                 MonaTags.Remove(tag);
+                UnregisterInTagRegistry(tag);
+            }
         }
 
-        private static List<IMonaBody> _find = new List<IMonaBody>();
+        private void UnregisterInTagRegistry(string tag)
+        {
+            if (!MonaBodiesByTag.ContainsKey(tag))
+                MonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (MonaBodiesByTag[tag].Contains(this))
+                MonaBodiesByTag[tag].Remove(this);
+        }
+
+        private void UnregisterInChildTagRegistry(string tag, IMonaBody body)
+        {
+            if (!_childMonaBodiesByTag.ContainsKey(tag))
+                _childMonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (_childMonaBodiesByTag[tag].Contains(body))
+                _childMonaBodiesByTag[tag].Remove(body);
+        }
+
         public static List<IMonaBody> FindByTag(string tag)
         {
-            _find.Clear();
-            for(var i = 0;i < MonaBodies.Count; i++)
-            {
-                if (MonaBodies[i].HasMonaTag(tag))
-                    _find.Add(MonaBodies[i]);
-            }
-            return _find;
+            if(MonaBodiesByTag.ContainsKey(tag))
+                return MonaBodiesByTag[tag];
+            return _empty;
         }
 
         public static IMonaBody FindByLocalId(string localId)
@@ -175,33 +213,24 @@ namespace Mona.SDK.Core.Body
 
         public IMonaBody FindChildByTag(string tag)
         {
-            for (var i = 0; i < _childMonaBodies.Count; i++)
-            {
-                if (_childMonaBodies[i].HasMonaTag(tag))
-                    return _childMonaBodies[i];
-            }
+            if (_childMonaBodiesByTag.ContainsKey(tag) && _childMonaBodiesByTag.Count > 0)
+                return _childMonaBodiesByTag[tag][0];
             return null;
         }
 
         public Transform FindChildTransformByTag(string tag)
         {
-            for (var i = 0; i < _childMonaBodies.Count; i++)
-            {
-                if (_childMonaBodies[i] != null && _childMonaBodies[i].HasMonaTag(tag))
-                    return _childMonaBodies[i]?.ActiveTransform;
-            }
+            if (_childMonaBodiesByTag.ContainsKey(tag) && _childMonaBodiesByTag.Count > 0)
+                return _childMonaBodiesByTag[tag][0]?.ActiveTransform;
             return null;
         }
 
+        private static List<IMonaBody> _empty = new List<IMonaBody>();
         public List<IMonaBody> FindChildrenByTag(string tag)
         {
-            _find.Clear();
-            for (var i = 0; i < _childMonaBodies.Count; i++)
-            {
-                if (_childMonaBodies[i].HasMonaTag(tag))
-                    _find.Add(_childMonaBodies[i]);
-            }
-            return _find;
+            if (_childMonaBodiesByTag.ContainsKey(tag))
+                return _childMonaBodiesByTag[tag];
+            return _empty;
         }
 
         public List<IMonaBody> Children() => _childMonaBodies;
@@ -440,6 +469,15 @@ namespace Mona.SDK.Core.Body
         {
             _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
             _monaTagged.Remove(this);
+
+            for (var i = 0; i < MonaTags.Count; i++)
+                RegisterInTagRegistry(MonaTags[i]);
+
+            for (var i = 0; i < _monaTagged.Count; i++)
+            {
+                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                    RegisterInTagRegistry(_monaTagged[i].MonaTags[t]);
+            }
         }
 
         private void AddDelegates()
@@ -536,9 +574,22 @@ namespace Mona.SDK.Core.Body
         private void OnDestroy()
         {
             _destroyed = true;
+            CleanupTags();
             FireDespawnEvent();
             UnregisterInParents();
             RemoveDelegates();
+        }
+
+        private void CleanupTags()
+        {
+            for (var i = 0; i < MonaTags.Count; i++)
+                UnregisterInTagRegistry(MonaTags[i]);
+
+            for (var i = 0; i < _monaTagged.Count; i++)
+            {
+                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                    UnregisterInTagRegistry(_monaTagged[i].MonaTags[t]);
+            }
         }
 
         public void SetMaterial(Material material)
@@ -613,12 +664,30 @@ namespace Mona.SDK.Core.Body
         {
             if (!_childMonaBodies.Contains(body))
                 _childMonaBodies.Add(body);
+
+            for (var i = 0; i < body.MonaTags.Count; i++)
+                RegisterInChildTagRegistry(body.MonaTags[i], body);
+
+            for (var i = 0; i < _monaTagged.Count; i++)
+            {
+                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                    RegisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+            }
         }
 
         public void UnregisterAsChild(IMonaBody body)
         {
             if (_childMonaBodies.Contains(body))
                 _childMonaBodies.Remove(body);
+
+            for (var i = 0; i < body.MonaTags.Count; i++)
+                UnregisterInChildTagRegistry(body.MonaTags[i], body);
+
+            for (var i = 0; i < _monaTagged.Count; i++)
+            {
+                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                    UnregisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+            }
         }
 
         public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
