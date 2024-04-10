@@ -862,7 +862,6 @@ namespace Mona.SDK.Core.Body
                 ApplyAddRotation(rotation.Rotation);
             }
             _rotationDeltas.Clear();
-            //Debug.Log($"apply position {_applyPosition} {Time.frameCount}");
 
             _applyPosition = GetPosition();
 
@@ -871,6 +870,9 @@ namespace Mona.SDK.Core.Body
                 var position = _positionDeltas[i];
                 ApplyAddPosition(position.Direction);
             }
+
+            //Debug.Log($"{Transform.gameObject} apply position {_applyPosition} {Time.frameCount}");
+
             _positionDeltas.Clear();
             
             
@@ -890,6 +892,8 @@ namespace Mona.SDK.Core.Body
                 }
                 else
                 {
+                    ActiveRigidbody.velocity = Vector3.zero;
+                    ActiveRigidbody.angularVelocity = Vector3.zero;
                     ActiveRigidbody.position = _applyPosition;
                     ActiveRigidbody.rotation = _applyRotation.normalized;
                 }
