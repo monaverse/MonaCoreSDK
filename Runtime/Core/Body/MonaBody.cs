@@ -1387,7 +1387,11 @@ namespace Mona.SDK.Core.Body
             rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
             if (ActiveRigidbody != null)
             {
+                var was = ActiveRigidbody.isKinematic;
+                ActiveRigidbody.isKinematic = true;
                 ActiveRigidbody.rotation = rotation;
+                ActiveRigidbody.isKinematic = was;
+                ActiveTransform.rotation = rotation;
             }
             else
                 ActiveTransform.rotation = rotation;

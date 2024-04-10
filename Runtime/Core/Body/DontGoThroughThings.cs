@@ -61,7 +61,7 @@ namespace Mona.SDK.Core.Body
         {
             //_myCollider = _item.skin.skinCollider;
             if (_myCollider == null) return;
-            _previousCenter = _body.GetCenter();
+            _previousCenter = _body.GetPosition() + Vector3.up * .5f;
             _previousPosition = _body.GetPosition();
             _minimumExtent = Mathf.Min(Mathf.Min(_myCollider.bounds.extents.x, _myCollider.bounds.extents.y), _myCollider.bounds.extents.z);
             _partialExtent = _minimumExtent * (1.0f - skinWidth);
@@ -79,7 +79,7 @@ namespace Mona.SDK.Core.Body
                 //return;
             }
             //have we moved more than our minimum extent?
-            Vector3 movementThisStep = _body.GetCenter() - _previousCenter;
+            Vector3 movementThisStep = _body.GetPosition()+Vector3.up*.5f - _previousCenter;
             float movementSqrMagnitude = movementThisStep.sqrMagnitude;
 
             if(debug && movementSqrMagnitude > 0) Debug.Log($"{nameof(DontGoThroughThings)} {movementSqrMagnitude} {_sqrMinimumExtent}");
@@ -99,18 +99,16 @@ namespace Mona.SDK.Core.Body
                         if (!hitInfo.collider.isTrigger)
                         {
                             var point = hitInfo.point;
-                            if (Mathf.Approximately(movementThisStep.y, 0f))
-                                point.y = _body.GetPosition().y;
-                            if (Mathf.Approximately(movementThisStep.x, 0f))
-                                point.x = _body.GetPosition().x;
-                            if (Mathf.Approximately(movementThisStep.z, 0f))
-                                point.z = _body.GetPosition().z;
+                            var dir = point - _previousCenter;
+                            if (Mathf.Approximately(dir.x, 0f)) dir.x = 0f;
+                            if (Mathf.Approximately(dir.y, 0f)) dir.y = 0f;
+                            if (Mathf.Approximately(dir.z, 0f)) dir.z = 0f;
 
-                            Debug.Log($"Travelled through collider {point} {movementThisStep} {Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)} {_previousCenter} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
+                            Debug.Log($"Travelled through collider {point} {dir} {movementThisStep.normalized} {Vector3.Scale(dir.normalized, _myCollider.bounds.extents)} {_previousCenter} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
                             EventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_EVENT, _body), new MonaBodyEvent(MonaBodyEventType.OnStop));
 
-                            if (_myCollider != null)
-                                _body.TeleportPosition(point - Vector3.Scale(movementThisStep.normalized, _myCollider.bounds.extents)); // * _partialExtent;
+                            if (_myCollider != null && movementThisStep.magnitude > Mathf.Epsilon)
+                                _body.TeleportPosition(point - Vector3.Scale(dir.normalized, _myCollider.bounds.extents) - Vector3.up*0.5f); // * _partialExtent;
                         }
                     }
                 }
@@ -126,7 +124,7 @@ namespace Mona.SDK.Core.Body
                 }*/
             }
 
-            _previousCenter = _body.GetCenter();
+            _previousCenter = _body.GetPosition() + Vector3.up * .5f;
             _previousPosition = _body.GetPosition();
         }
     }
