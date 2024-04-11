@@ -345,7 +345,7 @@ namespace Mona.SDK.Core.Body
 
         private void CacheComponents()
         {
-            _renderers = GetComponentsInChildren<Renderer>(true);
+            CacheRenderers();
             _rigidbody = GetComponent<Rigidbody>();
             if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
@@ -354,6 +354,11 @@ namespace Mona.SDK.Core.Body
             _characterController = GetComponent<CharacterController>();
             _camera = GetComponentInChildren<Camera>();
             CacheColliders();
+        }
+
+        public void CacheRenderers()
+        {
+            _renderers = GetComponentsInChildren<Renderer>(true);
         }
 
         public void AddRigidbody()

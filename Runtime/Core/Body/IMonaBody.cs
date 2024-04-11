@@ -50,6 +50,7 @@ namespace Mona.SDK.Core.Body
         bool IsAttachedToLocalPlayer();
 
         void CacheColliders();
+        void CacheRenderers();
         void InitializeTags();
         void AddTag(string tag);
         void RemoveTag(string tag);
