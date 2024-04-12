@@ -575,6 +575,11 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        public void Destroy()
+        {
+            GameObject.Destroy(gameObject);
+        }
+
         private bool _destroyed;
         private void OnDestroy()
         {
