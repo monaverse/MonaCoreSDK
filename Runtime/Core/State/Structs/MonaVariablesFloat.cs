@@ -17,18 +17,18 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private string _name;
         [SerializeField] public float _value = 1f;
         [SerializeField] private float _defaultValue;
+        [SerializeField] private NumberRoundingType _roundingType = NumberRoundingType.None;
         [SerializeField] private MinMaxConstraintType _minMaxType = MinMaxConstraintType.None;
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
         [SerializeField] private bool _returnRandomValueFromMinMax;
-        [SerializeField] private NumberRoundingType _randomRoundingType = NumberRoundingType.None;
 
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
+        public NumberRoundingType RoundingType { get => _roundingType; set => _roundingType = value; }
         public bool UseMinMax { get => _minMaxType != MinMaxConstraintType.None; }
         public MinMaxConstraintType MinMaxType { get => _minMaxType; set => _minMaxType = value; }
         public bool ReturnRandomValueFromMinMax { get => _returnRandomValueFromMinMax; set => _returnRandomValueFromMinMax = value; }
-        public NumberRoundingType RandomRoundingType { get => _randomRoundingType; set => _randomRoundingType = value; }
         private float MinMaxRange => _max - _min;
 
         public float Value
@@ -37,8 +37,9 @@ namespace Mona.SDK.Core.State.Structs
             {
                 if (_returnRandomValueFromMinMax && UseMinMax)
                 {
-                    float randomValue = UnityEngine.Random.Range(_min, _max);
-                    _value = _randomRoundingType == NumberRoundingType.None ? randomValue : Mathf.Round(randomValue); 
+                    float randomValue = _roundingType == NumberRoundingType.None ?
+                        UnityEngine.Random.Range(_min, _max) : UnityEngine.Random.Range((int)_min, ((int)_max) + 1);
+                    _value = randomValue;
                     UpdateUIDisplay();
                 }
 
@@ -46,6 +47,8 @@ namespace Mona.SDK.Core.State.Structs
             }
             set
             {
+                value = RoundValue(value);
+
                 if (!UseMinMax)
                 {
                     _value = value;
@@ -86,6 +89,8 @@ namespace Mona.SDK.Core.State.Structs
             get { return _min; }
             set
             {
+                value = RoundValue(value);
+
                 if (value <= _max)
                 {
                     _min = value;
@@ -107,6 +112,8 @@ namespace Mona.SDK.Core.State.Structs
             get { return _max; }
             set
             {
+                value = RoundValue(value);
+
                 if (value >= _min)
                 {
                     _max = value;
@@ -238,6 +245,17 @@ namespace Mona.SDK.Core.State.Structs
         public float PulseFrequency { get => _pulseFrequency; set => _pulseFrequency = value; }
 
         public MonaVariablesFloat() { }
+
+        private float RoundValue(float value)
+        {
+            switch (_roundingType)
+            {
+                case NumberRoundingType.RoundClosest: return Mathf.Round(value);
+                case NumberRoundingType.RoundUp: return Mathf.Ceil(value);
+                case NumberRoundingType.RoundDown: return Mathf.Floor(value);
+                default: return value;
+            }
+        }
 
         public string FormatNumber(float numberToFormat)
         {

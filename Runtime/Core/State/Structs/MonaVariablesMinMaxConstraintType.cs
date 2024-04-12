@@ -16,6 +16,8 @@ namespace Mona.SDK.Core.State.Structs
     public enum NumberRoundingType
     {
         None = 0,
-        WholeNumbers = 10
+        RoundClosest = 10,
+        RoundUp = 20,
+        RoundDown = 30
     }
 }
