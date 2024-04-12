@@ -1379,7 +1379,7 @@ namespace Mona.SDK.Core.Body
         {
             _positionDeltas.Clear();
             position = _positionBounds.BindValue(position);
-            Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
+            //Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
             if (ActiveRigidbody != null)
             {
                 var was = ActiveRigidbody.isKinematic;
