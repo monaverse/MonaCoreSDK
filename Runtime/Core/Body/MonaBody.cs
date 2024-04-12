@@ -795,8 +795,6 @@ namespace Mona.SDK.Core.Body
                 ApplySetActive();
                 CalculateVelocity(evt.DeltaTime, true);
 
-                
-
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
             }
@@ -817,7 +815,7 @@ namespace Mona.SDK.Core.Body
 
             _grounded = false;
 
-            var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f);
+            var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f, ~0, QueryTriggerInteraction.Ignore);
 
             if (hitCount > 0)
             {
@@ -1034,7 +1032,7 @@ namespace Mona.SDK.Core.Body
                     _grounded = false;
                     //var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
                     //Debug.Log($"Raycast {_baseOffset} {GetPosition()}");
-                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.2f);
+                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.2f, ~0, QueryTriggerInteraction.Ignore);
                     if (hitCount > 0)
                     {
                         for(var i = 0;i < hitCount; i++)
@@ -1378,6 +1376,7 @@ namespace Mona.SDK.Core.Body
         public void TeleportPosition(Vector3 position, bool isNetworked = true)
         {
             _positionDeltas.Clear();
+
             position = _positionBounds.BindValue(position);
             Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
             if (ActiveRigidbody != null)
