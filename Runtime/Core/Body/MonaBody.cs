@@ -263,7 +263,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetVelocity(Vector3 velocity)
         {
-            if (ActiveRigidbody != null)
+            if (ActiveRigidbody != null && !ActiveRigidbody.isKinematic)
                 ActiveRigidbody.velocity = velocity;
         }
 
@@ -844,7 +844,8 @@ namespace Mona.SDK.Core.Body
             if (Mathf.Approximately(adjustedVelocity.magnitude, 0f))
                 return;
 
-            ActiveRigidbody.velocity = adjustedVelocity;
+            if(!ActiveRigidbody.isKinematic)
+                ActiveRigidbody.velocity = adjustedVelocity;
         }
 
         private Vector3 _applyPosition;
