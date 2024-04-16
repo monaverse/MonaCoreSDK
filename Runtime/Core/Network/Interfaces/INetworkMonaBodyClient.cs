@@ -20,7 +20,7 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetKinematic(bool isKinematic);
         void SetPosition(Vector3 position, bool isKinematic = false);
         void SetRotation(Quaternion rotation, bool isKinematic = false);
-        void TeleportPosition(Vector3 position, bool isKinematic = false);
+        void TeleportPosition(Vector3 position, bool isKinematic = false, bool setToLocal = false);
         void TeleportRotation(Quaternion rotation, bool isKinematic = false);
         void TeleportScale(Vector3 scale, bool isKinematic = false);
         void SetScale(Vector3 scale);
