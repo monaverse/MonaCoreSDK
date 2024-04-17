@@ -22,7 +22,7 @@ namespace Mona.SDK.Core.UIElements
 
         protected TextField _nameField;
 #if UNITY_EDITOR
-        protected ObjectField _objectField;
+        protected ObjectField _bodyField;
         protected ObjectField _wearableField;
         protected ObjectField _avatarField;
         protected ObjectField _audioField;
@@ -30,6 +30,8 @@ namespace Mona.SDK.Core.UIElements
         protected ObjectField _materialField;
         protected ObjectField _animationField;
 #endif
+        private Toggle _bodyUseUrlField;
+        private TextField _bodyUrlField;
         private Toggle _avatarUseUrlField;
         private TextField _avatarUrlField;
         private IntegerField _animationLayer;
@@ -78,11 +80,25 @@ namespace Mona.SDK.Core.UIElements
             _nameField.style.marginRight = 5;
 
 #if UNITY_EDITOR
-            _objectField = new ObjectField();
-            _objectField.style.flexGrow = 1;
-            _objectField.RegisterValueChangedCallback((evt) =>
+            _bodyField = new ObjectField();
+            _bodyField.style.flexGrow = 1;
+            _bodyField.objectType = typeof(MonaBody);
+            _bodyField.RegisterValueChangedCallback((evt) =>
             {
                 ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Value = (MonaBody)evt.newValue;
+            });
+
+            _bodyUrlField = new TextField();
+            _bodyUrlField.style.flexGrow = 1;
+            _bodyUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaBodyAssetItem)_assets.AllAssets[_index]).Url = (string)evt.newValue;
+            });
+
+            _bodyUseUrlField = new Toggle();
+            _bodyUseUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                DisplayBodyFields(evt.newValue);
             });
 
             _avatarField = new ObjectField();
@@ -179,6 +195,22 @@ namespace Mona.SDK.Core.UIElements
 #endif
         }
 
+        private void DisplayBodyFields(bool useUrl)
+        {
+#if UNITY_EDITOR
+            if (_bodyField.parent == this) Remove(_bodyField);
+            if (_bodyUrlField.parent == this) Remove(_bodyUrlField);
+            if (useUrl)
+            {
+                Add(_bodyUrlField);
+            }
+            else
+            {
+                Add(_bodyField);
+            }
+#endif
+        }
+
         public virtual void Refresh()
         {
             Clear();
@@ -200,9 +232,11 @@ namespace Mona.SDK.Core.UIElements
 #if UNITY_EDITOR
             if (value is IMonaBodyAssetItem)
             {
-                Add(_objectField);
-                _objectField.objectType = typeof(MonaBody);
-                _objectField.value = (MonaBody)((IMonaBodyAssetItem)value).Value;
+                Add(_bodyUseUrlField);
+                DisplayBodyFields(_bodyUseUrlField.value);
+                _bodyUseUrlField.value = !string.IsNullOrEmpty(((IMonaBodyAssetItem)value).Url);
+                _bodyField.value = ((IMonaBodyAssetItem)value).Value;
+                _bodyUrlField.value = ((IMonaBodyAssetItem)value).Url;
             }
             else if (value is IMonaAvatarAssetItem)
             {

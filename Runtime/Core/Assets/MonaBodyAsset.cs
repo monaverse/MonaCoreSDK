@@ -14,6 +14,9 @@ namespace Mona.SDK.Core.Assets
         [SerializeField] private MonaBody _monaBody;
         public MonaBody Value { get => _monaBody; set => _monaBody = value; }
 
+        [SerializeField] private string _monaBodyUrl;
+        public string Url { get => _monaBodyUrl; set => _monaBodyUrl = value; }
+
         public MonaBodyAsset()
         {
         }
