@@ -10,5 +10,7 @@
         float Min { get; set; }
         float Max { get; set; }
         bool ReturnRandomValueFromMinMax { get; set; }
+
+        void ForceMinMax(float min, float max);
     }
 }

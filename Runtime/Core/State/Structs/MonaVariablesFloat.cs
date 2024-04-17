@@ -130,6 +130,15 @@ namespace Mona.SDK.Core.State.Structs
             }
         }
 
+        public void ForceMinMax(float min, float max)
+        {
+            float newMin = min <= max ? min : max;
+            float newMax = max >= min ? max : min;
+
+            _min = newMin;
+            _max = newMax;
+        }
+
         // ------ UI Related Values ------ //
 
         // General Display and UI Placement
