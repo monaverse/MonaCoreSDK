@@ -40,6 +40,8 @@ namespace Mona.SDK.Core.Body
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
         private IMonaBody _spawner;
+        private IMonaBody _poolBodyPrevious { get; set; }
+        private IMonaBody _poolBodyNext { get; set; }
         private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
 
         private Vector3 _initialPosition = Vector3.zero;
@@ -56,6 +58,8 @@ namespace Mona.SDK.Core.Body
 
         public IMonaBody Parent => _parent;
         public IMonaBody Spawner { get => _spawner; set => _spawner = value; }
+        public IMonaBody PoolBodyPrevious { get => _poolBodyPrevious; set => _poolBodyPrevious = value; }
+        public IMonaBody PoolBodyNext { get => _poolBodyNext; set => _poolBodyNext = value; }
 
         public bool IsNetworked => _networkBody != null;
         public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : ((transform != null) ? transform : null);

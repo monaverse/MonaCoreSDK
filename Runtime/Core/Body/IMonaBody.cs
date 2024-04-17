@@ -24,6 +24,8 @@ namespace Mona.SDK.Core.Body
         INetworkMonaBodyClient NetworkBody { get; }
         IMonaBody Parent { get; }
         IMonaBody Spawner { get; set; }
+        IMonaBody PoolBodyPrevious { get; set; }
+        IMonaBody PoolBodyNext { get; set; }
         bool Grounded { get; }
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
