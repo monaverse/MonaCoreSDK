@@ -7,7 +7,7 @@ using Mona.SDK.Core.Body;
 namespace Mona.SDK.Core.Assets.Behaviours
 {
     [Serializable]
-    public class MonaBodyAssetProviderBehaviour : MonoBehaviour, IMonaAssetProviderBehaviour
+    public class MonaBodyAssetProviderBehaviour : MonoBehaviour, IMonaBodyAssetProviderBehaviour
     {
         private MonaBodyAssets _monaAsset;
 
@@ -21,6 +21,11 @@ namespace Mona.SDK.Core.Assets.Behaviours
                 }
                 return _monaAsset;
             }
+        }
+
+        private void Awake()
+        {
+            gameObject.SetActive(false);
         }
 
         private void IndexChildren()
