@@ -1373,7 +1373,7 @@ namespace Mona.SDK.Core.Body
                 ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
         }
 
-        public void TeleportPosition(Vector3 position, bool isNetworked = true)
+        public void TeleportPosition(Vector3 position, bool isNetworked = true, bool setToLocal = false)
         {
             _positionDeltas.Clear();
 
@@ -1381,6 +1381,9 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
             if (ActiveRigidbody != null)
             {
+                if (setToLocal)
+                    position = ActiveTransform.TransformPoint(position);
+
                 var was = ActiveRigidbody.isKinematic;
                 ActiveRigidbody.isKinematic = true;
                 ActiveRigidbody.position = position;
@@ -1388,7 +1391,13 @@ namespace Mona.SDK.Core.Body
                 ActiveTransform.position = position;
             }
             else
-                ActiveTransform.position = position;
+            {
+                if (setToLocal)
+                    ActiveTransform.localPosition = position;
+                else
+                    ActiveTransform.position = position;
+            }
+                
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
