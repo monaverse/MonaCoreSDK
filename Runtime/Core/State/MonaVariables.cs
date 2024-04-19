@@ -32,10 +32,24 @@ namespace Mona.SDK.Core.State
         [SerializeReference]
         protected List<IMonaVariablesValue> _values = new List<IMonaVariablesValue>();
 
-        public List<IMonaVariablesValue> VariableList { get => _values; set => _values = value; }
+        public List<IMonaVariablesValue> VariableList
+        {
+            get => _values;
+            set
+            {
+                _values = value;
+                _variablesCache.Clear();
+                for(var i = 0;i < _values.Count; i++)
+                {
+                    var v = _values[i];
+                    _variablesCache[v.Name] = v;
+                }
+            }
+        }
 
         private Dictionary<int, IMonaVariablesValue> _variablesIndex = new Dictionary<int, IMonaVariablesValue>();
         private Dictionary<string, int> _variablesIndexByName = new Dictionary<string, int>();
+        private Dictionary<string, IMonaVariablesValue> _variablesCache = new Dictionary<string, IMonaVariablesValue>();
 
         public IMonaVariablesValue GetVariableByIndex(int index)
         {
@@ -49,11 +63,8 @@ namespace Mona.SDK.Core.State
 
         public IMonaVariablesValue GetVariable(string name)
         {
-            for (var i = 0; i < _values.Count; i++)
-            {
-                if (_values[i] != null && _values[i].Name == name)
-                    return _values[i];
-            }
+            if (_variablesCache.ContainsKey(name))
+                return _variablesCache[name];
             return null;
         }
 
@@ -71,6 +82,8 @@ namespace Mona.SDK.Core.State
             newValue.Name = name;
 
             _values.Add(newValue);
+            _variablesCache[name] = newValue;
+
             return newValue;
         }
 
@@ -79,6 +92,8 @@ namespace Mona.SDK.Core.State
             var prop = (IMonaVariablesValue)Activator.CreateInstance(type);
             prop.Name = name;
             _values[i] = prop;
+            _variablesCache[name] = prop;
+
             return prop;
         }
 

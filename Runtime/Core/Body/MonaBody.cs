@@ -62,8 +62,14 @@ namespace Mona.SDK.Core.Body
         public IMonaBody PoolBodyNext { get => _poolBodyNext; set => _poolBodyNext = value; }
 
         public bool IsNetworked => _networkBody != null;
-        public Transform ActiveTransform => _networkBody != null ? _networkBody.NetworkTransform : ((transform != null) ? transform : null);
-        public Rigidbody ActiveRigidbody => _networkBody != null ? _networkBody.NetworkRigidbody : ((_rigidbody != null) ? _rigidbody : null);
+
+        private Transform _activeTransform;
+        public Transform ActiveTransform => _activeTransform;
+
+        private bool _hasRigidbody;
+        private Rigidbody _activeRigidbody;
+        public Rigidbody ActiveRigidbody => _activeRigidbody;
+
         public Transform Transform => (_destroyed) ? null : transform;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
@@ -77,7 +83,7 @@ namespace Mona.SDK.Core.Body
         public Quaternion InitialRotation => _initialRotation;
         public Quaternion InitialLocalRotation => _initialLocalRotation;
         public Vector3 InitialScale => _initialScale;
-        public Vector3 CurrentVelocity => ActiveRigidbody != null && !ActiveRigidbody.isKinematic ? ActiveRigidbody.velocity : _transformVelocity;
+        public Vector3 CurrentVelocity => _hasRigidbody && !ActiveRigidbody.isKinematic ? ActiveRigidbody.velocity : _transformVelocity;
 
         public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
         public MonaBodyTransformBounds RotationBounds { get => _rotationBounds; set => _rotationBounds = value; }
@@ -248,39 +254,39 @@ namespace Mona.SDK.Core.Body
         public void SetDrag(float drag)
         {
             _drag = drag;
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 ActiveRigidbody.drag = drag;
         }
 
         public void SetAngularDrag(float drag)
         {
             _angularDrag = drag;
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 ActiveRigidbody.angularDrag = drag;
         }
 
         public void SetUseGravity(bool useGravity)
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 ActiveRigidbody.useGravity = useGravity;
         }
 
         public void SetVelocity(Vector3 velocity)
         {
-            if (ActiveRigidbody != null && !ActiveRigidbody.isKinematic)
+            if (_hasRigidbody && !ActiveRigidbody.isKinematic)
                 ActiveRigidbody.velocity = velocity;
         }
 
         public Vector3 GetVelocity()
         {
-            //if (ActiveRigidbody != null)
+            //if (_hasRigidbody)
             //    return ActiveRigidbody.velocity;
             return _transformVelocity;
         }
 
         public void SetAngularVelocity(Vector3 velocity)
         {
-            if (ActiveRigidbody != null && !ActiveRigidbody.isKinematic)
+            if (_hasRigidbody && !ActiveRigidbody.isKinematic)
                 ActiveRigidbody.angularVelocity = velocity;
         }
 
@@ -351,7 +357,11 @@ namespace Mona.SDK.Core.Body
         {
             CacheRenderers();
             _rigidbody = GetComponent<Rigidbody>();
-            if(SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
+            _activeTransform = transform;
+            _activeRigidbody = _rigidbody;
+            _hasRigidbody = _rigidbody != null;
+
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody)
             {
                 AddRigidbody();
             }
@@ -378,6 +388,8 @@ namespace Mona.SDK.Core.Body
                     _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
                 }
                 _rigidbody.isKinematic = true;
+                _activeRigidbody = _rigidbody;
+                _hasRigidbody = true;
             }
             if (gameObject.GetComponent<DontGoThroughThings>() == null)
                 gameObject.AddComponent<DontGoThroughThings>();
@@ -392,6 +404,8 @@ namespace Mona.SDK.Core.Body
                 Destroy(_rigidbody);
                 Destroy(gameObject.GetComponent<DontGoThroughThings>());
                 _rigidbody = null;
+                _activeRigidbody = null;
+                _hasRigidbody = false;
             }
         }
 
@@ -529,7 +543,7 @@ namespace Mona.SDK.Core.Body
                     RegisterWithNetwork();
             }
 
-            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || ActiveRigidbody != null)
+            if (SyncType == MonaBodyNetworkSyncType.NetworkRigidbody || _hasRigidbody)
                 SetLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A, true, true);
 
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
@@ -588,6 +602,7 @@ namespace Mona.SDK.Core.Body
         private void OnDestroy()
         {
             _destroyed = true;
+            _hasRigidbody = false;
             CleanupTags();
             FireDespawnEvent();
             UnregisterInParents();
@@ -707,6 +722,9 @@ namespace Mona.SDK.Core.Body
         public void SetNetworkMonaBody(INetworkMonaBodyClient obj)
         {
             _networkBody = obj;
+            _activeTransform = obj.NetworkTransform;
+            _activeRigidbody = obj.NetworkRigidbody;
+
             FireSpawnEvent();
             OnStarted();
             if (DisableOnLoad)
@@ -892,7 +910,7 @@ namespace Mona.SDK.Core.Body
             _applyPosition = _positionBounds.BindValue(_applyPosition);
             _applyRotation = _rotationBounds.BindValue(_applyRotation, ActiveTransform);
 
-            if(ActiveRigidbody != null)
+            if(_hasRigidbody)
             {
                 if(Parent != null)
                 {
@@ -925,7 +943,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyAllForces(float deltaTime)
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
             {
                 for (var i = 0; i < _force.Count; i++)
                 {
@@ -1029,7 +1047,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyDrag()
         {
-            if (ActiveRigidbody != null || _hasCharacterController)
+            if (_hasRigidbody || _hasCharacterController)
             {
                 if(_onlyApplyDragWhenGrounded && !_grounded)
                 {
@@ -1053,7 +1071,7 @@ namespace Mona.SDK.Core.Body
 
                     if(!_grounded)
                     {
-                        if (ActiveRigidbody != null)
+                        if (_hasRigidbody)
                         {
                             ActiveRigidbody.drag = 0;
                             ActiveRigidbody.angularDrag = 0;
@@ -1066,7 +1084,7 @@ namespace Mona.SDK.Core.Body
                 if (_dragType == DragType.Linear)
                 {
                     //Debug.Log($"apply drag {_drag} {_angularDrag} {_dragDivisor} {_angularDragDivisor}");
-                    if (ActiveRigidbody != null)
+                    if (_hasRigidbody)
                     {
                         ActiveRigidbody.drag = _drag;
                         ActiveRigidbody.angularDrag = _angularDrag;
@@ -1075,7 +1093,7 @@ namespace Mona.SDK.Core.Body
                 else
                 {
                     //Debug.Log($"apply drag {_drag} {_angularDrag} {_dragDivisor} {_angularDragDivisor}");
-                    if (ActiveRigidbody != null)
+                    if (_hasRigidbody)
                     {
                         ActiveRigidbody.drag = _drag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _dragDivisor);
                         ActiveRigidbody.angularDrag = _angularDrag * ActiveRigidbody.velocity.magnitude * (ActiveRigidbody.velocity.magnitude / _angularDragDivisor);
@@ -1148,7 +1166,7 @@ namespace Mona.SDK.Core.Body
             if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
             { 
                 Transform.gameObject.SetActive(_setActive);
-                if (ActiveRigidbody != null)
+                if (_hasRigidbody)
                 {
                     ActiveRigidbody.isKinematic = true;
                     ActiveRigidbody.Sleep();
@@ -1166,7 +1184,7 @@ namespace Mona.SDK.Core.Body
         public bool HasControl()
         {
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork) return true;
-            if (_networkBody == null) return true;
+            if (System.Object.ReferenceEquals(_networkBody, null)) return true;
             return _networkBody.HasControl();
         }
 
@@ -1192,7 +1210,7 @@ namespace Mona.SDK.Core.Body
 
         public void ResetLayer()
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 SetLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A, true);
             else
                 SetLayer(MonaCoreConstants.LAYER_DEFAULT, true);
@@ -1221,7 +1239,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetKinematic(bool isKinematic, bool isNetworked = true)
         {
-            if (ActiveRigidbody != null && ActiveRigidbody.isKinematic != isKinematic)
+            if (_hasRigidbody && ActiveRigidbody.isKinematic != isKinematic)
             {
                 if (!ActiveRigidbody.isKinematic && isKinematic)
                 {
@@ -1344,7 +1362,7 @@ namespace Mona.SDK.Core.Body
 
         public void ApplyForce(Vector3 direction, ForceMode mode, bool isNetworked = true)
         {
-            if(ActiveRigidbody != null)
+            if(_hasRigidbody)
             {
                 //Debug.Log($"{nameof(ApplyForce)} {direction} {mode}");
                 AddForce(direction, mode);
@@ -1363,7 +1381,7 @@ namespace Mona.SDK.Core.Body
 
         public void BindPosition()
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 ActiveRigidbody.position = _positionBounds.BindValue(ActiveTransform.position);
             else
                 ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
@@ -1371,7 +1389,7 @@ namespace Mona.SDK.Core.Body
 
         public void BindRotation()
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 ActiveRigidbody.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
             else
                 ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
@@ -1383,7 +1401,7 @@ namespace Mona.SDK.Core.Body
 
             position = _positionBounds.BindValue(position);
             //Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
             {
                 if (setToLocal)
                     position = ActiveTransform.TransformPoint(position);
@@ -1408,7 +1426,7 @@ namespace Mona.SDK.Core.Body
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
             rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
             {
                 var was = ActiveRigidbody.isKinematic;
                 ActiveRigidbody.isKinematic = true;
@@ -1431,7 +1449,7 @@ namespace Mona.SDK.Core.Body
         public void TeleportScale(Vector3 scale, bool isNetworked = true)
         {
             ActiveTransform.localScale = scale;
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
             {
                 ActiveRigidbody.transform.localScale = scale;
             }
@@ -1480,7 +1498,7 @@ namespace Mona.SDK.Core.Body
 
         public Vector3 GetPosition()
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 return ActiveRigidbody.position;
             else
                 return ActiveTransform.position;
@@ -1488,7 +1506,7 @@ namespace Mona.SDK.Core.Body
 
         public Quaternion GetRotation()
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
                 return ActiveRigidbody.rotation;
             else
                 return ActiveTransform.rotation;
@@ -1509,7 +1527,7 @@ namespace Mona.SDK.Core.Body
 
         public void RotateAround(Vector3 direction, float angle, bool isNetworked = true)
         {
-            if (ActiveRigidbody != null)
+            if (_hasRigidbody)
             {
                 SetRotation(Quaternion.AngleAxis(angle, direction), isNetworked);
             }
