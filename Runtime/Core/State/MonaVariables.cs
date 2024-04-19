@@ -99,7 +99,9 @@ namespace Mona.SDK.Core.State
             var prop = (IMonaVariablesValue)Activator.CreateInstance(type);
             prop.Name = name;
             _values[i] = prop;
-            _variablesCache[name] = prop;
+
+            if(!System.Object.ReferenceEquals(_variablesCache, null))
+                _variablesCache[name] = prop;
 
             return prop;
         }
