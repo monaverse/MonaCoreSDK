@@ -65,6 +65,13 @@ namespace Mona.SDK.Core.State
         {
             if (_variablesCache.ContainsKey(name))
                 return _variablesCache[name];
+
+            for (var i = 0; i < _values.Count; i++)
+            {
+                if (_values[i] != null && _values[i].Name == name)
+                    return _values[i];
+            }
+
             return null;
         }
 
