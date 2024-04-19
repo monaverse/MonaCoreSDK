@@ -63,7 +63,7 @@ namespace Mona.SDK.Core.State
 
         public IMonaVariablesValue GetVariable(string name)
         {
-            if (_variablesCache.ContainsKey(name))
+            if (!System.Object.ReferenceEquals(_variablesCache, null) && _variablesCache.ContainsKey(name))
                 return _variablesCache[name];
 
             for (var i = 0; i < _values.Count; i++)

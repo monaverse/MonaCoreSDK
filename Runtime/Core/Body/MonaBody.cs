@@ -1039,7 +1039,7 @@ namespace Mona.SDK.Core.Body
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up*.2f);
+            Gizmos.DrawRay(Transform.position + _baseOffset + Vector3.up * 0.01f, -Vector3.up * .2f);
         }
 
         private RaycastHit[] _results = new RaycastHit[10];
@@ -1498,6 +1498,7 @@ namespace Mona.SDK.Core.Body
 
         public Vector3 GetPosition()
         {
+            if (_destroyed) return default;
             if (_hasRigidbody)
                 return ActiveRigidbody.position;
             else
