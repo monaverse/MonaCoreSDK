@@ -17,9 +17,21 @@ namespace Mona.SDK.Core.State.Structs
 
         [SerializeField]
         public Vector3 _value;
+        private Vector3 _resetValue;
 
         public Vector3 Value { get => _value; set => _value = value; }
 
         public MonaVariablesVector3() { }
+
+        public void Reset()
+        {
+            _value = _resetValue;
+        }
+
+        public void SaveReset()
+        {
+            _resetValue = _value;
+        }
+
     }
 }

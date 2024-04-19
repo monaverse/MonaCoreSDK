@@ -7,5 +7,7 @@ namespace Mona.SDK.Core.State.Structs
         event Action OnChange;
         void Change();
         string Name { get; set; }
+        void Reset();
+        void SaveReset();
     }
 }

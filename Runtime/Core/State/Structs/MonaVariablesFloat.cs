@@ -31,6 +31,18 @@ namespace Mona.SDK.Core.State.Structs
         public bool ReturnRandomValueFromMinMax { get => _returnRandomValueFromMinMax; set => _returnRandomValueFromMinMax = value; }
         private float MinMaxRange => _max - _min;
 
+        private float _resetValue;
+
+        public void Reset()
+        {
+            _value = _resetValue;
+        }
+
+        public void SaveReset()
+        {
+            _resetValue = _value;
+        }
+
         public float Value
         {
             get

@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Mona.SDK.Core.State
 {
     [Serializable]
-    public class MonaVariables : IMonaVariables
+    public class MonaVariables : IMonaVariables, IDisposable
     {
         protected INetworkMonaVariables _networkState;
         protected IMonaBody _monaBody;
@@ -57,13 +57,19 @@ namespace Mona.SDK.Core.State
             return null;
         }
 
+        public void Dispose()
+        {
+        }
+
+
         public IMonaVariablesValue GetVariable(string name, Type type)
         {
             var value = GetVariable(name);
             if (value != null) return value;
-            
+
             var newValue = (IMonaVariablesValue)Activator.CreateInstance(type);
             newValue.Name = name;
+
             _values.Add(newValue);
             return newValue;
         }
