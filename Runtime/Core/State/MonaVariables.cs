@@ -1,4 +1,4 @@
-using Mona.SDK.Core.Body;
+﻿using Mona.SDK.Core.Body;
 using Mona.SDK.Core.Events;
 using Mona.SDK.Core.Network;
 using Mona.SDK.Core.Network.Interfaces;
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Mona.SDK.Core.Utils;
 
 namespace Mona.SDK.Core.State
 {
@@ -279,7 +280,7 @@ namespace Mona.SDK.Core.State
         protected virtual void FireValueEvent(string variableName, IMonaVariablesValue value)
         {
             value.Change();
-            EventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));
+            MonaEventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));
         }
     }
 }

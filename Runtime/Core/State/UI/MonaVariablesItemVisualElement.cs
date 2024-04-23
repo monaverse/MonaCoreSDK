@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using UnityEngine.UIElements;
+using UnityEngine;
 
 namespace Mona.SDK.Core.State.UIElements
 {
-    public class MonaVariablesItemVisualElement : VisualElement
+    public class MonaVariablesItemVisualElement : VisualElement, IDisposable
     {
         protected IMonaVariables _state;
         protected int _index;
@@ -24,6 +25,8 @@ namespace Mona.SDK.Core.State.UIElements
         protected Vector3Field _vector3Field;
 
         protected Action callback;
+
+        private Regex _regex;
 
         public MonaVariablesItemVisualElement(Action newCallback)
         {
@@ -43,70 +46,99 @@ namespace Mona.SDK.Core.State.UIElements
                 MonaCoreConstants.VECTOR2_TYPE_LABEL,
                 MonaCoreConstants.VECTOR3_TYPE_LABEL
             };
-            _typeField.RegisterValueChangedCallback((evt) =>
-            {
-                CreateValue(evt.newValue);
-            });
+            _typeField.RegisterValueChangedCallback(HandleTypeChanged);
 
             _nameField = new TextField();
-            _nameField.RegisterValueChangedCallback((evt) =>
-            {
-                if (evt.newValue == null || evt.newValue.StartsWith("_")) return;
-                if (_state.VariableList[_index].Name != evt.newValue)
-                {
-                    _state.VariableList[_index].Name = evt.newValue;
-                }
-            });
+            _nameField.RegisterValueChangedCallback(HandleNameChanged);
 
-            var regex = new Regex("\\d+");
-            _nameField.RegisterCallback<BlurEvent>((evt) =>
-            {
-                var count = _state.VariableList.FindAll(x => regex.Replace(x.Name, "") == _nameField.value);
-                    count.Remove(_state.VariableList[_index]);
-                if (count.Count > 0)
-                {
-                    _state.VariableList[_index].Name = _nameField.value + count.Count.ToString("D2");
-                    _nameField.value = _state.VariableList[_index].Name;
-                }                
-            });
+            _regex = new Regex("\\d+");
+            _nameField.RegisterCallback<BlurEvent>(HandleNameBlurred);
             _nameField.style.width = 100;
             _nameField.style.marginRight = 5;
 
             _floatField = new FloatField();
             _floatField.style.flexGrow = 1;
-            _floatField.RegisterValueChangedCallback((evt) =>
-            {
-                ((IMonaVariablesFloatValue)_state.VariableList[_index]).Value = evt.newValue;
-                ((IMonaVariablesFloatValue)_state.VariableList[_index]).DefaultValue = evt.newValue;
-            });
+            _floatField.RegisterValueChangedCallback(HandleFloatChanged);
 
             _stringField = new TextField();
             _stringField.style.flexGrow = 1;
-            _stringField.RegisterValueChangedCallback((evt) =>
-            {
-                if(_state.VariableList[_index] is IMonaVariablesStringValue)
-                    ((IMonaVariablesStringValue)_state.VariableList[_index]).Value = evt.newValue;
-            });
+            _stringField.RegisterValueChangedCallback(HandleStringChanged);
 
             _vector2Field = new Vector2Field();
             _vector2Field.style.flexGrow = 1;
-            _vector2Field.RegisterValueChangedCallback((evt) =>
-            {
-                ((IMonaVariablesVector2Value)_state.VariableList[_index]).Value = evt.newValue;
-            });
+            _vector2Field.RegisterValueChangedCallback(HandleVector2Changed);
 
             _vector3Field = new Vector3Field();
             _vector3Field.style.flexGrow = 1;
-            _vector3Field.RegisterValueChangedCallback((evt) =>
-            {
-                ((IMonaVariablesVector3Value)_state.VariableList[_index]).Value = evt.newValue;
-            });
+            _vector3Field.RegisterValueChangedCallback(HandleVector3Changed);
 
             _toggleField = new Toggle();
-            _toggleField.RegisterValueChangedCallback((evt) =>
+            _toggleField.RegisterValueChangedCallback(HandleBoolChanged);
+        }
+
+        public void Dispose()
+        {
+            _typeField.UnregisterValueChangedCallback(HandleTypeChanged);
+            _nameField.UnregisterValueChangedCallback(HandleNameChanged);
+            _nameField.UnregisterValueChangedCallback(HandleNameChanged);
+            _nameField.UnregisterCallback<BlurEvent>(HandleNameBlurred);
+            _floatField.UnregisterValueChangedCallback(HandleFloatChanged);
+            _stringField.UnregisterValueChangedCallback(HandleStringChanged);
+            _vector2Field.UnregisterValueChangedCallback(HandleVector2Changed);
+            _vector3Field.UnregisterValueChangedCallback(HandleVector3Changed);
+            _toggleField.UnregisterValueChangedCallback(HandleBoolChanged);
+        }
+
+        private void HandleBoolChanged(ChangeEvent<bool> evt)
+        {
+            ((IMonaVariablesBoolValue)_state.VariableList[_index]).Value = evt.newValue;
+        }
+
+        private void HandleVector3Changed(ChangeEvent<Vector3> evt)
+        {
+            ((IMonaVariablesVector3Value)_state.VariableList[_index]).Value = evt.newValue;
+        }
+
+        private void HandleVector2Changed(ChangeEvent<Vector2> evt)
+        {
+            ((IMonaVariablesVector2Value)_state.VariableList[_index]).Value = evt.newValue;
+        }
+
+        private void HandleStringChanged(ChangeEvent<string> evt)
+        {
+            if (_state.VariableList[_index] is IMonaVariablesStringValue)
+                ((IMonaVariablesStringValue)_state.VariableList[_index]).Value = evt.newValue;
+        }
+
+        private void HandleFloatChanged(ChangeEvent<float> evt)
+        {
+            ((IMonaVariablesFloatValue)_state.VariableList[_index]).Value = evt.newValue;
+            ((IMonaVariablesFloatValue)_state.VariableList[_index]).DefaultValue = evt.newValue;
+        }
+
+        private void HandleTypeChanged(ChangeEvent<string> evt)
+        {
+            CreateValue(evt.newValue);
+        }
+
+        private void HandleNameChanged(ChangeEvent<string> evt)
+        {
+            if (evt.newValue == null || evt.newValue.StartsWith("_")) return;
+            if (_state.VariableList[_index].Name != evt.newValue)
             {
-                ((IMonaVariablesBoolValue)_state.VariableList[_index]).Value = evt.newValue;
-            });
+                _state.VariableList[_index].Name = evt.newValue;
+            }
+        }
+
+        private void HandleNameBlurred(BlurEvent evt)
+        {
+            var count = _state.VariableList.FindAll(x => _regex.Replace(x.Name, "") == _nameField.value);
+            count.Remove(_state.VariableList[_index]);
+            if (count.Count > 0)
+            {
+                _state.VariableList[_index].Name = _nameField.value + count.Count.ToString("D2");
+                _nameField.value = _state.VariableList[_index].Name;
+            }
         }
 
         protected virtual void CreateValue(string value)

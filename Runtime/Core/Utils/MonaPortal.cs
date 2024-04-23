@@ -1,4 +1,4 @@
-using Mona.SDK.Brains.Core.Events;
+﻿using Mona.SDK.Brains.Core.Events;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace Mona.SDK.Core.Utils
         public static void GoTo(string portal)
         {
             Debug.Log($"Goto Portal Requested: {portal}");
-            EventBus.Trigger<MonaPortalChangeEvent>(new EventHook(MonaCoreConstants.ON_PORTAL_CHANGE_EVENT), new MonaPortalChangeEvent(portal));
+            MonaEventBus.Trigger<MonaPortalChangeEvent>(new EventHook(MonaCoreConstants.ON_PORTAL_CHANGE_EVENT), new MonaPortalChangeEvent(portal));
         }
     }
 }

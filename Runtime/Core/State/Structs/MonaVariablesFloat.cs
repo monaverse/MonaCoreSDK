@@ -2,6 +2,7 @@
 using UnityEngine;
 using Mona.SDK.Core.EasyUI;
 using System.Globalization;
+using System.Text;
 
 namespace Mona.SDK.Core.State.Structs
 {
@@ -13,6 +14,34 @@ namespace Mona.SDK.Core.State.Structs
         public void Change() => OnChange();
 
         // ------ Base Values ------
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 17;
+
+                hash = hash * 23 + (_name?.GetHashCode() ?? 0);
+                hash = hash * 23 + _value.GetHashCode();
+
+                return hash;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is IMonaVariablesValue other))
+            {
+                return false;
+            }
+
+            return Equals(other);
+        }
+
+        public bool Equals(IMonaVariablesValue other)
+        {
+            return GetHashCode() == other.GetHashCode();
+        }
 
         [SerializeField] private string _name;
         [SerializeField] public float _value = 1f;
@@ -225,18 +254,25 @@ namespace Mona.SDK.Core.State.Structs
         }
 
         // Number formatting
-       
+        private StringBuilder _formattedNumber = new StringBuilder();
+        private StringBuilder _minString = new StringBuilder();
+        private StringBuilder _maxString = new StringBuilder();
+        private const string FORWARD_SLASH_SPACES = " / ";
+        private const string PERCENT = "%";
+
         public string FormattedNumber
         {
             get
             {
+                _formattedNumber.Clear();
+
                 float displayValue = UseMinMax && _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
                     GaugeFillAmount * 100f : _value;
 
-                string minString = string.Empty;
-                string maxString = string.Empty;
+                _minString.Clear();
+                _maxString.Clear();
                 string percentageString = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
-                    "%" : string.Empty;
+                    PERCENT : string.Empty;
 
                 if (UseMinMax)
                 {
@@ -245,13 +281,32 @@ namespace Mona.SDK.Core.State.Structs
                     float maxValue = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Percentage ?
                         100f : _max;
 
-                    minString = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        _numericalFormatting.NumberPrefix + FormatNumber(minValue) + percentageString + _numericalFormatting.NumberSuffix + " / " : string.Empty;
-                    maxString = _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax ?
-                        " / " + _numericalFormatting.NumberPrefix + FormatNumber(maxValue) + percentageString + _numericalFormatting.NumberSuffix : string.Empty;                    
+                    if (_numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMin || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax)
+                    {
+                        _minString.Append(_numericalFormatting.NumberPrefix);
+                        _minString.Append(FormatNumber(minValue));
+                        _minString.Append(percentageString);
+                        _minString.Append(_numericalFormatting.NumberSuffix);
+                        _minString.Append(FORWARD_SLASH_SPACES);
+                    }
+
+                    if(_numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax)
+                    {
+                        _maxString.Append(_numericalFormatting.NumberPrefix);
+                        _maxString.Append(FormatNumber(maxValue));
+                        _maxString.Append(percentageString);
+                        _maxString.Append(_numericalFormatting.NumberSuffix);
+                    }                
                 }
 
-                return minString + _numericalFormatting.NumberPrefix + FormatNumber(displayValue) + percentageString + _numericalFormatting.NumberSuffix + maxString;
+                _formattedNumber.Append(_minString.ToString());
+                _formattedNumber.Append(_numericalFormatting.NumberPrefix);
+                _formattedNumber.Append(FormatNumber(displayValue));
+                _formattedNumber.Append(percentageString);
+                _formattedNumber.Append(_numericalFormatting.NumberSuffix);
+                _formattedNumber.Append(_maxString.ToString());
+
+                return _formattedNumber.ToString();
             }
         }
 
@@ -278,41 +333,54 @@ namespace Mona.SDK.Core.State.Structs
             }
         }
 
+        public const string NUMBER_GROUP_SEPARATOR_SPACE = " ";
+        public const string NUMBER_GROUP_SEPARATOR_COMMA = ",";
+        public const string NUMBER_GROUP_SEPARATOR_PERIOD = ".";
+        private const string CUSTOM_DECIMAL_FORMAT_PREFIX = "{0:N";
+        private const string CUSTOM_DECIMAL_FORMAT_SUFFIX = "}";
+
+        private CultureInfo _cultureInfo;
+        private NumberFormatInfo _numberFormatInfo;
+        private StringBuilder _customDecimalFormat = new StringBuilder();
+
         public string FormatNumber(float numberToFormat)
         {
-            CultureInfo cultureInfo = CultureInfo.CurrentCulture;
-            NumberFormatInfo numberFormatInfo = (NumberFormatInfo)cultureInfo.NumberFormat.Clone();
+            if (_cultureInfo == null)
+            {
+                _cultureInfo = CultureInfo.CurrentCulture;
+                _numberFormatInfo = (NumberFormatInfo)_cultureInfo.NumberFormat.Clone();
+            }
 
             switch (_numericalFormatting.ThousandthPlaceSeparatorType)
             {
                 case EasyUINumericalSeparatorType.None:
-                    numberFormatInfo.NumberGroupSeparator = string.Empty;
+                    _numberFormatInfo.NumberGroupSeparator = string.Empty;
                     break;
                 case EasyUINumericalSeparatorType.UseSpaces:
-                    numberFormatInfo.NumberGroupSeparator = " ";
+                    _numberFormatInfo.NumberGroupSeparator = NUMBER_GROUP_SEPARATOR_SPACE;
                     break;
                 case EasyUINumericalSeparatorType.UseCommas:
-                    numberFormatInfo.NumberGroupSeparator = ",";
+                    _numberFormatInfo.NumberGroupSeparator = NUMBER_GROUP_SEPARATOR_COMMA;
                     break;
                 case EasyUINumericalSeparatorType.UsePeriods:
-                    numberFormatInfo.NumberGroupSeparator = ".";
+                    _numberFormatInfo.NumberGroupSeparator = NUMBER_GROUP_SEPARATOR_PERIOD;
                     break;
             }
 
             switch (_numericalFormatting.DecimalPlaceSeparatorType)
             {
                 case EasyUINumericalSeparatorType.None:
-                    numberFormatInfo.NumberGroupSeparator = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency ?
+                    _numberFormatInfo.NumberGroupSeparator = _numericalFormatting.NumberFormatType == EasyUINumericalBaseFormatType.Currency ?
                         "." : string.Empty;
                     break;
                 case EasyUINumericalSeparatorType.UseSpaces:
-                    numberFormatInfo.NumberDecimalSeparator = " ";
+                    _numberFormatInfo.NumberDecimalSeparator = NUMBER_GROUP_SEPARATOR_SPACE;
                     break;
                 case EasyUINumericalSeparatorType.UseCommas:
-                    numberFormatInfo.NumberDecimalSeparator = ",";
+                    _numberFormatInfo.NumberDecimalSeparator = NUMBER_GROUP_SEPARATOR_COMMA;
                     break;
                 case EasyUINumericalSeparatorType.UsePeriods:
-                    numberFormatInfo.NumberDecimalSeparator = ".";
+                    _numberFormatInfo.NumberDecimalSeparator = NUMBER_GROUP_SEPARATOR_PERIOD;
                     break;
             }
 
@@ -320,16 +388,20 @@ namespace Mona.SDK.Core.State.Structs
             {
                 case EasyUINumericalBaseFormatType.Currency:
                     string monetaryFormat = "{0:C" + DecimalPlaceDisplay + "}";
-                    return string.Format(numberFormatInfo, monetaryFormat, numberToFormat);
+                    return string.Format(_numberFormatInfo, monetaryFormat, numberToFormat);
                 case EasyUINumericalBaseFormatType.Time:
-                    return TimeFormatString(numberToFormat, numberFormatInfo);
+                    return TimeFormatString(numberToFormat, _numberFormatInfo);
             }
 
             if (_numericalFormatting.DecimalOverrideType == EasyUIElementDisplayType.Default)
-                return FormatNumber(numberToFormat, numberFormatInfo);
+                return FormatNumber(numberToFormat, _numberFormatInfo);
 
-            string customDecimalFormat = "{0:N" + DecimalPlaceDisplay + "}";
-            return string.Format(numberFormatInfo, customDecimalFormat, numberToFormat);
+            _customDecimalFormat.Clear();
+            _customDecimalFormat.Append(CUSTOM_DECIMAL_FORMAT_PREFIX);
+            _customDecimalFormat.Append(DecimalPlaceDisplay);
+            _customDecimalFormat.Append(CUSTOM_DECIMAL_FORMAT_SUFFIX);
+            string customDecimalFormat = _customDecimalFormat.ToString();
+            return string.Format(_numberFormatInfo, customDecimalFormat, numberToFormat);
         }
 
         private string DecimalPlaceDisplay

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Mona.SDK.Core.Body;
@@ -6,6 +6,7 @@ using Mona.SDK.Core.Assets.Interfaces;
 using Mona.SDK.Core.Events;
 using Unity.VisualScripting;
 using Mona.SDK.Core.Network.Interfaces;
+using Mona.SDK.Core.Utils;
 
 namespace Mona.SDK.Core.Assets
 {
@@ -38,12 +39,12 @@ namespace Mona.SDK.Core.Assets
         private void AddDelegates()
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStartedEvent;
-            EventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Register<NetworkSpawnerStartedEvent>(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
         }
 
         private void RemoveDelegates()
         {
-            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
         }
 
         private void Dispose()

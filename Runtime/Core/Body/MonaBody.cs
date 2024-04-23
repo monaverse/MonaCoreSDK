@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.VisualScripting;
 using System.Collections.Generic;
 using Mona.SDK.Core.Network;
@@ -8,6 +8,7 @@ using System.Collections;
 using Mona.SDK.Core.Body.Enums;
 using Mona.SDK.Core.Network.Interfaces;
 using Mona.SDK.Core.Input;
+using Mona.SDK.Core.Utils;
 
 namespace Mona.SDK.Core.Body
 {
@@ -506,13 +507,13 @@ namespace Mona.SDK.Core.Body
         private void AddDelegates()
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
-            EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
-            EventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
 
             if (_networkBody == null)
             {
                 OnFixedUpdate = HandleFixedUpdate;
-                EventBus.Register(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
+                MonaEventBus.Register(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
             }
         }
 
@@ -527,8 +528,8 @@ namespace Mona.SDK.Core.Body
 
         private void RemoveDelegates()
         {
-            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
-            EventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
+            MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
         }
 
         private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
@@ -735,7 +736,7 @@ namespace Mona.SDK.Core.Body
             {
                 if(_animator != null)
                     _networkBody?.SetAnimator(_animator);
-                EventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
+                MonaEventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
             }
         }
 
@@ -965,7 +966,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyInput(MonaInput input)
         {
-            EventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(input));
+            MonaEventBus.Trigger(new EventHook(MonaCoreConstants.INPUT_EVENT, (IMonaBody)this), new MonaInputEvent(input));
             FireBodyHasInputEvent();
         }    
 
@@ -1117,27 +1118,27 @@ namespace Mona.SDK.Core.Body
 
         private void FireSpawnEvent()
         {
-            EventBus.Trigger<MonaBodySpawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodySpawnedEvent((IMonaBody)this));
+            MonaEventBus.Trigger<MonaBodySpawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodySpawnedEvent((IMonaBody)this));
         }
 
         private void FireDespawnEvent()
         {
-            EventBus.Trigger<MonaBodyDespawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodyDespawnedEvent((IMonaBody)this));
+            MonaEventBus.Trigger<MonaBodyDespawnedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_SPAWNED), new MonaBodyDespawnedEvent((IMonaBody)this));
         }
 
         private void FireBodyHasInputEvent()
         {
-            EventBus.Trigger<MonaBodyHasInputEvent>(new EventHook(MonaCoreConstants.MONA_BODY_HAS_INPUT_EVENT, (IMonaBody)this), new MonaBodyHasInputEvent());
+            MonaEventBus.Trigger<MonaBodyHasInputEvent>(new EventHook(MonaCoreConstants.MONA_BODY_HAS_INPUT_EVENT, (IMonaBody)this), new MonaBodyHasInputEvent());
         }
 
         private void FireFixedUpdateEvent(float deltaTime, bool hasInput)
         {
-            EventBus.Trigger<MonaBodyFixedTickEvent>(new EventHook(MonaCoreConstants.MONA_BODY_FIXED_TICK_EVENT, (IMonaBody)this), new MonaBodyFixedTickEvent(deltaTime, hasInput));
+            MonaEventBus.Trigger<MonaBodyFixedTickEvent>(new EventHook(MonaCoreConstants.MONA_BODY_FIXED_TICK_EVENT, (IMonaBody)this), new MonaBodyFixedTickEvent(deltaTime, hasInput));
         }
 
         private void FireStateAuthorityChanged()
         {
-            EventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this));
+            MonaEventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this));
         }
 
         public void SetTransformParent(Transform parent)
@@ -1145,7 +1146,7 @@ namespace Mona.SDK.Core.Body
             UnregisterInParents();
             ActiveTransform.SetParent(parent, true);
             RegisterInParents();
-            EventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
+            MonaEventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
         }
 
         public void SetActive(bool active, bool isNetworked = true)
