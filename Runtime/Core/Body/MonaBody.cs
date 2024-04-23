@@ -1150,7 +1150,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked = true)
         {
-            if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != active)
+            if (Transform != null && Transform.gameObject != null && active != _setActive)
             {
                 _setActive = active;
                 _setActiveIsNetworked = isNetworked;
@@ -1164,7 +1164,8 @@ namespace Mona.SDK.Core.Body
         private void ApplySetActive()
         {
             if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
-            { 
+            {
+                
                 Transform.gameObject.SetActive(_setActive);
                 if (_hasRigidbody)
                 {
