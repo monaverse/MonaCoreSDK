@@ -5,7 +5,7 @@ namespace Mona.SDK.Core.Assets.Interfaces
 {
     public interface IMonaAvatarAssetItem : IMonaAssetItem
     {
-        public Animator Value { get; set; }
+        public GameObject Value { get; set; }
         public string Url { get; set; }
     }
 }

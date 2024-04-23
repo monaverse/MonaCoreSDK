@@ -1349,7 +1349,10 @@ namespace Mona.SDK.Core.Body
                 if (_renderers != null && _renderers.Length > 0)
                 {
                     for (var i = 0; i < _renderers.Length; i++)
-                        _renderers[i].enabled = _visible;
+                    {
+                        if(_renderers[i] != null)
+                            _renderers[i].enabled = _visible;
+                    }
                 }
                 if (isNetworked) _networkBody?.SetVisible(vis);
             }

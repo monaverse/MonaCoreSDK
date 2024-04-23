@@ -103,10 +103,10 @@ namespace Mona.SDK.Core.UIElements
 
             _avatarField = new ObjectField();
             _avatarField.style.flexGrow = 1;
-            _avatarField.objectType = typeof(Animator);
+            _avatarField.objectType = typeof(GameObject);
             _avatarField.RegisterValueChangedCallback((evt) =>
             {
-                ((IMonaAvatarAssetItem)_assets.AllAssets[_index]).Value = (Animator)evt.newValue;
+                ((IMonaAvatarAssetItem)_assets.AllAssets[_index]).Value = (GameObject)evt.newValue;
             });
 
             _avatarUrlField = new TextField();
