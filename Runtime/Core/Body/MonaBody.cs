@@ -21,6 +21,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnControlRequested = delegate { };
 
         private bool _registerWhenEnabled;
+        private bool _startWhenEnabled;
         private IMonaNetworkSpawner _networkSpawner;
         private INetworkMonaBodyClient _networkBody;
         private Rigidbody _rigidbody;
@@ -550,9 +551,13 @@ namespace Mona.SDK.Core.Body
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
             {
                 FireSpawnEvent();
-                OnStarted();
                 if (DisableOnLoad)
+                {
+                    _startWhenEnabled = true;
                     SetActive(false);
+                }
+                else
+                    OnStarted();
             }
 
             RemoveDelegates();
@@ -560,6 +565,12 @@ namespace Mona.SDK.Core.Body
 
         private void OnEnable()
         {
+            if(_startWhenEnabled)
+            {
+                _startWhenEnabled = false;
+                OnStarted();
+            }
+
             if (_registerWhenEnabled)
             {
                 RegisterWithNetwork();
@@ -727,9 +738,13 @@ namespace Mona.SDK.Core.Body
             _activeRigidbody = obj.NetworkRigidbody;
 
             FireSpawnEvent();
-            OnStarted();
             if (DisableOnLoad)
+            {
+                _startWhenEnabled = true;
                 SetActive(false);
+            }
+            else
+                OnStarted();
 
 
             if (_networkBody != null)
