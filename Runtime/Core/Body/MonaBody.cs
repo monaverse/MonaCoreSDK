@@ -93,7 +93,7 @@ namespace Mona.SDK.Core.Body
         private bool _grounded;
         public bool Grounded => _grounded;
 
-        private bool _setActive = true;
+        private bool _setActive = false;
         private bool _setActiveIsNetworked = true;
 
         private Vector3 _lastPosition;
@@ -126,6 +126,7 @@ namespace Mona.SDK.Core.Body
         public MonaBodyNetworkSyncType SyncType = MonaBodyNetworkSyncType.NetworkTransform;
         public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
+        public bool TriggerInstantiated = false;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
 
@@ -353,6 +354,9 @@ namespace Mona.SDK.Core.Body
             InitializeTags();
             AddDelegates();
             SetInitialTransforms();
+
+            if (TriggerInstantiated)
+                FireInstantiated();
         }
 
         private void CacheComponents()
@@ -1154,6 +1158,11 @@ namespace Mona.SDK.Core.Body
         private void FireStateAuthorityChanged()
         {
             MonaEventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this));
+        }
+
+        private void FireInstantiated()
+        {
+            MonaEventBus.Trigger<MonaBodyInstantiatedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_INSTANTIATED), new MonaBodyInstantiatedEvent(this));
         }
 
         public void SetTransformParent(Transform parent)
