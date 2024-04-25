@@ -1181,7 +1181,12 @@ namespace Mona.SDK.Core.Body
             MonaEventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
         }
 
-        public void SetActive(bool active, bool isNetworked = true)
+        public void SetActive(bool active)
+        {
+            SetActive(active, true);
+        }
+
+        public void SetActive(bool active, bool isNetworked)
         {
             if (Transform != null && Transform.gameObject != null && active != _setActive)
             {
