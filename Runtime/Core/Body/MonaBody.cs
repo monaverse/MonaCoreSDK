@@ -129,7 +129,6 @@ namespace Mona.SDK.Core.Body
         public MonaBodyNetworkSyncType SyncType = MonaBodyNetworkSyncType.NetworkTransform;
         public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
-        public bool TriggerInstantiated = false;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
 
@@ -357,9 +356,11 @@ namespace Mona.SDK.Core.Body
             InitializeTags();
             AddDelegates();
             SetInitialTransforms();
+        }
 
-            if (TriggerInstantiated)
-                FireInstantiated();
+        private void Start()
+        {
+            FireInstantiated();
         }
 
         private void CacheComponents()
@@ -540,8 +541,12 @@ namespace Mona.SDK.Core.Body
             MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
         }
 
+        private bool _networkSpawned;
         private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
         {
+            if (_networkSpawned) return;
+            _networkSpawned = true;
+
             if (SyncType != MonaBodyNetworkSyncType.NotNetworked)
             {
                 _registerWhenEnabled = true;
