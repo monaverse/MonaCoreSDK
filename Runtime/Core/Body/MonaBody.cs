@@ -93,6 +93,9 @@ namespace Mona.SDK.Core.Body
         private bool _grounded;
         public bool Grounded => _grounded;
 
+        private int _childIndex = 0;
+        public int ChildIndex { get => _childIndex; set => _childIndex = value; }
+
         private bool _setActive = false;
         private bool _setActiveIsNetworked = true;
 

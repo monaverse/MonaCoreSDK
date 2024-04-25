@@ -30,6 +30,7 @@ namespace Mona.SDK.Core.Body
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
         List<Collider> Colliders { get; }
+        int ChildIndex { get; set; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }

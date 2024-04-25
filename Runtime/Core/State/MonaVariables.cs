@@ -59,7 +59,9 @@ namespace Mona.SDK.Core.State
 
         public int GetVariableIndexByName(string name)
         {
-            return _variablesIndexByName[name];
+            if(_variablesIndexByName.ContainsKey(name))
+                return _variablesIndexByName[name];
+            return -1;
         }
 
         public IMonaVariablesValue GetVariable(string name)
