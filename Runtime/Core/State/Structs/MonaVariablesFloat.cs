@@ -188,7 +188,7 @@ namespace Mona.SDK.Core.State.Structs
         public EasyUIVariableDisplayElement DisplayElementReference { get => _displayElementReference; set => _displayElementReference = value; }
 
         [SerializeField] private bool _allowUIDisplay = false;
-        [SerializeField] private bool _displayInUI = false;
+        [SerializeField] private bool _displayInUI = true;
         [SerializeField] private EasyUIDisplaySpace _displaySpace = EasyUIDisplaySpace.OnObject;
         [SerializeField] private EasyUIScreenPosition _screenPosition = EasyUIScreenPosition.TopLeft;
         [SerializeField] private EasyUIObjectPosition _objectPosition = EasyUIObjectPosition.Above;

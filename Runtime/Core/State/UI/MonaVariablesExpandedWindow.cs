@@ -24,6 +24,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected Toggle _returnRandomValueFromMinMax;
 
         protected Toggle _allowUIDisplay;
+        protected Toggle _displayInUI;
         protected EnumField _displaySpace;
         protected EnumField _screenPosition;
         protected EnumField _objectPosition;
@@ -79,6 +80,8 @@ namespace Mona.SDK.Core.State.UIElements
             }
 
             _allowUIDisplay.value = ((IEasyUINumericalDisplay)_variable).AllowUIDisplay;
+            _displayInUI.value = ((IEasyUINumericalDisplay)_variable).DisplayInUI;
+
             _displaySpace.value = ((IEasyUINumericalDisplay)_variable).DisplaySpace;
             _screenPosition.value = ((IEasyUINumericalDisplay)_variable).ScreenPosition;
             _objectPosition.value = ((IEasyUINumericalDisplay)_variable).ObjectPosition;
@@ -96,6 +99,7 @@ namespace Mona.SDK.Core.State.UIElements
 
             if (((IEasyUINumericalDisplay)_variable).AllowUIDisplay)
             {
+                _displayInUI.style.display = DisplayStyle.Flex;
                 _displaySpace.style.display = DisplayStyle.Flex;
                 _priority.style.display = DisplayStyle.Flex;
 
@@ -137,6 +141,7 @@ namespace Mona.SDK.Core.State.UIElements
             }
             else
             {
+                _displayInUI.style.display = DisplayStyle.None;
                 _displaySpace.style.display = DisplayStyle.None;
                 _screenPosition.style.display = DisplayStyle.None;
                 _objectPosition.style.display = DisplayStyle.None;
@@ -226,6 +231,14 @@ namespace Mona.SDK.Core.State.UIElements
                 Refresh();
             });
 
+            _displayInUI = new Toggle("Start With UI On");
+            _displayInUI.RegisterValueChangedCallback((evt) =>
+            {
+                ((IEasyUINumericalDisplay)_variable).DisplayInUI = evt.newValue;
+                callback?.Invoke();
+                Refresh();
+            });
+
             _displaySpace = new EnumField("Display Space", EasyUIDisplaySpace.HeadsUpDisplay);
             _displaySpace.RegisterValueChangedCallback((evt) =>
             {
@@ -284,6 +297,7 @@ namespace Mona.SDK.Core.State.UIElements
             rootVisualElement.Add(sv);
 
             sv.Add(_allowUIDisplay);
+            sv.Add(_displayInUI);
             sv.Add(_displaySpace);
             sv.Add(_screenPosition);
             sv.Add(_objectPosition);

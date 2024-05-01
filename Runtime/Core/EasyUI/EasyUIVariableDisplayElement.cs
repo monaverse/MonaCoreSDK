@@ -39,6 +39,7 @@ namespace Mona.SDK.Core.EasyUI
     {
         [SerializeField] private bool _isPlaceholder;
         [SerializeField] private GameObject _iconCounterElementPrefab;
+        [SerializeField] private GameObject _contentContainer;
         [SerializeField] private float _iconAnchorOffset = 0.2f;
         [SerializeField] private RectTransform _informationAreaRect;
         [SerializeField] private EasyUIImageSettings _elementBackground;
@@ -58,6 +59,8 @@ namespace Mona.SDK.Core.EasyUI
 
         public void UpdateDisplay(IEasyUINumericalDisplay variable)
         {
+            UpdateVisibilityDisplay(variable);
+
             if (_informationAreaRect)
             {
                 float minX = variable.PrimaryIcon.PrimarySprite.DisplayElement ? _iconAnchorOffset : 0f;
@@ -97,6 +100,12 @@ namespace Mona.SDK.Core.EasyUI
                     _primaryIcon.SetGauge(variable.FillType, variable.GaugeFillAmount);
                     break;
             }
+        }
+
+        private void UpdateVisibilityDisplay(IEasyUINumericalDisplay variable)
+        {
+            if (_contentContainer != null && _contentContainer.activeInHierarchy != variable.DisplayInUI)
+                _contentContainer.SetActive(variable.DisplayInUI);
         }
     }
 }

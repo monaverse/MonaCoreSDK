@@ -2023,6 +2023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isPlaceholder: 0
   _iconCounterElementPrefab: {fileID: 928920744644979257, guid: 382686ce2c749402097f9c17f5f92de9, type: 3}
+  _contentContainer: {fileID: 1876220023432940723}
   _iconAnchorOffset: 0.2
   _informationAreaRect: {fileID: 2606831601252938126}
   _elementBackground:
@@ -2032,6 +2033,7 @@ MonoBehaviour:
     _elementShadow: {fileID: 4703814020297523805}
     _shadowOnByDefault: 0
     _defaultShadowOffset: {x: -3, y: -3}
+    _isObjectUI: 0
   _primaryIcon:
     _prerequisitParents:
     - {fileID: 7896186163946783706}
@@ -2044,6 +2046,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 2317637774257828300}
       _shadowOnByDefault: 1
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _backgroundImageSettings:
       _requiredParents:
       - {fileID: 1466554055631547223}
@@ -2053,6 +2056,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 0}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _foregroundImageSettings:
       _requiredParents:
       - {fileID: 1466554055631547223}
@@ -2062,26 +2066,27 @@ MonoBehaviour:
       _elementShadow: {fileID: 3088018746125645103}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _textSettings:
       _requiredParents:
       - {fileID: 1466554055631547223}
       - {fileID: 6785689677185049861}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _tmpText: {fileID: 13706436841113310}
       _tmpShadowText: {fileID: 0}
-      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
-      _elementShadow: {fileID: 0}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
   _nameDisplay:
     _requiredParents:
     - {fileID: 1607676681959612570}
     - {fileID: 7513851702505489146}
+    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
     _tmpText: {fileID: 1595113858648399766}
     _tmpShadowText: {fileID: 4845255259043364976}
-    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
-    _elementShadow: {fileID: 0}
     _shadowOnByDefault: 1
     _defaultShadowOffset: {x: -3, y: -3}
+    _isObjectUI: 0
   _horizontalGauge:
     _prerequisitParents:
     - {fileID: 8676015915484335609}
@@ -2093,6 +2098,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 6565780254381216147}
       _shadowOnByDefault: 1
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _backgroundImageSettings:
       _requiredParents:
       - {fileID: 7740214976552735400}
@@ -2101,6 +2107,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 0}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _foregroundImageSettings:
       _requiredParents:
       - {fileID: 7740214976552735400}
@@ -2109,15 +2116,16 @@ MonoBehaviour:
       _elementShadow: {fileID: 8717005208060240759}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _textSettings:
       _requiredParents:
       - {fileID: 7740214976552735400}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _tmpText: {fileID: 4150488972772390299}
       _tmpShadowText: {fileID: 812815820418698115}
-      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
-      _elementShadow: {fileID: 0}
       _shadowOnByDefault: 1
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
   _highVolumeCounter:
     _prerequisitParents:
     - {fileID: 2291580868811127543}
@@ -2130,6 +2138,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 4065469395081120785}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _backgroundImageSettings:
       _requiredParents:
       - {fileID: 3145582305900935460}
@@ -2138,6 +2147,7 @@ MonoBehaviour:
       _elementShadow: {fileID: 0}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _foregroundImageSettings:
       _requiredParents:
       - {fileID: 3145582305900935460}
@@ -2146,25 +2156,26 @@ MonoBehaviour:
       _elementShadow: {fileID: 7264364754957798562}
       _shadowOnByDefault: 0
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
     _textSettings:
       _requiredParents:
       - {fileID: 6250087381804366368}
+      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
       _tmpText: {fileID: 4393490415862817303}
       _tmpShadowText: {fileID: 3248519690011713121}
-      _defaultColor: {r: 1, g: 1, b: 1, a: 1}
-      _elementShadow: {fileID: 0}
       _shadowOnByDefault: 1
       _defaultShadowOffset: {x: -3, y: -3}
+      _isObjectUI: 0
   _numberDisplay:
     _requiredParents:
     - {fileID: 8676015915484335609}
     - {fileID: 4351765990131914469}
+    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
     _tmpText: {fileID: 7578589229300589346}
     _tmpShadowText: {fileID: 762262498066603873}
-    _defaultColor: {r: 1, g: 1, b: 1, a: 1}
-    _elementShadow: {fileID: 0}
     _shadowOnByDefault: 1
     _defaultShadowOffset: {x: -3, y: -3}
+    _isObjectUI: 0
   _iconCounter:
     _requiredParents:
     - {fileID: 8676015915484335609}

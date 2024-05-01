@@ -105,7 +105,7 @@ namespace Mona.SDK.Core.Body
                             if (Mathf.Approximately(dir.y, 0f)) dir.y = 0f;
                             if (Mathf.Approximately(dir.z, 0f)) dir.z = 0f;
 
-                            Debug.Log($"Travelled through collider {point} {dir} {movementThisStep.normalized} {Vector3.Scale(dir.normalized, _myCollider.bounds.extents)} {_previousCenter} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
+                            //Debug.Log($"Travelled through collider {point} {dir} {movementThisStep.normalized} {Vector3.Scale(dir.normalized, _myCollider.bounds.extents)} {_previousCenter} {hitInfo.collider} {hitInfo.distance} extent {_partialExtent}");
                             MonaEventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_EVENT, _body), new MonaBodyEvent(MonaBodyEventType.OnStop));
 
                             if (_myCollider != null && movementThisStep.magnitude > Mathf.Epsilon)
