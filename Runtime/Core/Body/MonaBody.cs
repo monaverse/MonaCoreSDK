@@ -346,7 +346,9 @@ namespace Mona.SDK.Core.Body
         private bool _mockNetwork;
 
         private Renderer[] _renderers;
+        private Renderer[] _bodyRenderers;
         public Renderer[] Renderers => _renderers;
+        public Renderer[] BodyRenderers => _bodyRenderers;
 
         private void Awake()
         {
@@ -383,6 +385,7 @@ namespace Mona.SDK.Core.Body
         public void CacheRenderers()
         {
             _renderers = GetComponentsInChildren<Renderer>(true);
+            _bodyRenderers = GetComponents<Renderer>();
         }
 
         public void AddRigidbody()
@@ -651,6 +654,12 @@ namespace Mona.SDK.Core.Body
                 SetMaterial(material, i);
         }
 
+        public void SetBodyMaterial(Material material, bool useSharedMaterial = false)
+        {
+            for (var i = 0; i < _bodyRenderers.Length; i++)
+                SetBodyMaterial(material, i, useSharedMaterial);
+        }
+
         public void SetSharedMaterial(Material material)
         {
             for (var i = 0; i < _renderers.Length; i++)
@@ -664,6 +673,26 @@ namespace Mona.SDK.Core.Body
                 renderer.material = material;
             else
                 renderer.materials[materialSlot] = material;
+        }
+
+        public void SetBodyMaterial(Material material, int rendererIndex, bool useSharedMaterial, int materialSlot = -1)
+        {
+            var renderer = _bodyRenderers[rendererIndex];
+
+            if (useSharedMaterial)
+            {
+                if (materialSlot == -1)
+                    renderer.sharedMaterial = material;
+                else
+                    renderer.sharedMaterials[materialSlot] = material;
+            }
+            else
+            {
+                if (materialSlot == -1)
+                    renderer.material = material;
+                else
+                    renderer.materials[materialSlot] = material;
+            }
         }
 
         public void SetSharedMaterial(Material material, int rendererIndex, int materialSlot = -1)

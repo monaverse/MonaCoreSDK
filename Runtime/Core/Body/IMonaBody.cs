@@ -40,6 +40,7 @@ namespace Mona.SDK.Core.Body
         Vector3 CurrentVelocity { get; }
 
         Renderer[] Renderers { get; }
+        Renderer[] BodyRenderers { get; }
 
         MonaBodyTransformBounds PositionBounds { get; set; }
         MonaBodyTransformBounds RotationBounds { get; set; }
@@ -106,8 +107,10 @@ namespace Mona.SDK.Core.Body
         void SetAnimator(Animator animator);
 
         void SetMaterial(Material material);
+        void SetBodyMaterial(Material material, bool useSharedMaterial = false);
         void SetSharedMaterial(Material material);
         void SetMaterial(Material material, int rendererIndex, int materialIndex = -1);
+        void SetBodyMaterial(Material material, int rendererIndex, bool useSharedMaterial = false, int materialIndex = -1);
         void SetSharedMaterial(Material material, int rendererIndex, int materialIndex = -1);
         void SetTexture(Texture texture, string textureSlot, bool sharedMaterial);
 
