@@ -993,6 +993,13 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        public void CancelForces()
+        {
+            ActiveRigidbody.velocity = Vector3.zero;
+            ActiveRigidbody.angularVelocity = Vector3.zero;
+            _force.Clear();
+        }
+
         private void ApplyAddRotation(Quaternion delta)
         {
             _applyRotation *= delta;
@@ -1000,16 +1007,16 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyAllForces(float deltaTime)
         {
-            if (_hasRigidbody)
+            if (!_hasRigidbody)
+                return;
+
+            for (var i = 0; i < _force.Count; i++)
             {
-                for (var i = 0; i < _force.Count; i++)
-                {
-                    var force = _force[i];
-                    ActiveRigidbody.AddForce(force.Force, force.Mode);
-                    //Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
-                }
-                _force.Clear();
+                var force = _force[i];
+                ActiveRigidbody.AddForce(force.Force, force.Mode);
+                //Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
             }
+            _force.Clear();
         }
 
         private void ApplyInputs(List<MonaInput> inputs)

@@ -292,6 +292,7 @@ namespace Mona.SDK.Core.State.Structs
 
                     if(_numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMax || _numericalFormatting.MinMaxFormatting == MinMaxNumericalFormatting.ShowMinAndMax)
                     {
+                        _maxString.Append(FORWARD_SLASH_SPACES);
                         _maxString.Append(_numericalFormatting.NumberPrefix);
                         _maxString.Append(FormatNumber(maxValue));
                         _maxString.Append(percentageString);

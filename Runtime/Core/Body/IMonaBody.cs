@@ -62,6 +62,7 @@ namespace Mona.SDK.Core.Body
         void SetLayer(string layerName, bool includeChildren, bool isNetworked = true);
         void ResetLayer();
         void ApplyForce(Vector3 force, ForceMode forceMode, bool isNetworked = true);
+        void CancelForces();
         void MoveDirection(Vector3 direction, bool isNetworked = true);
         void SetPosition(Vector3 position, bool isNetworked = true);
         void AddPosition(Vector3 dir, bool isNetworked = true);
