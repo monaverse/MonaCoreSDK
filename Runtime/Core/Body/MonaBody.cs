@@ -1237,7 +1237,7 @@ namespace Mona.SDK.Core.Body
                 if (_hasRigidbody)
                 {
                     ActiveRigidbody.isKinematic = true;
-                    ActiveRigidbody.Sleep();
+                    //ActiveRigidbody.Sleep();
                 }
                 if (_setActiveIsNetworked) _networkBody?.SetActive(_setActive);
             }
