@@ -858,8 +858,11 @@ namespace Mona.SDK.Core.Body
                     _lastInput = default;
                 }
 
-                BindPosition();
-                BindRotation();
+                if (_positionBounds.RestrictTransform)
+                {
+                    BindPosition();
+                    BindRotation();
+                }
 
                 FireFixedUpdateEvent(evt.DeltaTime, false);
 
