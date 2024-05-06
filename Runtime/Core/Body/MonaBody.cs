@@ -45,6 +45,7 @@ namespace Mona.SDK.Core.Body
         private IMonaBody _poolBodyPrevious { get; set; }
         private IMonaBody _poolBodyNext { get; set; }
         private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
+        private bool _hasRigidbodyInParent;
 
         private Vector3 _initialPosition = Vector3.zero;
         private Vector3 _initialLocalPosition = Vector3.zero;
@@ -363,6 +364,7 @@ namespace Mona.SDK.Core.Body
         private void Start()
         {
             FireInstantiated();
+            HasRigidbodyInParent();
         }
 
         private void CacheComponents()
@@ -714,6 +716,20 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private void HasRigidbodyInParent()
+        {
+            var rb = GetComponentsInParent<Rigidbody>(true);
+            for (var i = 0; i < rb.Length; i++)
+            {
+                if (rb[i] != _rigidbody)
+                {
+                    _hasRigidbodyInParent = true;
+                    return;
+                }
+            }
+            _hasRigidbodyInParent = false;
+        }
+
         private void RegisterInParents()
         {
             MonaBodies.Add(this);
@@ -849,7 +865,7 @@ namespace Mona.SDK.Core.Body
             if (_networkBody == null)
             {
                 _hasInput = _monaInputs.Count > 0;
-                if(_hasInput)
+                if (_hasInput)
                 {
                     //if(_monaInputs.Count > 1) 
                     //    Debug.Log($"mona inputs count {_monaInputs.Count}");
@@ -858,11 +874,8 @@ namespace Mona.SDK.Core.Body
                     _lastInput = default;
                 }
 
-                if (_positionBounds.RestrictTransform)
-                {
-                    BindPosition();
-                    BindRotation();
-                }
+                BindPosition();
+                BindRotation();
 
                 FireFixedUpdateEvent(evt.DeltaTime, false);
 
@@ -1217,6 +1230,7 @@ namespace Mona.SDK.Core.Body
             UnregisterInParents();
             ActiveTransform.SetParent(parent, true);
             RegisterInParents();
+            HasRigidbodyInParent();
             MonaEventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
         }
 
@@ -1463,7 +1477,10 @@ namespace Mona.SDK.Core.Body
         public void BindPosition()
         {
             if (_hasRigidbody)
-                ActiveRigidbody.position = _positionBounds.BindValue(ActiveTransform.position);
+            {
+                if(!_hasRigidbodyInParent || _positionBounds.RestrictTransform)
+                    ActiveRigidbody.position = _positionBounds.BindValue(ActiveTransform.position);
+            }
             else
                 ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
         }
@@ -1471,7 +1488,10 @@ namespace Mona.SDK.Core.Body
         public void BindRotation()
         {
             if (_hasRigidbody)
-                ActiveRigidbody.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
+            {
+                if(!_hasRigidbodyInParent || _positionBounds.RestrictTransform)
+                    ActiveRigidbody.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
+            }
             else
                 ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
         }
