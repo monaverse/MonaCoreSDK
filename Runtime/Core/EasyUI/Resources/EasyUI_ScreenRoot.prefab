@@ -61,6 +61,7 @@ MonoBehaviour:
   _screenPlacement: 0
   _objectPlacement: 0
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &2223340869781700200
@@ -150,6 +151,7 @@ MonoBehaviour:
   _screenPlacement: 40
   _objectPlacement: 10
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &3189268518978784392
@@ -177,7 +179,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ReverseArrangement: 1
 --- !u!1 &2255878180504132087
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,6 +371,7 @@ MonoBehaviour:
   _screenPlacement: 50
   _objectPlacement: 10
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &3194298941780852659
@@ -396,7 +399,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ReverseArrangement: 1
 --- !u!1 &6232703957522311466
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,6 +539,7 @@ MonoBehaviour:
   _screenPlacement: 20
   _objectPlacement: 0
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &1371924456344372915
@@ -728,6 +732,7 @@ MonoBehaviour:
   _screenPlacement: 10
   _objectPlacement: 0
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &1967159442264746938
@@ -817,6 +822,7 @@ MonoBehaviour:
   _screenPlacement: 30
   _objectPlacement: 10
   _maxChildren: 3
+  _reverseDisplayOrder: 0
   _variablePrefab: {fileID: 5385855502816265082, guid: 551f511e4e12e4f169c90da240101429, type: 3}
   _placeholderPrefab: {fileID: 4497672472671337411, guid: 65699bdfe1aa843d592b1a50a950b659, type: 3}
 --- !u!114 &3383034469970857071
@@ -844,4 +850,4 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ReverseArrangement: 1
