@@ -679,7 +679,10 @@ namespace Mona.SDK.Core.Body
         {
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
-                renderer.material = material;
+            {
+                for (var i = 0; i < renderer.materials.Length; i++)
+                    renderer.materials[i] = material;
+            }
             else
                 renderer.materials[materialSlot] = material;
         }
@@ -691,14 +694,20 @@ namespace Mona.SDK.Core.Body
             if (useSharedMaterial)
             {
                 if (materialSlot == -1)
-                    renderer.sharedMaterial = material;
+                {
+                    for(var i = 0;i < renderer.sharedMaterials.Length; i++)
+                        renderer.sharedMaterials[i] = material;
+                }
                 else
                     renderer.sharedMaterials[materialSlot] = material;
             }
             else
             {
                 if (materialSlot == -1)
-                    renderer.material = material;
+                {
+                    for (var i = 0; i < renderer.materials.Length; i++)
+                        renderer.materials[i] = material;
+                }
                 else
                     renderer.materials[materialSlot] = material;
             }
@@ -708,7 +717,10 @@ namespace Mona.SDK.Core.Body
         {
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
-                renderer.sharedMaterial = material;
+            {
+                for (var i = 0; i < renderer.sharedMaterials.Length; i++)
+                    renderer.sharedMaterials[i] = material;
+            }
             else
                 renderer.sharedMaterials[materialSlot] = material;
         }
