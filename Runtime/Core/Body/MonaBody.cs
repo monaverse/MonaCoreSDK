@@ -1607,8 +1607,18 @@ namespace Mona.SDK.Core.Body
 
             ActiveTransform.localScale = _initialScale = scale;
 
-            for (var i = 0; i < _childMonaBodies.Count; i++)
-                _childMonaBodies[i].SetInitialTransforms();
+            //TODO: I don't like this. sometimes child monabodies are getting destroyed and not cleaning themselves up.
+            for (var i = _childMonaBodies.Count - 1; i >= 0; i--)
+            {
+                try
+                {
+                    _childMonaBodies[i].SetInitialTransforms();
+                }
+                catch(Exception e)
+                {
+                    _childMonaBodies.RemoveAt(i);
+                }
+            }
 
 
             if (isNetworked)
