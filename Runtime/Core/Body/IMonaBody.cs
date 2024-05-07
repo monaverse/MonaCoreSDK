@@ -14,6 +14,9 @@ namespace Mona.SDK.Core.Body
         event Action OnResumed;
         event Action OnPaused;
 
+        string SkinId { get; set; }
+        GameObject Skin { get; set; }
+
         string LocalId { get; }
         Transform ActiveTransform { get; }
         Rigidbody ActiveRigidbody { get; }

@@ -20,6 +20,12 @@ namespace Mona.SDK.Core.Body
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
 
+        private string _skinId;
+        public string SkinId { get => _skinId; set => _skinId = value; }
+
+        private GameObject _skin;
+        public GameObject Skin { get => _skin; set => _skin = value; }
+
         private bool _registerWhenEnabled;
         private bool _startWhenEnabled;
         private IMonaNetworkSpawner _networkSpawner;
@@ -118,6 +124,7 @@ namespace Mona.SDK.Core.Body
         {
             public Quaternion Rotation;
         }
+
 
         private List<MonaBodyForce> _force = new List<MonaBodyForce>();
         private List<MonaBodyDirection> _positionDeltas = new List<MonaBodyDirection>();
