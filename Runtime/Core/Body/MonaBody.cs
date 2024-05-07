@@ -680,8 +680,10 @@ namespace Mona.SDK.Core.Body
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
             {
-                for (var i = 0; i < renderer.materials.Length; i++)
-                    renderer.materials[i] = material;
+                var materials = renderer.materials;
+                for (var i = 0; i < materials.Length; i++)
+                    materials[i] = material;
+                renderer.materials = materials;                
             }
             else
                 renderer.materials[materialSlot] = material;
@@ -695,8 +697,10 @@ namespace Mona.SDK.Core.Body
             {
                 if (materialSlot == -1)
                 {
-                    for(var i = 0;i < renderer.sharedMaterials.Length; i++)
-                        renderer.sharedMaterials[i] = material;
+                    var materials = renderer.sharedMaterials;
+                    for (var i = 0; i < materials.Length; i++)
+                        materials[i] = material;
+                    renderer.sharedMaterials = materials;
                 }
                 else
                     renderer.sharedMaterials[materialSlot] = material;
@@ -705,8 +709,10 @@ namespace Mona.SDK.Core.Body
             {
                 if (materialSlot == -1)
                 {
-                    for (var i = 0; i < renderer.materials.Length; i++)
-                        renderer.materials[i] = material;
+                    var materials = renderer.materials;
+                    for (var i = 0; i < materials.Length; i++)
+                        materials[i] = material;
+                    renderer.materials = materials;
                 }
                 else
                     renderer.materials[materialSlot] = material;
@@ -718,8 +724,10 @@ namespace Mona.SDK.Core.Body
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
             {
-                for (var i = 0; i < renderer.sharedMaterials.Length; i++)
-                    renderer.sharedMaterials[i] = material;
+                var materials = renderer.sharedMaterials;
+                for (var i = 0; i < materials.Length; i++)
+                    materials[i] = material;
+                renderer.sharedMaterials = materials;
             }
             else
                 renderer.sharedMaterials[materialSlot] = material;
