@@ -10,28 +10,28 @@ namespace Mona.SDK.Core.State
     {
         void SetGameObject(GameObject gameObject);
 
-        void Set(string variableName, int value, bool isNetworked = true);
-        void Set(string variableName, bool value, bool isNetworked = true);
-        void Set(string variableName, string value, bool isNetworked = true);
-        void Set(string variableName, float value, bool isNetworked = true);
-        void Set(string variableName, IMonaBody value);
-        void Set(string variableName, Vector2 value, bool isNetworked = true);
-        void Set(string variableName, Vector3 value, bool isNetworked = true);
+        void Set(string variableName, int value, bool isNetworked = true, bool createIfNotFound = true);
+        void Set(string variableName, bool value, bool isNetworked = true, bool createIfNotFound = true);
+        void Set(string variableName, string value, bool isNetworked = true, bool createIfNotFound = true);
+        void Set(string variableName, float value, bool isNetworked = true, bool createIfNotFound = true);
+        void Set(string variableName, IMonaBody value, bool createIfNotFound = true);
+        void Set(string variableName, Vector2 value, bool isNetworked = true, bool createIfNotFound = true);
+        void Set(string variableName, Vector3 value, bool isNetworked = true, bool createIfNotFound = true);
 
         List<IMonaVariablesValue> VariableList { get; set; }
         IMonaVariablesValue GetVariable(string variableName);
-        IMonaVariablesValue GetVariable(string variableName, Type type);
+        IMonaVariablesValue GetVariable(string variableName, Type type, bool createIfNotFound = true);
         IMonaVariablesValue CreateVariable(string variableName, Type type, int i);
         IMonaVariablesValue GetVariableByIndex(int index);
         int GetVariableIndexByName(string name);
 
-        int GetInt(string variableName);
-        bool GetBool(string variableName);
-        string GetString(string variableName);
-        float GetFloat(string variableName);
-        IMonaBody GetBody(string variableName);
-        Vector2 GetVector2(string variableName);
-        Vector3 GetVector3(string variableName);
+        int GetInt(string variableName, bool createIfNotFound = true);
+        bool GetBool(string variableName, bool createIfNotFound = true);
+        string GetString(string variableName, bool createIfNotFound = true);
+        float GetFloat(string variableName, bool createIfNotFound = true);
+        IMonaBody GetBody(string variableName, bool createIfNotFound = true);
+        Vector2 GetVector2(string variableName, bool createIfNotFound = true);
+        Vector3 GetVector3(string variableName, bool createIfNotFound = true);
         string GetValueAsString(string variableName);
     }
 

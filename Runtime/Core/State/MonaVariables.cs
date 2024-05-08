@@ -83,10 +83,13 @@ namespace Mona.SDK.Core.State
         }
 
 
-        public IMonaVariablesValue GetVariable(string name, Type type)
+        public IMonaVariablesValue GetVariable(string name, Type type, bool createIfNotFound = true)
         {
             var value = GetVariable(name);
             if (value != null) return value;
+
+            if (!createIfNotFound)
+                return null;
 
             var newValue = (IMonaVariablesValue)Activator.CreateInstance(type);
             newValue.Name = name;
@@ -109,9 +112,13 @@ namespace Mona.SDK.Core.State
             return prop;
         }
 
-        public void Set(string name, IMonaBody value)
+        public void Set(string name, IMonaBody value, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesBody));
+            var prop = GetVariable(name, typeof(MonaVariablesBody), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesBodyValue)prop);
             if (propValue.Value != value)
             {
@@ -120,15 +127,19 @@ namespace Mona.SDK.Core.State
             }
         }
 
-        public IMonaBody GetBody(string name)
+        public IMonaBody GetBody(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesBody));
+            var prop = GetVariable(name, typeof(MonaVariablesBody), createIfNotFound);
             return ((IMonaVariablesBodyValue)prop).Value;
         }
 
-        public void Set(string name, bool value, bool isNetworked = true)
+        public void Set(string name, bool value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesBool));
+            var prop = GetVariable(name, typeof(MonaVariablesBool), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesBoolValue)prop);
             if (propValue.Value != value)
             {
@@ -139,15 +150,19 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public bool GetBool(string name)
+        public bool GetBool(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesBool));
+            var prop = GetVariable(name, typeof(MonaVariablesBool), createIfNotFound);
             return ((IMonaVariablesBoolValue)prop).Value;
         }
 
-        public void Set(string name, float value, bool isNetworked = true)
+        public void Set(string name, float value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            var prop = GetVariable(name, typeof(MonaVariablesFloat), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesFloatValue)prop);
             if (propValue.Value != value)
             {
@@ -158,15 +173,19 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public float GetFloat(string name)
+        public float GetFloat(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            var prop = GetVariable(name, typeof(MonaVariablesFloat), createIfNotFound);
             return ((IMonaVariablesFloatValue)prop).Value;
         }
 
-        public void Set(string name, int value, bool isNetworked = true)
+        public void Set(string name, int value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesInt));
+            var prop = GetVariable(name, typeof(MonaVariablesInt), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesIntValue)prop);
             if (propValue.Value != value)
             {
@@ -177,15 +196,19 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public int GetInt(string name)
+        public int GetInt(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesInt));
+            var prop = GetVariable(name, typeof(MonaVariablesInt), createIfNotFound);
             return ((IMonaVariablesIntValue)prop).Value;
         }
 
-        public void Set(string name, string value, bool isNetworked = true)
+        public void Set(string name, string value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesString));
+            var prop = GetVariable(name, typeof(MonaVariablesString), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesStringValue)prop);
             if (propValue.Value != value)
             {
@@ -196,15 +219,19 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public string GetString(string name)
+        public string GetString(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesString));
+            var prop = GetVariable(name, typeof(MonaVariablesString), createIfNotFound);
             return ((IMonaVariablesStringValue)prop).Value;
         }
 
-        public void Set(string name, Vector2 value, bool isNetworked = true)
+        public void Set(string name, Vector2 value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesVector2));
+            var prop = GetVariable(name, typeof(MonaVariablesVector2), createIfNotFound);
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesVector2Value)prop);
             if (propValue.Value != value)
             {
@@ -215,15 +242,20 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public Vector2 GetVector2(string name)
+        public Vector2 GetVector2(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesFloat));
+            var prop = GetVariable(name, typeof(MonaVariablesFloat), createIfNotFound);
             return ((IMonaVariablesVector2Value)prop).Value;
         }
 
-        public void Set(string name, Vector3 value, bool isNetworked = true)
+        public void Set(string name, Vector3 value, bool isNetworked = true, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesVector3));
+            var prop = GetVariable(name, typeof(MonaVariablesVector3), createIfNotFound);
+
+
+            if (prop == null)
+                return;
+
             var propValue = ((IMonaVariablesVector3Value)prop);
             if (propValue.Value != value)
             {
@@ -234,9 +266,9 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
-        public Vector3 GetVector3(string name)
+        public Vector3 GetVector3(string name, bool createIfNotFound = true)
         {
-            var prop = GetVariable(name, typeof(MonaVariablesVector3));
+            var prop = GetVariable(name, typeof(MonaVariablesVector3), createIfNotFound);
             return ((IMonaVariablesVector3Value)prop).Value;
         }
 
