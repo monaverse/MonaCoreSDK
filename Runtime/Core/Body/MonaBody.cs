@@ -1310,7 +1310,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return _gameObject.activeInHierarchy;
+            return _gameObject.activeSelf;
         }
 
 
