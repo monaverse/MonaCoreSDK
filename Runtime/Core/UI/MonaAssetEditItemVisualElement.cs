@@ -29,6 +29,7 @@ namespace Mona.SDK.Core.UIElements
         protected ObjectField _textureField;
         protected ObjectField _materialField;
         protected ObjectField _animationField;
+        protected ObjectField _meshField;
 #endif
         private Toggle _bodyUseUrlField;
         private TextField _bodyUrlField;
@@ -160,6 +161,13 @@ namespace Mona.SDK.Core.UIElements
                 ((IMonaAnimationAssetItem)_assets.AllAssets[_index]).Value = (AnimationClip)evt.newValue;
             });
 
+            _meshField = new ObjectField();
+            _meshField.style.flexGrow = 1;
+            _meshField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaMeshAssetItem)_assets.AllAssets[_index]).Value = (Mesh)evt.newValue;
+            });
+
             _animationLayer = new IntegerField();
             _animationLayer.style.width = 30;
             _animationLayer.tooltip = "Layer";
@@ -284,6 +292,13 @@ namespace Mona.SDK.Core.UIElements
 
                 Add(_animationLayerWeight);
                 _animationLayerWeight.value = ((IMonaAnimationAssetItem)value).LayerWeight;
+            }
+            else if (value is IMonaMeshAssetItem)
+            {
+                Add(_meshField);
+                _meshField.objectType = typeof(Mesh);
+                _meshField.value = ((IMonaMeshAssetItem)value).Value;
+                _meshField.SetEnabled(true);
             }
 #endif
         }
