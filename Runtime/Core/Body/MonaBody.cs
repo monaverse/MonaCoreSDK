@@ -79,6 +79,7 @@ namespace Mona.SDK.Core.Body
         private Rigidbody _activeRigidbody;
         public Rigidbody ActiveRigidbody => _activeRigidbody;
 
+        private Transform _transform;
         public Transform Transform => (_destroyed) ? null : transform;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
@@ -358,9 +359,13 @@ namespace Mona.SDK.Core.Body
         public Renderer[] Renderers => _renderers;
         public Renderer[] BodyRenderers => _bodyRenderers;
 
+        private GameObject _gameObject;
+
         private void Awake()
         {
-            _setActive = gameObject.activeInHierarchy;
+            _transform = transform;
+            _gameObject = gameObject;
+            _setActive = _gameObject.activeInHierarchy;
             RegisterInParents();
             CacheComponents();
             InitializeTags();
@@ -394,6 +399,11 @@ namespace Mona.SDK.Core.Body
         public void CacheRenderers()
         {
             _renderers = GetComponentsInChildren<Renderer>(true);
+
+            _materialsIndex.Clear();
+            for (var i = 0; i < _renderers.Length; i++)
+                _materialsIndex[_renderers[i]] = _renderers[i].materials;
+
             _bodyRenderers = GetComponents<Renderer>();
         }
 
@@ -406,15 +416,16 @@ namespace Mona.SDK.Core.Body
                 _rigidbody = GetComponent<Rigidbody>();
                 if (_rigidbody == null)
                 {
-                    _rigidbody = gameObject.AddComponent<Rigidbody>();
+                    if (_gameObject == null) _gameObject = gameObject;
+                    _rigidbody = _gameObject.AddComponent<Rigidbody>();
                     _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
                 }
                 _rigidbody.isKinematic = true;
                 _activeRigidbody = _rigidbody;
                 _hasRigidbody = true;
             }
-            if (gameObject.GetComponent<DontGoThroughThings>() == null)
-                gameObject.AddComponent<DontGoThroughThings>();
+            if (_gameObject.GetComponent<DontGoThroughThings>() == null)
+                _gameObject.AddComponent<DontGoThroughThings>();
         }
 
         public void RemoveRigidbody()
@@ -424,7 +435,7 @@ namespace Mona.SDK.Core.Body
             if (_rigidbody != null)
             {
                 Destroy(_rigidbody);
-                Destroy(gameObject.GetComponent<DontGoThroughThings>());
+                Destroy(_gameObject.GetComponent<DontGoThroughThings>());
                 _rigidbody = null;
                 _activeRigidbody = null;
                 _hasRigidbody = false;
@@ -565,7 +576,7 @@ namespace Mona.SDK.Core.Body
                 _networkSpawner = evt.NetworkSpawner;
                 if (_networkSpawner == null)
                     _mockNetwork = true;
-                if (gameObject.activeInHierarchy)
+                if (_gameObject.activeInHierarchy)
                     RegisterWithNetwork();
             }
 
@@ -623,7 +634,7 @@ namespace Mona.SDK.Core.Body
 
         private void RegisterWithNetwork()
         {
-            if (_networkSpawner != null && gameObject != null)
+            if (_networkSpawner != null && _gameObject != null)
             {
                 _networkSpawner.RegisterMonaBody(this);
             }
@@ -631,7 +642,7 @@ namespace Mona.SDK.Core.Body
 
         public void Destroy()
         {
-            GameObject.Destroy(gameObject);
+            GameObject.Destroy(_gameObject);
         }
 
         private bool _destroyed;
@@ -675,12 +686,14 @@ namespace Mona.SDK.Core.Body
                 SetSharedMaterial(material, i);
         }
 
+        private Dictionary<Renderer, Material[]> _materialsIndex = new Dictionary<Renderer, Material[]>();
+
         public void SetMaterial(Material material, int rendererIndex, int materialSlot = -1)
         {
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
             {
-                var materials = renderer.materials;
+                var materials = _materialsIndex[renderer];
                 for (var i = 0; i < materials.Length; i++)
                     materials[i] = material;
                 renderer.materials = materials;                
@@ -709,7 +722,7 @@ namespace Mona.SDK.Core.Body
             {
                 if (materialSlot == -1)
                 {
-                    var materials = renderer.materials;
+                    var materials = _materialsIndex[renderer];
                     for (var i = 0; i < materials.Length; i++)
                         materials[i] = material;
                     renderer.materials = materials;
@@ -1146,7 +1159,7 @@ namespace Mona.SDK.Core.Body
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(Transform.position + _baseOffset + Vector3.up * 0.01f, -Vector3.up * .2f);
+            Gizmos.DrawRay(transform.position + _baseOffset + Vector3.up * 0.01f, -Vector3.up * .2f);
         }
 
         private RaycastHit[] _results = new RaycastHit[10];
@@ -1268,7 +1281,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked)
         {
-            if (Transform != null && Transform.gameObject != null && active != _setActive)
+            if (_gameObject != null && active != _setActive)
             {
                 _setActive = active;
                 _setActiveIsNetworked = isNetworked;
@@ -1281,10 +1294,11 @@ namespace Mona.SDK.Core.Body
 
         private void ApplySetActive()
         {
-            if (Transform != null && Transform.gameObject != null && Transform.gameObject.activeInHierarchy != _setActive)
+            //if (Transform != null && Transform.gameObject != null &&
+            if(_gameObject.activeSelf != _setActive)
             {
                 
-                Transform.gameObject.SetActive(_setActive);
+                _gameObject.SetActive(_setActive);
                 if (_hasRigidbody)
                 {
                     ActiveRigidbody.isKinematic = true;
@@ -1296,7 +1310,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return Transform.gameObject.activeInHierarchy;
+            return _gameObject.activeInHierarchy;
         }
 
 
@@ -1338,12 +1352,12 @@ namespace Mona.SDK.Core.Body
         public void SetLayer(string layerName, bool includeChildren, bool isNetworked = true)
         {
             var layer = LayerMask.NameToLayer(layerName);
-            if (gameObject.layer != layer)
+            if (_gameObject.layer != layer)
             {
-                gameObject.layer = layer;
+                _gameObject.layer = layer;
                 if (includeChildren)
                 {
-                    var children = gameObject.GetComponentsInChildren<Transform>();
+                    var children = _gameObject.GetComponentsInChildren<Transform>();
                     for (var i = 0; i < children.Length; i++)
                         children[i].gameObject.layer = layer;
                 }
@@ -1353,7 +1367,7 @@ namespace Mona.SDK.Core.Body
 
         public int GetLayer()
         {
-            return gameObject.layer;
+            return _gameObject.layer;
         }
 
         public void SetKinematic(bool isKinematic, bool isNetworked = true)
