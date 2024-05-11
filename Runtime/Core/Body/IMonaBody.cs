@@ -9,6 +9,7 @@ namespace Mona.SDK.Core.Body
 {
     public interface IMonaBody
     {
+        event Action OnDisableOnLoad;
         event Action OnStarted;
         event Action<IMonaBody> OnDisabled;
         event Action OnResumed;

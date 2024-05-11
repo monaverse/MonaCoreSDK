@@ -17,6 +17,9 @@ namespace Mona.SDK.Core.Utils
 
         public static void Register<TArgs>(EventHook hook, Action<TArgs> handler)
         {
+            //if (object.ReferenceEquals(hook.target, null))
+             //   Debug.Log($"{nameof(Register)} {hook.name}");
+
             if (!events.TryGetValue(hook, out var handlers))
             {
                 handlers = new HashSet<Delegate>();
@@ -44,6 +47,9 @@ namespace Mona.SDK.Core.Utils
         public static void Trigger<TArgs>(EventHook hook, TArgs args)
         {
             HashSet<Action<TArgs>> handlers = null;
+
+            //if (object.ReferenceEquals(hook.target, null))
+            //    Debug.Log($"{nameof(Trigger)} {hook.name}");
 
             if (events.TryGetValue(hook, out var potentialHandlers))
             {

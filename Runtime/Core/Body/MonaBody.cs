@@ -15,6 +15,7 @@ namespace Mona.SDK.Core.Body
     public class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
         public event Action OnStarted = delegate { };
+        public event Action OnDisableOnLoad = delegate { };
         public event Action<IMonaBody> OnDisabled = delegate { };
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
@@ -583,6 +584,7 @@ namespace Mona.SDK.Core.Body
                 if (DisableOnLoad)
                 {
                     _startWhenEnabled = true;
+                    OnDisableOnLoad?.Invoke();
                     SetActive(false);
                 }
                 else
@@ -868,7 +870,7 @@ namespace Mona.SDK.Core.Body
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-            ApplySetActive();
+            //ApplySetActive();
             CalculateVelocity(deltaTime, true);
         }
 
@@ -887,7 +889,7 @@ namespace Mona.SDK.Core.Body
             ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplyGroundingObjectVelocity();
-            ApplySetActive();
+            //ApplySetActive();
             CalculateVelocity(deltaTime, true);
         }
 
@@ -921,7 +923,8 @@ namespace Mona.SDK.Core.Body
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
 
-                ApplySetActive();
+                if(!_setActive)
+                    ApplySetActive();
                 CalculateVelocity(evt.DeltaTime, true);
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
@@ -1289,7 +1292,7 @@ namespace Mona.SDK.Core.Body
         private void ApplySetActive()
         {
             //if (Transform != null && Transform.gameObject != null &&
-            if(gameObject.activeSelf != _setActive)
+            if(gameObject.activeInHierarchy != _setActive)
             {
                 
                 gameObject.SetActive(_setActive);
@@ -1304,7 +1307,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return gameObject.activeSelf;
+            return gameObject.activeSelf && gameObject.activeInHierarchy;
         }
 
 
