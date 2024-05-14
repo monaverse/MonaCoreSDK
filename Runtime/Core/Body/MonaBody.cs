@@ -155,15 +155,18 @@ namespace Mona.SDK.Core.Body
         private bool _hasInput;
         private List<MonaInput> _monaInputs = new List<MonaInput>();
 
-        private List<IMonaTagged> _monaTagged = new List<IMonaTagged>();
+        private List<IMonaTagged> _monaTagged;
 
         public bool HasMonaTag(string tag)
         {
             if (MonaTags.Contains(tag)) return true;
-            for(var i = 0;i < _monaTagged.Count; i++)
+            if(_monaTagged != null && _monaTagged.Count > 0)
             {
-                if (_monaTagged[i].HasMonaTag(tag))
-                    return true;
+                for(var i = 0;i < _monaTagged.Count; i++)
+                {
+                    if (_monaTagged[i].HasMonaTag(tag))
+                        return true;
+                }
             }
             return false;
         }
@@ -518,8 +521,11 @@ namespace Mona.SDK.Core.Body
 
         public void InitializeTags()
         {
-            _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
-            _monaTagged.Remove(this);
+            if(_monaTagged == null)
+            {
+                _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
+                _monaTagged.Remove(this);
+            }
 
             for (var i = 0; i < MonaTags.Count; i++)
                 RegisterInTagRegistry(MonaTags[i]);
@@ -657,10 +663,13 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < MonaTags.Count; i++)
                 UnregisterInTagRegistry(MonaTags[i]);
 
-            for (var i = 0; i < _monaTagged.Count; i++)
+            if(_monaTagged != null && _monaTagged.Count > 0)
             {
-                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
-                    UnregisterInTagRegistry(_monaTagged[i].MonaTags[t]);
+                for (var i = 0; i < _monaTagged.Count; i++)
+                {
+                    for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                        UnregisterInTagRegistry(_monaTagged[i].MonaTags[t]);
+                }
             }
         }
 
@@ -802,10 +811,13 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < body.MonaTags.Count; i++)
                 RegisterInChildTagRegistry(body.MonaTags[i], body);
 
-            for (var i = 0; i < _monaTagged.Count; i++)
+            if(_monaTagged != null && _monaTagged.Count > 0)
             {
-                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
-                    RegisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+                for (var i = 0; i < _monaTagged.Count; i++)
+                {
+                    for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                        RegisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+                }
             }
         }
 
@@ -817,10 +829,13 @@ namespace Mona.SDK.Core.Body
             for (var i = 0; i < body.MonaTags.Count; i++)
                 UnregisterInChildTagRegistry(body.MonaTags[i], body);
 
-            for (var i = 0; i < _monaTagged.Count; i++)
+            if(_monaTagged != null && _monaTagged.Count > 0)
             {
-                for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
-                    UnregisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+                for (var i = 0; i < _monaTagged.Count; i++)
+                {
+                    for (var t = 0; t < _monaTagged[i].MonaTags.Count; t++)
+                        UnregisterInChildTagRegistry(_monaTagged[i].MonaTags[t], body);
+                }
             }
         }
 
