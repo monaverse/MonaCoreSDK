@@ -167,5 +167,7 @@ namespace Mona.SDK.Core.Body
         void Destroy();
 
         void TriggerRemoteAnimation(string clipName);
+
+        void SetDisableOnLoad(bool b);
     }
 }

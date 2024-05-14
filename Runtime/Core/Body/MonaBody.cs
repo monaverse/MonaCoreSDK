@@ -14,6 +14,18 @@ namespace Mona.SDK.Core.Body
 {
     public class MonaBody : MonaBodyBase, IMonaBody, IMonaTagged
     {
+        public override bool Equals(object other)
+        {
+            if (!(other is MonaBody obj))
+                return false;
+            return base.Equals(obj);
+        }
+
+        public bool Equals(MonaBody other)
+        {
+            return LocalId == other.LocalId;
+        }
+
         public event Action OnStarted = delegate { };
         public event Action OnDisableOnLoad = delegate { };
         public event Action<IMonaBody> OnDisabled = delegate { };
@@ -138,6 +150,8 @@ namespace Mona.SDK.Core.Body
         public MonaBodyNetworkSyncType SyncType = MonaBodyNetworkSyncType.NetworkTransform;
         public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
+
+        public void SetDisableOnLoad(bool b) => DisableOnLoad = b;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
 
