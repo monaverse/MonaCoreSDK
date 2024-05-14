@@ -68,8 +68,13 @@ namespace Mona.SDK.Core.Assets
 
         public IMonaAssetItem GetMonaAsset(string prefabId)
         {
-            var asset = _monaAssets.Find((x) => x.PrefabId.Equals(prefabId));
-            return asset != null ? asset : null;
+            for(var i = 0;i < _monaAssets.Count;i++)
+            {
+                var monaAsset = _monaAssets[i];
+                if (monaAsset.PrefabId == prefabId)
+                    return monaAsset;
+            }
+            return null;
         }
 
         public IMonaAssetItem GetMonaAssetByIndex(int index)
