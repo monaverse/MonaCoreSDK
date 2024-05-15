@@ -28,7 +28,9 @@ namespace Mona.SDK.Core.Body
 
         public event Action OnStarted = delegate { };
         public event Action OnDisableOnLoad = delegate { };
-        public event Action<IMonaBody> OnDisabled = delegate { };
+        public event Action<IMonaBody> OnBodyDisabled = delegate { };
+        public event Action OnEnabled = delegate { };
+        public event Action OnDisabled = delegate { };
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
@@ -41,6 +43,11 @@ namespace Mona.SDK.Core.Body
 
         private bool _registerWhenEnabled;
         private bool _startWhenEnabled;
+
+        private bool _started;
+        public bool Started => _started;
+
+        private bool _startWhenAllChildrenHaveStarted;
         private IMonaNetworkSpawner _networkSpawner;
         private INetworkMonaBodyClient _networkBody;
         private Rigidbody _rigidbody;
@@ -144,6 +151,7 @@ namespace Mona.SDK.Core.Body
         private List<MonaBodyRotation> _rotationDeltas = new List<MonaBodyRotation>();
 
         private bool _updateEnabled;
+        private bool _enabled;
 
         public bool UpdateEnabled => _updateEnabled;
 
@@ -554,7 +562,6 @@ namespace Mona.SDK.Core.Body
         private void AddDelegates()
         {
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
-            MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
             MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
 
             if (_networkBody == null)
@@ -575,7 +582,6 @@ namespace Mona.SDK.Core.Body
 
         private void RemoveDelegates()
         {
-            MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
             MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
         }
 
@@ -602,38 +608,65 @@ namespace Mona.SDK.Core.Body
             {
                 FireSpawnEvent();
                 if (DisableOnLoad)
-                {
-                    _startWhenEnabled = true;
-                    OnDisableOnLoad?.Invoke();
-                    SetActive(false);
-                }
+                    TriggerDisableOnLoad();
                 else
-                    OnStarted();
+                    _startWhenAllChildrenHaveStarted = true;
             }
 
             RemoveDelegates();
         }
 
+        private void TriggerDisableOnLoad()
+        {
+            _startWhenEnabled = true;
+            OnDisableOnLoad?.Invoke();
+            SetActive(false);
+        }
+
+        private void TriggerStarted()
+        {
+            _startWhenAllChildrenHaveStarted = false;
+            _startWhenEnabled = false;
+            _started = true;
+            OnStarted();
+        }
+
+        private void TriggerEnabled()
+        {
+            OnEnabled();
+        }
+
+        private void TriggerDisabled()
+        {
+            OnDisabled();
+            OnBodyDisabled?.Invoke(this);
+        }
+
         private void OnEnable()
         {
-            if(_startWhenEnabled)
-            {
-                _startWhenEnabled = false;
-                OnStarted();
-            }
+            _enabled = true;
+
+            if (_startWhenEnabled)
+                _startWhenAllChildrenHaveStarted = true;
+            else if (_started)
+                TriggerEnabled();
 
             if (_registerWhenEnabled)
             {
                 RegisterWithNetwork();
                 _registerWhenEnabled = false;
             }
-            //Resume();
         }
 
         private void OnDisable()
         {
-            //Pause();
-            OnDisabled?.Invoke(this);
+            _enabled = false;
+            if (!_started)
+            {
+                //Debug.Log($"{nameof(OnDisable)} before starting, mark for start {gameObject.name}", gameObject);
+                _startWhenEnabled = true;
+            }
+            TriggerDisabled();
         }
 
         public void Pause(bool isNetworked = true)
@@ -861,13 +894,9 @@ namespace Mona.SDK.Core.Body
 
             FireSpawnEvent();
             if (DisableOnLoad)
-            {
-                _startWhenEnabled = true;
-                SetActive(false);
-            }
+                TriggerDisableOnLoad();
             else
-                OnStarted();
-
+                _startWhenAllChildrenHaveStarted = true;
 
             if (_networkBody != null)
             {
@@ -885,9 +914,28 @@ namespace Mona.SDK.Core.Body
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
+        private void TrackChildrenStarted()
+        {
+            if (_startWhenAllChildrenHaveStarted)
+            {
+                var children = Children();
+                for(var i = 0;i < children.Count; i++)
+                {
+                    if (children[i].GetActive() && !children[i].Started)
+                    {
+                        //Debug.Log($"{nameof(TrackChildrenStarted)} can't start {gameObject.name}, waiting on {children[i].Transform.name}", children[i].Transform.gameObject);
+                        return;
+                    }
+                }
+                TriggerStarted();
+            }
+        }
+
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
         {
-            if(hasInput)
+            if (!_started) TrackChildrenStarted();
+            if (!_enabled) return;
+            if (hasInput)
                 ApplyInputs(inputs);
 
             FireFixedUpdateEvent(deltaTime, false);
@@ -899,12 +947,14 @@ namespace Mona.SDK.Core.Body
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyDrag();
-            //ApplySetActive();
+
             CalculateVelocity(deltaTime, true);
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
         {
+            if (!_started) TrackChildrenStarted();
+            if (!_enabled) return;
             if (hasInput)
                 ApplyInput(input);
 
@@ -918,7 +968,7 @@ namespace Mona.SDK.Core.Body
             ApplyAllForces(deltaTime);
             ApplyDrag();
             ApplyGroundingObjectVelocity();
-            //ApplySetActive();
+
             CalculateVelocity(deltaTime, true);
         }
 
@@ -926,6 +976,8 @@ namespace Mona.SDK.Core.Body
 
         public void HandleFixedUpdate(MonaFixedTickEvent evt)
         {
+            if (!_started) TrackChildrenStarted();
+            if (!_enabled) return;
             if (_destroyed) return;
             if (_networkBody == null)
             {
@@ -952,8 +1004,6 @@ namespace Mona.SDK.Core.Body
                 ApplyAllForces(evt.DeltaTime);
                 ApplyDrag();
 
-                if(!_setActive)
-                    ApplySetActive();
                 CalculateVelocity(evt.DeltaTime, true);
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
@@ -1307,14 +1357,11 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked)
         {
-            if (gameObject != null && active != _setActive)
+            if (gameObject != null && active != GetActive())
             {
                 _setActive = active;
                 _setActiveIsNetworked = isNetworked;
-                if(active)
-                {
-                    ApplySetActive();
-                }
+                ApplySetActive();
             }
         }
 
@@ -1323,7 +1370,6 @@ namespace Mona.SDK.Core.Body
             //if (Transform != null && Transform.gameObject != null &&
             if(gameObject.activeInHierarchy != _setActive)
             {
-                
                 gameObject.SetActive(_setActive);
                 if (_hasRigidbody)
                 {
@@ -1336,7 +1382,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return gameObject.activeSelf && gameObject.activeInHierarchy;
+            return gameObject.activeInHierarchy;
         }
 
 
