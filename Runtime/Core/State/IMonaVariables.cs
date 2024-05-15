@@ -33,6 +33,8 @@ namespace Mona.SDK.Core.State
         Vector2 GetVector2(string variableName, bool createIfNotFound = true);
         Vector3 GetVector3(string variableName, bool createIfNotFound = true);
         string GetValueAsString(string variableName);
+
+        void CacheVariableNames();
     }
 
 }

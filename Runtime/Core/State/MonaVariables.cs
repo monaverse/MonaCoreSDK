@@ -36,21 +36,28 @@ namespace Mona.SDK.Core.State
         public List<IMonaVariablesValue> VariableList
         {
             get => _values;
-            set
-            {
-                _values = value;
-                _variablesCache.Clear();
-                for(var i = 0;i < _values.Count; i++)
-                {
-                    var v = _values[i];
-                    _variablesCache[v.Name] = v;
-                }
-            }
+            set => _values = value;
         }
 
         private Dictionary<int, IMonaVariablesValue> _variablesIndex = new Dictionary<int, IMonaVariablesValue>();
         private Dictionary<string, int> _variablesIndexByName = new Dictionary<string, int>();
-        private Dictionary<string, IMonaVariablesValue> _variablesCache = new Dictionary<string, IMonaVariablesValue>();
+        private Dictionary<string, IMonaVariablesValue> _variablesCache;
+
+        private void InitVariableNames()
+        {
+            if(_variablesCache == null)
+                _variablesCache = new Dictionary<string, IMonaVariablesValue>(15);
+        }
+
+        public void CacheVariableNames()
+        {
+            InitVariableNames();
+            for (var i = 0; i < _values.Count; i++)
+            {
+                var v = _values[i];
+                _variablesCache[v.Name] = v;
+            }
+        }
 
         public IMonaVariablesValue GetVariableByIndex(int index)
         {
@@ -66,15 +73,17 @@ namespace Mona.SDK.Core.State
 
         public IMonaVariablesValue GetVariable(string name)
         {
-            if (!System.Object.ReferenceEquals(_variablesCache, null) && _variablesCache.ContainsKey(name))
-                return _variablesCache[name];
-
-            for (var i = 0; i < _values.Count; i++)
+            if (!Application.isPlaying)
             {
-                if (_values[i] != null && _values[i].Name == name)
-                    return _values[i];
+                for (var i = 0; i < _values.Count; i++)
+                {
+                    var v = _values[i];
+                    if (v != null && v.Name == name)
+                        return v;
+                }
             }
-
+            else if (_variablesCache != null && _variablesCache.ContainsKey(name))
+                return _variablesCache[name];
             return null;
         }
 
@@ -105,10 +114,7 @@ namespace Mona.SDK.Core.State
             var prop = (IMonaVariablesValue)Activator.CreateInstance(type);
             prop.Name = name;
             _values[i] = prop;
-
-            if(!System.Object.ReferenceEquals(_variablesCache, null))
-                _variablesCache[name] = prop;
-
+            _variablesCache[name] = prop;
             return prop;
         }
 
