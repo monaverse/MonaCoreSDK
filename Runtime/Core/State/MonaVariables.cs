@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Mona.SDK.Core.Utils;
+using Mona.SDK.Core.EasyUI;
 
 namespace Mona.SDK.Core.State
 {
@@ -16,6 +17,9 @@ namespace Mona.SDK.Core.State
     {
         protected INetworkMonaVariables _networkState;
         protected IMonaBody _monaBody;
+        protected bool _hasUI;
+
+        public bool HasUI() => _hasUI;
 
         public MonaVariables(GameObject gameObject = null)
         {
@@ -52,10 +56,16 @@ namespace Mona.SDK.Core.State
         public void CacheVariableNames()
         {
             InitVariableNames();
+            _hasUI = false;
             for (var i = 0; i < _values.Count; i++)
             {
                 var v = _values[i];
                 _variablesCache[v.Name] = v;
+                if(v is IEasyUINumericalDisplay)
+                {
+                    if (((IEasyUINumericalDisplay)v).AllowUIDisplay)
+                        _hasUI = true;
+                }
             }
         }
 

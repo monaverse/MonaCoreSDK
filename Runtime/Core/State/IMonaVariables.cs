@@ -35,6 +35,7 @@ namespace Mona.SDK.Core.State
         string GetValueAsString(string variableName);
 
         void CacheVariableNames();
+        bool HasUI();
     }
 
 }
