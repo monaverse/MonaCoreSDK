@@ -30,6 +30,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnDisableOnLoad = delegate { };
         public event Action<IMonaBody> OnBodyDisabled = delegate { };
         public event Action OnEnabled = delegate { };
+        public event Action<IMonaBody> OnAfterEnabled = delegate { };
         public event Action OnDisabled = delegate { };
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
@@ -42,10 +43,10 @@ namespace Mona.SDK.Core.Body
         public GameObject Skin { get => _skin; set => _skin = value; }
 
         private bool _registerWhenEnabled;
-        private bool _startWhenEnabled;
 
         private bool _started;
-        public bool Started => _started;
+        private bool _childrenLoaded;
+        public bool ChildrenLoaded => _childrenLoaded;
 
         private bool _startWhenAllChildrenHaveStarted;
         private IMonaNetworkSpawner _networkSpawner;
@@ -123,7 +124,6 @@ namespace Mona.SDK.Core.Body
         private int _childIndex = 0;
         public int ChildIndex { get => _childIndex; set => _childIndex = value; }
 
-        private bool _setActive = false;
         private bool _setActiveIsNetworked = true;
 
         private Vector3 _lastPosition;
@@ -386,7 +386,9 @@ namespace Mona.SDK.Core.Body
 
         private void Awake()
         {
-            _setActive = gameObject.activeInHierarchy;
+            //Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
+            _enabled = gameObject.activeInHierarchy;
+            if (_enabled) _startWhenAllChildrenHaveStarted = true;
             RegisterInParents();
             CacheComponents();
             InitializeTags();
@@ -607,10 +609,7 @@ namespace Mona.SDK.Core.Body
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
             {
                 FireSpawnEvent();
-                if (DisableOnLoad)
-                    TriggerDisableOnLoad();
-                else
-                    _startWhenAllChildrenHaveStarted = true;
+                _startWhenAllChildrenHaveStarted = true;
             }
 
             RemoveDelegates();
@@ -618,15 +617,15 @@ namespace Mona.SDK.Core.Body
 
         private void TriggerDisableOnLoad()
         {
-            _startWhenEnabled = true;
+            //Debug.Log($"{nameof(TriggerDisableOnLoad)} {DisableOnLoad}", gameObject);
+            DisableOnLoad = false;
             OnDisableOnLoad?.Invoke();
             SetActive(false);
         }
 
         private void TriggerStarted()
         {
-            _startWhenAllChildrenHaveStarted = false;
-            _startWhenEnabled = false;
+            //Debug.Log($"{nameof(TriggerStarted)} monabody {gameObject.name}", gameObject);
             _started = true;
             OnStarted();
         }
@@ -644,12 +643,10 @@ namespace Mona.SDK.Core.Body
 
         private void OnEnable()
         {
+            //Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
             _enabled = true;
 
-            if (_startWhenEnabled)
-                _startWhenAllChildrenHaveStarted = true;
-            else if (_started)
-                TriggerEnabled();
+            _startWhenAllChildrenHaveStarted = true;                
 
             if (_registerWhenEnabled)
             {
@@ -658,14 +655,14 @@ namespace Mona.SDK.Core.Body
             }
         }
 
+        private bool _wasChildrenLoaded;
         private void OnDisable()
         {
+            //Debug.Log($"{nameof(OnDisable)} monabody {gameObject.name}", gameObject);
             _enabled = false;
-            if (!_started)
-            {
-                //Debug.Log($"{nameof(OnDisable)} before starting, mark for start {gameObject.name}", gameObject);
-                _startWhenEnabled = true;
-            }
+            _wasChildrenLoaded = _childrenLoaded;
+            _childrenLoaded = false;
+            
             TriggerDisabled();
         }
 
@@ -893,10 +890,7 @@ namespace Mona.SDK.Core.Body
             _activeRigidbody = obj.NetworkRigidbody;
 
             FireSpawnEvent();
-            if (DisableOnLoad)
-                TriggerDisableOnLoad();
-            else
-                _startWhenAllChildrenHaveStarted = true;
+            _startWhenAllChildrenHaveStarted = true;
 
             if (_networkBody != null)
             {
@@ -914,27 +908,49 @@ namespace Mona.SDK.Core.Body
 
         public void SetUpdateEnabled(bool enabled) => _updateEnabled = enabled;
 
+        private bool _waitForAfterEnabled;
         private void TrackChildrenStarted()
         {
             if (_startWhenAllChildrenHaveStarted)
             {
-                var children = Children();
-                for(var i = 0;i < children.Count; i++)
+                if (_waitForAfterEnabled)
                 {
-                    if (children[i].GetActive() && !children[i].Started)
+                    //Debug.Log($"{nameof(OnAfterEnabled)} monabody {gameObject.name}", gameObject);
+                    _waitForAfterEnabled = false;
+                    _startWhenAllChildrenHaveStarted = false;
+                    _childrenLoaded = true;
+                    if (DisableOnLoad)
+                        TriggerDisableOnLoad();
+                    else
+                        OnAfterEnabled(this);
+                }
+                else
+                {
+                    var children = Children();
+                    for (var i = 0; i < children.Count; i++)
                     {
-                        //Debug.Log($"{nameof(TrackChildrenStarted)} can't start {gameObject.name}, waiting on {children[i].Transform.name}", children[i].Transform.gameObject);
-                        return;
+                        if (children[i].GetActive() && !children[i].ChildrenLoaded)
+                        {
+                            //Debug.Log($"{nameof(TrackChildrenStarted)} can't start {gameObject.name}, waiting on {children[i].Transform.name}", children[i].Transform.gameObject);
+                            return;
+                        }
+                    }
+                   _waitForAfterEnabled = true;
+                    if (!DisableOnLoad)
+                    {
+                        if (!_started)
+                            TriggerStarted();
+                        else
+                            TriggerEnabled();
                     }
                 }
-                TriggerStarted();
             }
         }
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, List<MonaInput> inputs)
         {
-            if (!_started) TrackChildrenStarted();
             if (!_enabled) return;
+            if (_startWhenAllChildrenHaveStarted) TrackChildrenStarted();
             if (hasInput)
                 ApplyInputs(inputs);
 
@@ -953,8 +969,8 @@ namespace Mona.SDK.Core.Body
 
         public void FixedUpdateNetwork(float deltaTime, bool hasInput, MonaInput input)
         {
-            if (!_started) TrackChildrenStarted();
             if (!_enabled) return;
+            if (_startWhenAllChildrenHaveStarted) TrackChildrenStarted();
             if (hasInput)
                 ApplyInput(input);
 
@@ -976,8 +992,8 @@ namespace Mona.SDK.Core.Body
 
         public void HandleFixedUpdate(MonaFixedTickEvent evt)
         {
-            if (!_started) TrackChildrenStarted();
             if (!_enabled) return;
+            if (_startWhenAllChildrenHaveStarted) TrackChildrenStarted();
             if (_destroyed) return;
             if (_networkBody == null)
             {
@@ -1359,25 +1375,17 @@ namespace Mona.SDK.Core.Body
         {
             if (gameObject != null && active != GetActive())
             {
-                _setActive = active;
                 _setActiveIsNetworked = isNetworked;
-                ApplySetActive();
-            }
-        }
+                
+                gameObject.SetActive(active);
 
-        private void ApplySetActive()
-        {
-            //if (Transform != null && Transform.gameObject != null &&
-            if(gameObject.activeInHierarchy != _setActive)
-            {
-                gameObject.SetActive(_setActive);
                 if (_hasRigidbody)
                 {
                     ActiveRigidbody.isKinematic = true;
                     //ActiveRigidbody.Sleep();
                 }
-                if (_setActiveIsNetworked) _networkBody?.SetActive(_setActive);
             }
+            if (_setActiveIsNetworked) _networkBody?.SetActive(active);
         }
 
         public bool GetActive()

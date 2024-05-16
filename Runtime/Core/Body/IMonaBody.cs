@@ -12,6 +12,7 @@ namespace Mona.SDK.Core.Body
         event Action OnDisableOnLoad;
         event Action OnStarted;
         event Action OnEnabled;
+        event Action<IMonaBody> OnAfterEnabled;
         event Action OnDisabled;
         event Action<IMonaBody> OnBodyDisabled;
         event Action OnResumed;
@@ -37,7 +38,7 @@ namespace Mona.SDK.Core.Body
         MonaBodyAttachType AttachType { get; set; }
         List<Collider> Colliders { get; }
         int ChildIndex { get; set; }
-        bool Started { get; }
+        bool ChildrenLoaded { get; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }
