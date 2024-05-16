@@ -1,4 +1,6 @@
 using UnityEngine;
+using Mona.SDK.Core.State;
+using Mona.SDK.Core.State.Structs;
 
 namespace Mona.SDK.Core.EasyUI
 {
@@ -104,7 +106,7 @@ namespace Mona.SDK.Core.EasyUI
 
         private void UpdateVisibilityDisplay(IEasyUINumericalDisplay variable)
         {
-            if (_contentContainer != null && _contentContainer.activeInHierarchy != variable.DisplayInUI)
+            if (_contentContainer != null && _contentContainer.activeSelf != variable.DisplayInUI)
                 _contentContainer.SetActive(variable.DisplayInUI);
         }
     }
