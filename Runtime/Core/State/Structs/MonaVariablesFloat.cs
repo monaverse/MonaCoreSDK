@@ -506,8 +506,10 @@ namespace Mona.SDK.Core.State.Structs
 
         public void UpdateUIDisplay()
         {
-            if (_displayElementReference != null)
-                _displayElementReference.UpdateDisplay(this);
+            if (!_allowUIDisplay || _displayElementReference == null)
+                return;
+
+            _displayElementReference.UpdateDisplay(this);
         }
     }
 }
