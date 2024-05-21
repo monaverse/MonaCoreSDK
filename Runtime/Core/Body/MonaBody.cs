@@ -94,7 +94,18 @@ namespace Mona.SDK.Core.Body
         public bool IsNetworked => _networkBody != null;
 
         private Transform _activeTransform;
-        public Transform ActiveTransform => _activeTransform;
+        private bool _activeTransformSet;
+        public Transform ActiveTransform {
+            get
+            {
+                if (!_activeTransformSet)
+                {
+                    _activeTransformSet = true;
+                    _activeTransform = Transform;
+                }
+                return _activeTransform;
+            }
+        }
 
         private bool _hasRigidbody;
         private Rigidbody _activeRigidbody;
