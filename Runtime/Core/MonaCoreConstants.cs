@@ -24,6 +24,7 @@
         public const string REGISTER_NETWORK_SETTINGS_EVENT = "OnMonaRegisterNetworkSettignsEvent";
         public const string ON_PLAYER_CHANGE_AVATAR_EVENT = "OnPlayerChangeAvatar";
         public const string ON_CHANGE_AVATAR_EVENT = "OnChangeAvatar";
+        public const string ON_CHANGE_SPACE_EVENT = "OnChangeSpace";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
