@@ -149,6 +149,11 @@ namespace Mona.SDK.Core.Body
 
         private void Reset()
         {
+            EnsureUniqueDurableID();
+        }
+
+        public void EnsureUniqueDurableID()
+        {
             if (_durableID.ToString() == System.Guid.Empty.ToString())
                 GenerateDurableID();
         }

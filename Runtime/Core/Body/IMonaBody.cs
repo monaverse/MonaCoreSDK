@@ -22,6 +22,7 @@ namespace Mona.SDK.Core.Body
         GameObject Skin { get; set; }
 
         string LocalId { get; }
+        SerializableGuid DurableID { get; set; }
         Transform ActiveTransform { get; }
         Rigidbody ActiveRigidbody { get; }
         Transform Transform { get; }
@@ -173,5 +174,6 @@ namespace Mona.SDK.Core.Body
         void TriggerRemoteAnimation(string clipName);
 
         void SetDisableOnLoad(bool b);
+        void EnsureUniqueDurableID();
     }
 }
