@@ -114,6 +114,7 @@ namespace Mona.SDK.Core.State
             newValue.Name = name;
 
             _values.Add(newValue);
+            if (_variablesCache == null) InitVariableNames();
             _variablesCache[name] = newValue;
 
             return newValue;
@@ -124,6 +125,7 @@ namespace Mona.SDK.Core.State
             var prop = (IMonaVariablesValue)Activator.CreateInstance(type);
             prop.Name = name;
             _values[i] = prop;
+            if (_variablesCache == null) InitVariableNames();
             _variablesCache[name] = prop;
             return prop;
         }
