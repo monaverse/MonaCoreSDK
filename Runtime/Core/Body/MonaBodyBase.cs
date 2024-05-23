@@ -36,6 +36,7 @@ namespace Mona.SDK.Core.Body
         [SerializeField] private string _localId;
 
         [SerializeField] private SerializableGuid _guid;
+        [SerializeField] private SerializableGuid _durableID;
 
         public string LocalId
         {
@@ -46,6 +47,8 @@ namespace Mona.SDK.Core.Body
             }
             set => _localId = value;
         }
+
+        public SerializableGuid DurableID { get => _durableID; set => _durableID = value; }
 
         
         //Fall back for Empty Guids on Reactors
@@ -144,5 +147,20 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(MonaBody)}.{nameof(MakeUnique)} {_localId}");
         }
 
+        private void Reset()
+        {
+            EnsureUniqueDurableID();
+        }
+
+        public void EnsureUniqueDurableID()
+        {
+            if (_durableID.ToString() == System.Guid.Empty.ToString())
+                GenerateDurableID();
+        }
+
+        private void GenerateDurableID()
+        {
+            _durableID = System.Guid.NewGuid();
+        }
     }
 }
