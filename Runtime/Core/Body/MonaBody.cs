@@ -158,6 +158,7 @@ namespace Mona.SDK.Core.Body
 
 
         private List<MonaBodyForce> _force = new List<MonaBodyForce>();
+        private List<MonaBodyForce> _torque = new List<MonaBodyForce>();
         private List<MonaBodyDirection> _positionDeltas = new List<MonaBodyDirection>();
         private List<MonaBodyRotation> _rotationDeltas = new List<MonaBodyRotation>();
 
@@ -405,6 +406,7 @@ namespace Mona.SDK.Core.Body
             InitializeTags();
             AddDelegates();
             SetInitialTransforms();
+
         }
 
         private void Start()
@@ -447,7 +449,7 @@ namespace Mona.SDK.Core.Body
                 SyncType = MonaBodyNetworkSyncType.NetworkRigidbody;
             if (_rigidbody == null)
             {
-                _rigidbody = GetComponent<Rigidbody>();
+                _rigidbody = GetComponentInParent<Rigidbody>();
                 if (_rigidbody == null)
                 {
                     _rigidbody = gameObject.AddComponent<Rigidbody>();
@@ -973,6 +975,7 @@ namespace Mona.SDK.Core.Body
 
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
+            ApplyAllTorques(deltaTime);
             ApplyDrag();
 
             CalculateVelocity(deltaTime, true);
@@ -993,6 +996,7 @@ namespace Mona.SDK.Core.Body
 
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
+            ApplyAllTorques(deltaTime);
             ApplyDrag();
             ApplyGroundingObjectVelocity();
 
@@ -1029,6 +1033,7 @@ namespace Mona.SDK.Core.Body
 
                 ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
+                ApplyAllTorques(evt.DeltaTime);
                 ApplyDrag();
 
                 CalculateVelocity(evt.DeltaTime, true);
@@ -1176,6 +1181,20 @@ namespace Mona.SDK.Core.Body
                 //Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
             }
             _force.Clear();
+        }
+
+        private void ApplyAllTorques(float deltaTime)
+        {
+            if (!_hasRigidbody)
+                return;
+
+            for (var i = 0; i < _torque.Count; i++)
+            {
+                var torque = _torque[i];
+                ActiveRigidbody.AddTorque(torque.Force, torque.Mode);
+                //Debug.Log($"{nameof(ApplyAllForces)} {force.Force} {force.Mode}");
+            }
+            _torque.Clear();
         }
 
         private void ApplyInputs(List<MonaInput> inputs)
@@ -1600,6 +1619,21 @@ namespace Mona.SDK.Core.Body
         {
             _force.Add(new MonaBodyForce() { Force = force, Mode = mode });
         }
+
+        public void ApplyTorque(Vector3 direction, ForceMode mode, bool isNetworked = true)
+        {
+            if (_hasRigidbody)
+            {
+                //Debug.Log($"{nameof(ApplyForce)} {direction} {mode}");
+                AddTorque(direction, mode);
+            }
+        }
+
+        private void AddTorque(Vector3 force, ForceMode mode)
+        {
+            _torque.Add(new MonaBodyForce() { Force = force, Mode = mode });
+        }
+
 
         public void MoveDirection(Vector3 direction, bool isNetworked = true)
         {
