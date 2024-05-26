@@ -40,6 +40,7 @@ namespace Mona.SDK.Core.Body
         List<Collider> Colliders { get; }
         int ChildIndex { get; set; }
         bool ChildrenLoaded { get; }
+        MonaBodyNetworkSyncType SyncType { get; set; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }

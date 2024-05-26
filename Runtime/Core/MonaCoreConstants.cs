@@ -2,6 +2,8 @@
 {
     public class MonaCoreConstants
     {
+        public const string DEFAULT_IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+
         public const string TAG_PLAYER = "Player";
         public const string TAG_SPACE = "Space";
         public const string TAG_PORTAL = "Portal";
@@ -23,6 +25,7 @@
         public const string INPUTS_EVENT = "OnMonaInputsTickEvent";
         public const string REGISTER_NETWORK_SETTINGS_EVENT = "OnMonaRegisterNetworkSettignsEvent";
         public const string ON_PLAYER_CHANGE_AVATAR_EVENT = "OnPlayerChangeAvatar";
+        public const string ON_CHANGE_SPAWN_EVENT = "OnChangeSpawn";
         public const string ON_CHANGE_AVATAR_EVENT = "OnChangeAvatar";
         public const string ON_CHANGE_SPACE_EVENT = "OnChangeSpace";
 

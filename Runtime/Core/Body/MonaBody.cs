@@ -167,7 +167,10 @@ namespace Mona.SDK.Core.Body
 
         public bool UpdateEnabled => _updateEnabled;
 
-        public MonaBodyNetworkSyncType SyncType = MonaBodyNetworkSyncType.NetworkTransform;
+        [SerializeField]
+        private MonaBodyNetworkSyncType _syncType = MonaBodyNetworkSyncType.NetworkTransform;
+        public MonaBodyNetworkSyncType SyncType { get => _syncType; set => _syncType = value; }
+
         public bool SyncPositionAndRotation = true;
         public bool DisableOnLoad = false;
 
@@ -398,10 +401,10 @@ namespace Mona.SDK.Core.Body
 
         private void Awake()
         {
+            _started = false;
             //Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
             _enabled = gameObject.activeInHierarchy;
             if (_enabled) _startWhenAllChildrenHaveStarted = true;
-            RegisterInParents();
             CacheComponents();
             InitializeTags();
             AddDelegates();
@@ -411,6 +414,7 @@ namespace Mona.SDK.Core.Body
 
         private void Start()
         {
+            RegisterInParents();
             FireInstantiated();
             HasRigidbodyInParent();
         }
@@ -1106,54 +1110,69 @@ namespace Mona.SDK.Core.Body
         {
             if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0) return;
 
+            bool updateRotation = false;
+            bool updatePosition = false;
+
             _applyRotation = GetRotation();
-
-            for (var i = 0; i < _rotationDeltas.Count; i++)
-            {
-                var rotation = _rotationDeltas[i];
-                ApplyAddRotation(rotation.Rotation);
-            }
-            _rotationDeltas.Clear();
-
             _applyPosition = GetPosition();
 
-            for (var i = 0; i < _positionDeltas.Count; i++)
+            if (_rotationDeltas.Count > 0)
             {
-                var position = _positionDeltas[i];
-                ApplyAddPosition(position.Direction);
+                for (var i = 0; i < _rotationDeltas.Count; i++)
+                {
+                    var rotation = _rotationDeltas[i];
+                    ApplyAddRotation(rotation.Rotation);
+                }
+                _rotationDeltas.Clear();
+                _applyRotation = _rotationBounds.BindValue(_applyRotation, ActiveTransform);
+                updateRotation = true;
             }
 
-            //Debug.Log($"{Transform.gameObject} apply position {_applyPosition} {Time.frameCount}");
+            if (_positionDeltas.Count > 0)
+            {
 
-            _positionDeltas.Clear();
-            
-            
-            _applyPosition = _positionBounds.BindValue(_applyPosition);
-            _applyRotation = _rotationBounds.BindValue(_applyRotation, ActiveTransform);
+                for (var i = 0; i < _positionDeltas.Count; i++)
+                {
+                    var position = _positionDeltas[i];
+                    ApplyAddPosition(position.Direction);
+                }
+
+                //Debug.Log($"{Transform.gameObject} apply position {_applyPosition} {Time.frameCount}");
+
+                _positionDeltas.Clear();
+
+
+                _applyPosition = _positionBounds.BindValue(_applyPosition);
+                updatePosition = true;
+            }
 
             if(_hasRigidbody)
             {
                 if(Parent != null)
                 {
-                    ActiveTransform.position = _applyPosition;
-                    ActiveTransform.rotation = _applyRotation;
+                    if(updatePosition) ActiveTransform.position = _applyPosition;
+                    if(updateRotation) ActiveTransform.rotation = _applyRotation;
                 }
                 else if (ActiveRigidbody.isKinematic)
                 {
-                    ActiveRigidbody.Move(_applyPosition, _applyRotation);
+                    if(updatePosition || updateRotation)
+                        ActiveRigidbody.Move(_applyPosition, _applyRotation);
                 }
                 else
                 {
-                    ActiveRigidbody.velocity = Vector3.zero;
-                    ActiveRigidbody.angularVelocity = Vector3.zero;
-                    ActiveRigidbody.position = _applyPosition;
-                    ActiveRigidbody.rotation = _applyRotation.normalized;
+                    if (updatePosition || updateRotation)
+                    {
+                        ActiveRigidbody.velocity = Vector3.zero;
+                        ActiveRigidbody.angularVelocity = Vector3.zero;
+                    }
+                    if (updatePosition) ActiveRigidbody.position = _applyPosition;
+                    if (updateRotation) ActiveRigidbody.rotation = _applyRotation.normalized;
                 }
             }
             else
             {
-                ActiveTransform.position = _applyPosition;
-                ActiveTransform.rotation = _applyRotation;
+                if (updatePosition) ActiveTransform.position = _applyPosition;
+                if (updateRotation) ActiveTransform.rotation = _applyRotation;
             }
         }
 
@@ -1642,10 +1661,13 @@ namespace Mona.SDK.Core.Body
 
         public void BindPosition()
         {
+            if (!_positionBounds.RestrictTransform) return;
             if (_hasRigidbody)
             {
-                if(!_hasRigidbodyInParent || _positionBounds.RestrictTransform)
+                if(!_hasRigidbodyInParent)
                     ActiveRigidbody.position = _positionBounds.BindValue(ActiveTransform.position);
+                else
+                    ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
             }
             else
                 ActiveTransform.position = _positionBounds.BindValue(ActiveTransform.position);
@@ -1653,10 +1675,13 @@ namespace Mona.SDK.Core.Body
 
         public void BindRotation()
         {
+            if (!_positionBounds.RestrictTransform) return;
             if (_hasRigidbody)
             {
-                if(!_hasRigidbodyInParent || _positionBounds.RestrictTransform)
+                if(!_hasRigidbodyInParent)
                     ActiveRigidbody.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
+                else
+                    ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
             }
             else
                 ActiveTransform.rotation = _rotationBounds.BindValue(ActiveTransform.rotation, ActiveTransform);
