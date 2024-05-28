@@ -92,8 +92,9 @@ namespace Mona.SDK.Core.State
                         return v;
                 }
             }
-            else if (_variablesCache != null && _variablesCache.ContainsKey(name))
-                return _variablesCache[name];
+            CacheVariableNames();
+            if (_variablesCache != null && _variablesCache.ContainsKey(name))
+                return _variablesCache[name];            
             return null;
         }
 
