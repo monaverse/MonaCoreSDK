@@ -15,6 +15,7 @@ namespace Mona.SDK.Core.State
         void Set(string variableName, string value, bool isNetworked = true, bool createIfNotFound = true);
         void Set(string variableName, float value, bool isNetworked = true, bool createIfNotFound = true);
         void Set(string variableName, IMonaBody value, bool createIfNotFound = true);
+        void Set(string variableName, List<IMonaBody> value, bool createIfNotFound = true);
         void Set(string variableName, Vector2 value, bool isNetworked = true, bool createIfNotFound = true);
         void Set(string variableName, Vector3 value, bool isNetworked = true, bool createIfNotFound = true);
 
@@ -29,6 +30,7 @@ namespace Mona.SDK.Core.State
         bool GetBool(string variableName, bool createIfNotFound = true);
         string GetString(string variableName, bool createIfNotFound = true);
         float GetFloat(string variableName, bool createIfNotFound = true);
+        List<IMonaBody> GetBodyArray(string variableName, bool createIfNotFound = true);
         IMonaBody GetBody(string variableName, bool createIfNotFound = true);
         Vector2 GetVector2(string variableName, bool createIfNotFound = true);
         Vector3 GetVector3(string variableName, bool createIfNotFound = true);

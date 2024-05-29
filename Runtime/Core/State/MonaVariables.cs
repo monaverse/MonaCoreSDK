@@ -169,6 +169,27 @@ namespace Mona.SDK.Core.State
                 _networkState?.UpdateValue(prop);
         }
 
+        public List<IMonaBody> GetBodyArray(string name, bool createIfNotFound = true)
+        {
+            var prop = GetVariable(name, typeof(MonaVariablesBodyArray), createIfNotFound);
+            return ((IMonaVariablesBodyArrayValue)prop).Value;
+        }
+
+        public void Set(string name, List<IMonaBody> value, bool createIfNotFound = true)
+        {
+            var prop = GetVariable(name, typeof(MonaVariablesBodyArray), createIfNotFound);
+
+            if (prop == null)
+                return;
+
+            var propValue = ((IMonaVariablesBodyArrayValue)prop);
+            if (propValue.Value != value)
+            {
+                propValue.Value = value;
+                FireValueEvent(name, prop);
+            }
+        }
+
         public bool GetBool(string name, bool createIfNotFound = true)
         {
             var prop = GetVariable(name, typeof(MonaVariablesBool), createIfNotFound);
@@ -305,6 +326,8 @@ namespace Mona.SDK.Core.State
                 return ((IMonaVariablesVector2Value)variable).Value.ToString();
             else if (variable is IMonaVariablesVector3Value)
                 return ((IMonaVariablesVector3Value)variable).Value.ToString();
+            else if (variable is IMonaVariablesBodyArrayValue)
+                return ((IMonaVariablesBodyArrayValue)variable).Value.ConvertAll<string>(x => x.LocalId).ToString();
 
             return string.Empty;
         }

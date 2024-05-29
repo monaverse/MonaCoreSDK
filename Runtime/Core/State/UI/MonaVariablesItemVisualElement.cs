@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 using UnityEngine.UIElements;
 using UnityEngine;
+using System.Text;
 
 namespace Mona.SDK.Core.State.UIElements
 {
@@ -23,6 +24,7 @@ namespace Mona.SDK.Core.State.UIElements
         protected Toggle _toggleField;
         protected Vector2Field _vector2Field;
         protected Vector3Field _vector3Field;
+        protected Label _labelField;
 
         protected Action callback;
 
@@ -44,7 +46,8 @@ namespace Mona.SDK.Core.State.UIElements
                 MonaCoreConstants.STRING_TYPE_LABEL,
                 MonaCoreConstants.BOOL_TYPE_LABEL,
                 MonaCoreConstants.VECTOR2_TYPE_LABEL,
-                MonaCoreConstants.VECTOR3_TYPE_LABEL
+                MonaCoreConstants.VECTOR3_TYPE_LABEL,
+                MonaCoreConstants.BODY_ARRAY_TYPE_LABEL
             };
             _typeField.RegisterValueChangedCallback(HandleTypeChanged);
 
@@ -74,6 +77,8 @@ namespace Mona.SDK.Core.State.UIElements
 
             _toggleField = new Toggle();
             _toggleField.RegisterValueChangedCallback(HandleBoolChanged);
+
+            _labelField = new Label();
         }
 
         public void Dispose()
@@ -167,6 +172,10 @@ namespace Mona.SDK.Core.State.UIElements
                     if (variable != null && variable is IMonaVariablesVector3Value) return;
                     _state.CreateVariable(name, typeof(MonaVariablesVector3), _index);
                     break;
+                case MonaCoreConstants.BODY_ARRAY_TYPE_LABEL:
+                    if (variable != null && variable is IMonaVariablesBodyArrayValue) return;
+                    _state.CreateVariable(name, typeof(MonaVariablesBodyArray), _index);
+                    break;
             }
             Refresh();
         }
@@ -230,6 +239,14 @@ namespace Mona.SDK.Core.State.UIElements
                 _typeField.value = MonaCoreConstants.VECTOR3_TYPE_LABEL;
                 Add(_vector3Field);
                 _vector3Field.value = ((IMonaVariablesVector3Value)value).Value;
+            }
+            else if (value is IMonaVariablesBodyArrayValue)
+            {
+                _typeField.value = MonaCoreConstants.BODY_ARRAY_TYPE_LABEL;
+                Add(_labelField);
+                var lbl = new StringBuilder();
+                ((IMonaVariablesBodyArrayValue)value).Value.ForEach(x => lbl.Append(x.Transform.name + ","));
+                _labelField.text = lbl.ToString();
             }
         }
 

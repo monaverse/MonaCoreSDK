@@ -46,6 +46,7 @@
         public const string BOOL_TYPE_LABEL = "Boolean";
         public const string VECTOR2_TYPE_LABEL = "Vector2";
         public const string VECTOR3_TYPE_LABEL = "Vector3";
+        public const string BODY_ARRAY_TYPE_LABEL = "Body Array";
         public const string REFERENCE_TYPE_LABEL = "Reference";
 
         public const string BODY_TYPE_LABEL = "Mona Body Prefab";
