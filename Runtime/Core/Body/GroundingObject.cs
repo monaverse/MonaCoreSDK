@@ -15,6 +15,8 @@ namespace Mona.SDK.Core.Body
         private bool _onlyHasTransform = false;
         private Vector3 _previousPosition;
 
+        public IMonaBody MonaBody => _monaBody;
+
         public bool TrackingObject => _initialized;
 
         public void Initialize(Transform objectTransform, IMonaBody riderMonaBody)

@@ -35,6 +35,7 @@ namespace Mona.SDK.Core.Body
         IMonaBody PoolBodyPrevious { get; set; }
         IMonaBody PoolBodyNext { get; set; }
         bool Grounded { get; }
+        GroundingObject CurrentGroundingObject { get; }
         Animator Animator { get; }
         MonaBodyAttachType AttachType { get; set; }
         List<Collider> Colliders { get; }

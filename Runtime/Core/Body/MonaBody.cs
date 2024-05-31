@@ -1306,6 +1306,8 @@ namespace Mona.SDK.Core.Body
         private RaycastHit[] _results = new RaycastHit[10];
         private GroundingObject _cachedGroundingObject = new GroundingObject();
 
+        public GroundingObject CurrentGroundingObject => _cachedGroundingObject;
+
         private void ApplyDrag()
         {
             if (_hasRigidbody || _hasCharacterController)
