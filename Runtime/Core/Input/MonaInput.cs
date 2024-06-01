@@ -61,7 +61,8 @@ namespace Mona.SDK.Core.Input
                 && MoveValue.Equals(other.MoveValue)
                 && LookValue.Equals(other.LookValue)
                 && Origin.Equals(other.Origin)
-                && Direction.Equals(other.Direction);
+                && Direction.Equals(other.Direction)
+                && Mouse.Equals(other.Mouse);
         }
 
         public MonaInputState GetButton(MonaInputType type)
@@ -118,6 +119,7 @@ namespace Mona.SDK.Core.Input
             return MonaInputState.None;
         }
 
+        public Vector2 Mouse;
         public Vector2 MoveValue;
         public Vector2 LookValue;
         public Vector3 Origin;
