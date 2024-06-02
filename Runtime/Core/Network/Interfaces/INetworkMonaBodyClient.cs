@@ -30,5 +30,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetPaused(bool paused);
         void SetAnimator(Animator animator);
         void TriggerAnimation(string clipName);
+        void SetPlayer(int playerId, int clientId, string name);
     }
 }

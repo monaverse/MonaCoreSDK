@@ -6,8 +6,9 @@ namespace Mona.SDK.Core.Network.Enums
 {
     public enum MonaNetworkType
     {
-        Shared = 0,
-        SharedHost = 1,
+        None = 0,
+        Shared = 1,
+        //SharedHost = 2,
         /* TODO
         Hosted = 1,
         Server = 2

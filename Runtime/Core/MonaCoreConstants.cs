@@ -3,6 +3,7 @@
     public class MonaCoreConstants
     {
         public const string DEFAULT_IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+        public const float WAIT_FOR_NETWORK_SPAWNER_TIMEOUT = 30f;
 
         public const string TAG_PLAYER = "Player";
         public const string TAG_SPACE = "Space";

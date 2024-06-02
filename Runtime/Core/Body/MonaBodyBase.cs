@@ -97,14 +97,14 @@ namespace Mona.SDK.Core.Body
                 var uniques = new List<MonaBodyBase>(GameObject.FindObjectsOfType<MonaBodyBase>(true));
 
                 var count = uniques.FindAll((x) => x.guid == _guid).Count;
-                if (count > 1)
+                //if (count > 1)
                 {
                     var suffix = ((_localPlayerId+1) * 100000 + count).ToString();
                     var tmpGuid = _guid.ToString();
                     _localId = string.Concat(tmpGuid.Substring(0, tmpGuid.Length - suffix.Length), suffix);
                 }
-                else
-                    _localId = _guid;
+                //else
+                //    _localId = _guid;
             }
         }
 

@@ -77,6 +77,17 @@ namespace Mona.SDK.Core.Assets
             return null;
         }
 
+        public T GetMonaAsset<T>(Func<T, bool> predicate)
+        {
+            for (var i = 0; i < _monaAssets.Count; i++)
+            {
+                var monaAsset = (T)_monaAssets[i];
+                if (predicate(monaAsset))
+                    return monaAsset;
+            }
+            return default;
+        }
+
         public IMonaAssetItem GetMonaAssetByIndex(int index)
         {
             if (index < _monaAssets.Count && index >= 0)

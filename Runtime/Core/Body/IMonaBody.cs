@@ -50,6 +50,10 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
         Vector3 CurrentVelocity { get; }
 
+        int PlayerId { get; }
+        int ClientId { get; }
+        string PlayerName { get; }
+
         Renderer[] Renderers { get; }
         Renderer[] BodyRenderers { get; }
 
@@ -178,5 +182,7 @@ namespace Mona.SDK.Core.Body
 
         void SetDisableOnLoad(bool b);
         void EnsureUniqueDurableID();
+
+        void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true);
     }
 }

@@ -13,6 +13,7 @@ namespace Mona.SDK.Core.Assets.Interfaces
         List<string> AllNames { get;  }
         IMonaAssetItem TakeTopCardOffDeck(bool shuffleIfEmpty);
         IMonaAssetItem GetMonaAsset(string prefabId);
+        T GetMonaAsset<T>(Func<T, bool> predicate);
         IMonaAssetItem GetMonaAssetByIndex(int index);
         IMonaAssetItem CreateAsset(string name, Type type, int i);
     }

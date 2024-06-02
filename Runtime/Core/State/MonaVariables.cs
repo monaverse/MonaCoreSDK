@@ -165,6 +165,7 @@ namespace Mona.SDK.Core.State
                 propValue.Value = value;
                 FireValueEvent(name, prop);
             }
+
             if (isNetworked)
                 _networkState?.UpdateValue(prop);
         }
