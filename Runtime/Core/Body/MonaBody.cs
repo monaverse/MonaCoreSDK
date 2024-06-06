@@ -410,10 +410,10 @@ namespace Mona.SDK.Core.Body
         private void Awake()
         {
             _started = false;
-            Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
+            //Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
             _enabled = gameObject.activeInHierarchy;
             if (_enabled) _startWhenAllChildrenHaveStarted = true;
-            Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+            //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             CacheComponents();
             InitializeTags();
             AddDelegates();
@@ -589,7 +589,7 @@ namespace Mona.SDK.Core.Body
 
         private void AddDelegates()
         {
-            Debug.Log($"{nameof(AddDelegates)} {Transform.name}");
+            //Debug.Log($"{nameof(AddDelegates)} {Transform.name}");
             OnNetworkSpawnerStartedEvent = HandleNetworkSpawnerStarted;
             MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
             MonaEventBus.Register(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
@@ -612,7 +612,7 @@ namespace Mona.SDK.Core.Body
 
         private void RemoveDelegates()
         {
-            Debug.Log($"{nameof(RemoveDelegates)} {Transform?.name}");
+            //Debug.Log($"{nameof(RemoveDelegates)} {Transform?.name}");
             MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT, this), OnNetworkSpawnerStartedEvent);
             MonaEventBus.Unregister(new EventHook(MonaCoreConstants.NETWORK_SPAWNER_STARTED_EVENT), OnNetworkSpawnerStartedEvent);
         }
@@ -620,7 +620,7 @@ namespace Mona.SDK.Core.Body
         private bool _networkSpawned;
         private void HandleNetworkSpawnerStarted(NetworkSpawnerStartedEvent evt)
         {
-            Debug.Log($"{nameof(HandleNetworkSpawnerStarted)} {Transform.name}");
+            //Debug.Log($"{nameof(HandleNetworkSpawnerStarted)} {Transform.name}");
             if (_networkSpawned) return;
             _networkSpawned = true;
 
@@ -665,7 +665,7 @@ namespace Mona.SDK.Core.Body
 
         private void TriggerEnabled()
         {
-            Debug.Log($"{nameof(TriggerEnabled)}");
+            //Debug.Log($"{nameof(TriggerEnabled)}");
             OnEnabled();
         }
 
@@ -677,11 +677,11 @@ namespace Mona.SDK.Core.Body
 
         private void OnEnable()
         {
-            Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
+            //Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
             _enabled = true;
 
             _startWhenAllChildrenHaveStarted = true;
-            Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+            //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
 
             if (_registerWhenEnabled)
             {
@@ -958,7 +958,7 @@ namespace Mona.SDK.Core.Body
                 if (_waitForAfterEnabled)
                 {
                     _waitForAfterEnabled = false;
-                    Debug.Log($"_startWhenAllChildrenHaveStarted = false", gameObject);
+                    //Debug.Log($"_startWhenAllChildrenHaveStarted = false", gameObject);
                     _startWhenAllChildrenHaveStarted = false;
                     _childrenLoaded = true;
                     if (DisableOnLoad)
@@ -973,7 +973,7 @@ namespace Mona.SDK.Core.Body
                     {
                         if (children[i].GetActive() && !children[i].ChildrenLoaded)
                         {
-                            Debug.Log($"{nameof(TrackChildrenStarted)} can't start {gameObject.name}, waiting on {children[i].Transform.name}", children[i].Transform.gameObject);
+                            //Debug.Log($"{nameof(TrackChildrenStarted)} can't start {gameObject.name}, waiting on {children[i].Transform.name}", children[i].Transform.gameObject);
                             return;
                         }
                     }
@@ -1780,6 +1780,21 @@ namespace Mona.SDK.Core.Body
             else
                 ActiveTransform.rotation = rotation;
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
+        }
+
+        public void TeleportGlobalRotation(Vector3 axis, float value, bool isNetworked = true)
+        {
+            ActiveTransform.Rotate(axis, value, Space.World);
+
+            if (_hasRigidbody)
+            {
+                var was = ActiveRigidbody.isKinematic;
+                ActiveRigidbody.isKinematic = true;
+                ActiveRigidbody.rotation = ActiveTransform.rotation;
+                ActiveRigidbody.isKinematic = was;
+            }
+
+            if (isNetworked) _networkBody?.TeleportGlobalRotation(axis, value);
         }
 
         public void SetPosition(Vector3 position, bool isNetworked = true)
