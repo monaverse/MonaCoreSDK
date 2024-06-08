@@ -22,7 +22,7 @@ namespace Mona.SDK.Core.Network.Interfaces
         void SetRotation(Quaternion rotation, bool isKinematic = false);
         void TeleportPosition(Vector3 position, bool isKinematic = false, bool setToLocal = false);
         void TeleportRotation(Quaternion rotation, bool isKinematic = false);
-        void TeleportGlobalRotation(Vector3 axis, float value);
+        void TeleportGlobalRotation(Quaternion rotation);
         void TeleportScale(Vector3 scale, bool isKinematic = false);
         void SetScale(Vector3 scale);
         void SetColor(Color color);

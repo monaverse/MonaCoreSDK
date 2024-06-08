@@ -44,7 +44,12 @@ namespace Mona.SDK.Core.Body
 
         private bool _registerWhenEnabled;
 
+        private bool _instantiated;
+        public bool Instantiated => _instantiated;
+
         private bool _started;
+        public bool Started => _started;
+
         private bool _childrenLoaded;
         public bool ChildrenLoaded => _childrenLoaded;
 
@@ -424,8 +429,8 @@ namespace Mona.SDK.Core.Body
         private void Start()
         {
             RegisterInParents();
-            FireInstantiated();
             HasRigidbodyInParent();
+            FireInstantiated();
         }
 
         private void CacheComponents()
@@ -641,7 +646,7 @@ namespace Mona.SDK.Core.Body
             {
                 FireSpawnEvent();
                 _startWhenAllChildrenHaveStarted = true;
-                Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+                //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             }
 
 
@@ -1482,7 +1487,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return gameObject.activeInHierarchy;
+            return gameObject != null && gameObject.activeInHierarchy;
         }
 
 
@@ -1794,7 +1799,7 @@ namespace Mona.SDK.Core.Body
                 ActiveRigidbody.isKinematic = was;
             }
 
-            if (isNetworked) _networkBody?.TeleportGlobalRotation(axis, value);
+            if (isNetworked) _networkBody?.TeleportGlobalRotation(ActiveTransform.rotation);
         }
 
         public void SetPosition(Vector3 position, bool isNetworked = true)

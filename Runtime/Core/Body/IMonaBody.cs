@@ -54,6 +54,9 @@ namespace Mona.SDK.Core.Body
         int ClientId { get; }
         string PlayerName { get; }
 
+        bool Instantiated { get; }
+        bool Started { get; }
+
         Renderer[] Renderers { get; }
         Renderer[] BodyRenderers { get; }
 
