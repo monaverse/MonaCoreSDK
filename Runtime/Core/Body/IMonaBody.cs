@@ -54,6 +54,9 @@ namespace Mona.SDK.Core.Body
         int ClientId { get; }
         string PlayerName { get; }
 
+        bool Instantiated { get; }
+        bool Started { get; }
+
         Renderer[] Renderers { get; }
         Renderer[] BodyRenderers { get; }
 
@@ -91,6 +94,7 @@ namespace Mona.SDK.Core.Body
 
         void TeleportPosition(Vector3 pos, bool isNetworked = true, bool setToLocal = false);
         void TeleportRotation(Quaternion rot, bool isNetworked = true);
+        void TeleportGlobalRotation(Vector3 axis, float value, bool isNetworked = true);
         void TeleportScale(Vector3 scale, bool isNetworked = true);
         void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool spawnedAsChild, bool isNetworked = true);
 
