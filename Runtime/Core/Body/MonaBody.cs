@@ -412,8 +412,12 @@ namespace Mona.SDK.Core.Body
             _started = false;
             Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
             _enabled = gameObject.activeInHierarchy;
-            if (_enabled) _startWhenAllChildrenHaveStarted = true;
-            Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
+            {
+                if (_enabled) _startWhenAllChildrenHaveStarted = true;
+            }
+            //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             CacheComponents();
             InitializeTags();
             AddDelegates();
@@ -641,7 +645,7 @@ namespace Mona.SDK.Core.Body
             {
                 FireSpawnEvent();
                 _startWhenAllChildrenHaveStarted = true;
-                Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+                //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             }
 
 
@@ -677,11 +681,11 @@ namespace Mona.SDK.Core.Body
 
         private void OnEnable()
         {
-            Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
+            //Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
             _enabled = true;
 
             _startWhenAllChildrenHaveStarted = true;
-            Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
+            //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
 
             if (_registerWhenEnabled)
             {
@@ -958,7 +962,7 @@ namespace Mona.SDK.Core.Body
                 if (_waitForAfterEnabled)
                 {
                     _waitForAfterEnabled = false;
-                    Debug.Log($"_startWhenAllChildrenHaveStarted = false", gameObject);
+                    //Debug.Log($"_startWhenAllChildrenHaveStarted = false", gameObject);
                     _startWhenAllChildrenHaveStarted = false;
                     _childrenLoaded = true;
                     if (DisableOnLoad)
