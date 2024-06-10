@@ -48,7 +48,8 @@ namespace Mona.SDK.Core.Body
             set => _localId = value;
         }
 
-        public SerializableGuid DurableID { get => _durableID; set => _durableID = value; }
+        public SerializableGuid Guid { get => _guid; set => _guid = value; }
+        public SerializableGuid DurableId { get => _durableID; set => _durableID = value; }
 
         
         //Fall back for Empty Guids on Reactors

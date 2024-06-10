@@ -22,7 +22,7 @@ namespace Mona.SDK.Core.Body
         GameObject Skin { get; set; }
 
         string LocalId { get; }
-        SerializableGuid DurableID { get; set; }
+        SerializableGuid DurableId { get; set; }
         Transform ActiveTransform { get; }
         Rigidbody ActiveRigidbody { get; }
         Transform Transform { get; }
