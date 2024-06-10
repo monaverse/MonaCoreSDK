@@ -42,6 +42,7 @@ namespace Mona.SDK.Core.Body
         int ChildIndex { get; set; }
         bool ChildrenLoaded { get; }
         MonaBodyNetworkSyncType SyncType { get; set; }
+        bool DisableOnLoad { get; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }

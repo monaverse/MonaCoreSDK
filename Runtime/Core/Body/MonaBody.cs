@@ -185,9 +185,11 @@ namespace Mona.SDK.Core.Body
         public MonaBodyNetworkSyncType SyncType { get => _syncType; set => _syncType = value; }
 
         public bool SyncPositionAndRotation = true;
-        public bool DisableOnLoad = false;
 
-        public void SetDisableOnLoad(bool b) => DisableOnLoad = b;
+        private bool _disableOnLoad = false;
+        public bool DisableOnLoad => _disableOnLoad;
+
+        public void SetDisableOnLoad(bool b) => _disableOnLoad = b;
 
         public bool LocalOnly => SyncType == MonaBodyNetworkSyncType.NotNetworked;
 
@@ -661,7 +663,7 @@ namespace Mona.SDK.Core.Body
         private void TriggerDisableOnLoad()
         {
             //Debug.Log($"{nameof(TriggerDisableOnLoad)} {DisableOnLoad}", gameObject);
-            DisableOnLoad = false;
+            _disableOnLoad = false;
             OnDisableOnLoad?.Invoke();
             SetActive(false);
         }
