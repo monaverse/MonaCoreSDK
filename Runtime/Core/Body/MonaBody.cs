@@ -245,8 +245,10 @@ namespace Mona.SDK.Core.Body
             if (!_childMonaBodiesByTag.ContainsKey(tag))
                 _childMonaBodiesByTag.Add(tag, new List<IMonaBody>());
             if (!_childMonaBodiesByTag[tag].Contains(body))
+            {
                 _childMonaBodiesByTag[tag].Add(body);
-        }
+            }
+            }
 
         public void RemoveTag(string tag)
         {
@@ -1166,8 +1168,19 @@ namespace Mona.SDK.Core.Body
             bool updateRotation = false;
             bool updatePosition = false;
 
-            _applyRotation = GetRotation();
-            _applyPosition = GetPosition();
+            if (_teleportRotationSet)
+                _applyRotation = _teleportRotation;
+            else
+                _applyRotation = GetRotation();
+
+            _teleportRotationSet = false;
+
+            if (_teleportPositionSet)
+                _applyPosition = _teleportPosition;
+            else
+                _applyPosition = GetPosition();
+
+            _teleportPositionSet = false;
 
             if (_rotationDeltas.Count > 0)
             {
@@ -1213,8 +1226,13 @@ namespace Mona.SDK.Core.Body
                 }
                 else if (ActiveRigidbody.isKinematic)
                 {
-                    if(updatePosition || updateRotation)
-                        ActiveRigidbody.Move(_applyPosition, _applyRotation);
+                    if (updatePosition && updateRotation)
+                        ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
+                    else
+                    {
+                        if (updatePosition) ActiveRigidbody.MovePosition(_applyPosition);
+                        if (updateRotation) ActiveRigidbody.MoveRotation(_applyRotation.normalized);
+                    }
                 }
                 else
                 {
@@ -1764,18 +1782,17 @@ namespace Mona.SDK.Core.Body
         {
             _positionDeltas.Clear();
 
-            position = _positionBounds.BindValue(position);
+            if (_positionBounds.RestrictTransform)
+                position = _positionBounds.BindValue(position);
+
             //Debug.Log($"{nameof(TeleportPosition)} {position} {Time.frameCount}");
             if (_hasRigidbody)
             {
                 if (setToLocal)
                     position = ActiveTransform.TransformPoint(position);
 
-                var was = ActiveRigidbody.isKinematic;
-                ActiveRigidbody.isKinematic = true;
-                ActiveRigidbody.position = position;
-                ActiveRigidbody.isKinematic = was;
-                ActiveTransform.position = position;
+                _teleportPositionSet = true;
+                _teleportPosition = position;
             }
             else
             {
@@ -1788,16 +1805,23 @@ namespace Mona.SDK.Core.Body
             if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
+        Quaternion _teleportRotation;
+        bool _teleportRotationSet = false;
+
+        Vector3 _teleportPosition;
+        bool _teleportPositionSet = false;
+
         public void TeleportRotation(Quaternion rotation, bool isNetworked = true)
         {
-            rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
+            _rotationDeltas.Clear();
+
+            if (_positionBounds.RestrictTransform)
+                rotation = _rotationBounds.BindValue(rotation, ActiveTransform);
+
             if (_hasRigidbody)
             {
-                var was = ActiveRigidbody.isKinematic;
-                ActiveRigidbody.isKinematic = true;
-                ActiveRigidbody.rotation = rotation;
-                ActiveRigidbody.isKinematic = was;
-                ActiveTransform.rotation = rotation;
+                _teleportRotationSet = true;
+                _teleportRotation = rotation;
             }
             else
                 ActiveTransform.rotation = rotation;
@@ -1807,14 +1831,18 @@ namespace Mona.SDK.Core.Body
 
         public void TeleportGlobalRotation(Vector3 axis, float value, bool isNetworked = true)
         {
-            ActiveTransform.Rotate(axis, value, Space.World);
+            //ActiveTransform.Rotate(axis, value, Space.World);
+            var rotation = ActiveRigidbody.rotation;
+            rotation *= Quaternion.Euler(axis * value);
 
             if (_hasRigidbody)
             {
-                var was = ActiveRigidbody.isKinematic;
-                ActiveRigidbody.isKinematic = true;
-                ActiveRigidbody.rotation = ActiveTransform.rotation;
-                ActiveRigidbody.isKinematic = was;
+                _teleportRotationSet = true;
+                _teleportRotation = rotation;
+            }
+            else
+            {
+                ActiveTransform.Rotate(axis, value, Space.World);
             }
 
             if (isNetworked) _networkBody?.TeleportGlobalRotation(ActiveTransform.rotation);
