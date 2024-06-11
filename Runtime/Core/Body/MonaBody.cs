@@ -1166,16 +1166,7 @@ namespace Mona.SDK.Core.Body
             bool updateRotation = false;
             bool updatePosition = false;
 
-            if (_setTeleportRotation)
-            {
-                _applyRotation = _teleportRotation;
-                _setTeleportRotation = false;
-            }
-            else
-            {
-                _applyRotation = GetRotation();
-            }
-
+            _applyRotation = GetRotation();
             _applyPosition = GetPosition();
 
             if (_rotationDeltas.Count > 0)
