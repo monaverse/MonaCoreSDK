@@ -1166,7 +1166,16 @@ namespace Mona.SDK.Core.Body
             bool updateRotation = false;
             bool updatePosition = false;
 
-            _applyRotation = GetRotation();
+            if (_setTeleportRotation)
+            {
+                _applyRotation = _teleportRotation;
+                _setTeleportRotation = false;
+            }
+            else
+            {
+                _applyRotation = GetRotation();
+            }
+
             _applyPosition = GetPosition();
 
             if (_rotationDeltas.Count > 0)
@@ -1203,8 +1212,13 @@ namespace Mona.SDK.Core.Body
             {
                 if(Parent != null)
                 {
-                    if(updatePosition) ActiveTransform.position = _applyPosition;
-                    if(updateRotation) ActiveTransform.rotation = _applyRotation;
+                    if (updatePosition && updateRotation)
+                        ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
+                    else
+                    {
+                        if (updatePosition) ActiveTransform.position = _applyPosition;
+                        if (updateRotation) ActiveTransform.rotation = _applyRotation;
+                    }
                 }
                 else if (ActiveRigidbody.isKinematic)
                 {
@@ -1215,11 +1229,16 @@ namespace Mona.SDK.Core.Body
                 {
                     if (updatePosition || updateRotation)
                     {
-                        ActiveRigidbody.velocity = Vector3.zero;
-                        ActiveRigidbody.angularVelocity = Vector3.zero;
+                        if(updatePosition) ActiveRigidbody.velocity = Vector3.zero;
+                        if(updateRotation) ActiveRigidbody.angularVelocity = Vector3.zero;
                     }
-                    if (updatePosition) ActiveRigidbody.position = _applyPosition;
-                    if (updateRotation) ActiveRigidbody.rotation = _applyRotation.normalized;
+                    if (updatePosition && updateRotation)
+                        ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
+                    else
+                    {
+                        if (updatePosition) ActiveRigidbody.position = _applyPosition;
+                        if (updateRotation) ActiveRigidbody.rotation = _applyRotation.normalized;
+                    }
                 }
             }
             else
@@ -1791,6 +1810,7 @@ namespace Mona.SDK.Core.Body
             }
             else
                 ActiveTransform.rotation = rotation;
+
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
