@@ -342,14 +342,13 @@ namespace Mona.SDK.Core.State
         public void SyncValuesOnNetwork()
         {
             if (_networkState == null) return;
-
             _variablesIndex.Clear();
             _variablesIndexByName.Clear();
             for (var i = 0; i < _values.Count; i++)
             {
                 _variablesIndex[i] = _values[i];
                 _variablesIndexByName[_values[i].Name] = i;
-                //Debug.Log($"{nameof(SyncValuesOnNetwork)} {_values[i].Name}, index {i}");
+                
                 _networkState.UpdateValue(_values[i]);
             }
         }

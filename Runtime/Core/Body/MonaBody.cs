@@ -422,7 +422,13 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(Awake)} monabody {gameObject.name}", gameObject);
             _enabled = gameObject.activeInHierarchy;
 
-            if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
+            AddDelegates();
+
+            if (SyncType != MonaBodyNetworkSyncType.NotNetworked)
+            {
+            
+            }
+            else
             {
                 if (_enabled) _startWhenAllChildrenHaveStarted = true;
             }
@@ -430,7 +436,6 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             CacheComponents();
             InitializeTags();
-            AddDelegates();
             SetInitialTransforms();
 
         }
@@ -654,9 +659,10 @@ namespace Mona.SDK.Core.Body
             if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
             {
                 FireSpawnEvent();
-                _startWhenAllChildrenHaveStarted = true;
                 //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
             }
+
+            _startWhenAllChildrenHaveStarted = true;
 
 
             RemoveDelegates();
