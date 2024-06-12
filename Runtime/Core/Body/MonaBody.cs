@@ -186,6 +186,7 @@ namespace Mona.SDK.Core.Body
 
         public bool SyncPositionAndRotation = true;
 
+        [SerializeField]
         private bool _disableOnLoad = false;
         public bool DisableOnLoad => _disableOnLoad;
 
@@ -1169,7 +1170,7 @@ namespace Mona.SDK.Core.Body
         private Quaternion _applyRotation;
         private void ApplyPositionAndRotation()
         {
-            if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0) return;
+            if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0 && !_teleportPositionSet && !_teleportRotationSet) return;
 
             bool updateRotation = false;
             bool updatePosition = false;
@@ -1179,14 +1180,10 @@ namespace Mona.SDK.Core.Body
             else
                 _applyRotation = GetRotation();
 
-            _teleportRotationSet = false;
-
             if (_teleportPositionSet)
                 _applyPosition = _teleportPosition;
             else
                 _applyPosition = GetPosition();
-
-            _teleportPositionSet = false;
 
             if (_rotationDeltas.Count > 0)
             {
@@ -1232,12 +1229,15 @@ namespace Mona.SDK.Core.Body
                 }
                 else if (ActiveRigidbody.isKinematic)
                 {
-                    if (updatePosition && updateRotation)
-                        ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
-                    else
+                    if (updatePosition) ActiveRigidbody.MovePosition(_applyPosition);
+                    if (updateRotation) ActiveRigidbody.MoveRotation(_applyRotation.normalized);
+                    if (_teleportPositionSet)
                     {
-                        if (updatePosition) ActiveRigidbody.MovePosition(_applyPosition);
-                        if (updateRotation) ActiveRigidbody.MoveRotation(_applyRotation.normalized);
+                        ActiveTransform.position = _applyPosition;
+                    }
+                    if (_teleportRotationSet)
+                    {
+                        ActiveTransform.rotation = _applyRotation.normalized;
                     }
                 }
                 else
@@ -1261,6 +1261,9 @@ namespace Mona.SDK.Core.Body
                 if (updatePosition) ActiveTransform.position = _applyPosition;
                 if (updateRotation) ActiveTransform.rotation = _applyRotation;
             }
+
+            _teleportPositionSet = false;
+            _teleportRotationSet = false;
         }
 
         public void CancelForces()
