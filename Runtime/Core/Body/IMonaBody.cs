@@ -189,5 +189,6 @@ namespace Mona.SDK.Core.Body
         void EnsureUniqueDurableID();
 
         void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true);
+        Bounds GetBounds(GameObject go = null);
     }
 }

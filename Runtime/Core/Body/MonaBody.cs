@@ -1231,14 +1231,6 @@ namespace Mona.SDK.Core.Body
                 {
                     if (updatePosition) ActiveRigidbody.MovePosition(_applyPosition);
                     if (updateRotation) ActiveRigidbody.MoveRotation(_applyRotation.normalized);
-                    if (_teleportPositionSet)
-                    {
-                        ActiveTransform.position = _applyPosition;
-                    }
-                    if (_teleportRotationSet)
-                    {
-                        ActiveTransform.rotation = _applyRotation.normalized;
-                    }
                 }
                 else
                 {
@@ -1254,6 +1246,19 @@ namespace Mona.SDK.Core.Body
                         if (updatePosition) ActiveRigidbody.position = _applyPosition;
                         if (updateRotation) ActiveRigidbody.rotation = _applyRotation.normalized;
                     }
+                }
+
+                if (_teleportPositionSet)
+                {
+                    ActiveRigidbody.velocity = Vector3.zero;
+                    ActiveRigidbody.position = _applyPosition;
+                    ActiveTransform.position = _applyPosition;
+                }
+                if (_teleportRotationSet)
+                {
+                    ActiveRigidbody.angularVelocity = Vector3.zero;
+                    ActiveRigidbody.rotation = _applyRotation.normalized;
+                    ActiveTransform.rotation = _applyRotation.normalized;
                 }
             }
             else
@@ -2028,6 +2033,43 @@ namespace Mona.SDK.Core.Body
             float distanceToClosest = Vector3.Distance(GetPosition(), tags[0].GetPosition());
 
             return distanceToClosest > closestExludedDistance ? tags[0] : tags[1];
+        }
+
+        public Bounds GetBounds(GameObject go = null)
+        {
+            if(go == null)
+                go = gameObject;
+            Bounds bounds;
+            Renderer childRender;
+            bounds = GetRenderBounds(go);
+            if (bounds.extents.x == 0)
+            {
+                bounds = new Bounds(go.transform.position, Vector3.zero);
+                foreach (Transform child in go.transform)
+                {
+                    childRender = child.GetComponent<Renderer>();
+                    if (childRender)
+                    {
+                        bounds.Encapsulate(childRender.bounds);
+                    }
+                    else
+                    {
+                        bounds.Encapsulate(GetBounds(child.gameObject));
+                    }
+                }
+            }
+            return bounds;
+        }
+
+        private Bounds GetRenderBounds(GameObject go)
+        {
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
+            Renderer render = go.GetComponent<Renderer>();
+            if (render != null)
+            {
+                return render.bounds;
+            }
+            return bounds;
         }
     }
 }
