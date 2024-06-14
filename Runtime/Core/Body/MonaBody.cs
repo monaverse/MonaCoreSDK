@@ -425,11 +425,7 @@ namespace Mona.SDK.Core.Body
 
             AddDelegates();
 
-            if (SyncType != MonaBodyNetworkSyncType.NotNetworked)
-            {
-            
-            }
-            else
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked)
             {
                 if (_enabled) _startWhenAllChildrenHaveStarted = true;
             }
@@ -701,7 +697,8 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
             _enabled = true;
 
-            _startWhenAllChildrenHaveStarted = true;
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked)
+                _startWhenAllChildrenHaveStarted = true;
             //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
 
             if (_registerWhenEnabled)
