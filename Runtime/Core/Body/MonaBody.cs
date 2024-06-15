@@ -645,7 +645,9 @@ namespace Mona.SDK.Core.Body
                 _registerWhenEnabled = true;
                 _networkSpawner = evt.NetworkSpawner;
                 if (_networkSpawner == null)
+                {
                     _mockNetwork = true;
+                }
                 if (gameObject.activeInHierarchy)
                     RegisterWithNetwork();
             }
@@ -697,7 +699,7 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(OnEnabled)} monabody {gameObject.name}", gameObject);
             _enabled = true;
 
-            if (SyncType == MonaBodyNetworkSyncType.NotNetworked)
+            if (SyncType == MonaBodyNetworkSyncType.NotNetworked || _mockNetwork)
                 _startWhenAllChildrenHaveStarted = true;
             //Debug.Log($"_startWhenAllChildrenHaveStarted = true", gameObject);
 
