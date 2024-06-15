@@ -21,6 +21,7 @@
         public const string MONA_BODY_HAS_INPUT_EVENT = "OnMonaBodyHasInputEvent";
         public const string MONA_BODY_FIXED_TICK_EVENT = "OnMonaBodyFixedTickEvent";
         public const string MONA_BODY_ANIMATION_TRIGGERED_EVENT = "OnMonaBodyAnimationTriggeredEvent";
+        public const string MONA_BODY_SCALE_CHANGED_EVENT = "OnMonaBodyScaleChangedEvent";
         public const string LOCAL_INPUT_EVENT = "OnMonaLocalInputEvent";
         public const string INPUT_EVENT = "OnMonaInputTickEvent";
         public const string INPUTS_EVENT = "OnMonaInputsTickEvent";

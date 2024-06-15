@@ -1981,6 +1981,7 @@ namespace Mona.SDK.Core.Body
             {
                 ActiveTransform.localScale = scale;
                 if (isNetworked) _networkBody?.SetScale(scale);
+                MonaEventBus.Trigger(new EventHook(MonaCoreConstants.MONA_BODY_SCALE_CHANGED_EVENT, this), new MonaBodyScaleChangedEvent(this));
             }
         }
 
