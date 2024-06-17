@@ -1899,7 +1899,8 @@ namespace Mona.SDK.Core.Body
             _initialLocalPosition = ActiveTransform.localPosition;
             _initialLocalRotation = ActiveTransform.localRotation;
 
-            ActiveTransform.localScale = _initialScale = scale;
+            _initialScale = scale;
+            SetScale(_initialScale);
 
             //TODO: I don't like this. sometimes child monabodies are getting destroyed and not cleaning themselves up.
             for (var i = _childMonaBodies.Count - 1; i >= 0; i--)
