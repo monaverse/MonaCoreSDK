@@ -35,6 +35,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
+        public event Action OnTeleported = delegate { };
 
         private string _skinId;
         public string SkinId { get => _skinId; set => _skinId = value; }
@@ -1214,9 +1215,9 @@ namespace Mona.SDK.Core.Body
                 updatePosition = true;
             }
 
-            if(_hasRigidbody)
+            if (_hasRigidbody)
             {
-                if(Parent != null)
+                if (Parent != null)
                 {
                     if (updatePosition && updateRotation)
                         ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
@@ -1235,8 +1236,8 @@ namespace Mona.SDK.Core.Body
                 {
                     if (updatePosition || updateRotation)
                     {
-                        if(updatePosition) ActiveRigidbody.velocity = Vector3.zero;
-                        if(updateRotation) ActiveRigidbody.angularVelocity = Vector3.zero;
+                        if (updatePosition) ActiveRigidbody.velocity = Vector3.zero;
+                        if (updateRotation) ActiveRigidbody.angularVelocity = Vector3.zero;
                     }
                     if (updatePosition && updateRotation)
                         ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
@@ -1266,8 +1267,12 @@ namespace Mona.SDK.Core.Body
                 if (updateRotation) ActiveTransform.rotation = _applyRotation;
             }
 
-            _teleportPositionSet = false;
-            _teleportRotationSet = false;
+            if (_teleportPositionSet || _teleportRotationSet)
+            {
+                _teleportPositionSet = false;
+                _teleportRotationSet = false;
+                OnTeleported?.Invoke();
+            }
         }
 
         public void CancelForces()
@@ -1813,6 +1818,8 @@ namespace Mona.SDK.Core.Body
                     ActiveTransform.localPosition = position;
                 else
                     ActiveTransform.position = position;
+
+                OnTeleported?.Invoke();
             }
                 
             if (isNetworked) _networkBody?.TeleportPosition(position);
@@ -1837,7 +1844,11 @@ namespace Mona.SDK.Core.Body
                 _teleportRotation = rotation;
             }
             else
+            {
                 ActiveTransform.rotation = rotation;
+
+                OnTeleported?.Invoke();
+            }
 
             if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
@@ -1856,6 +1867,7 @@ namespace Mona.SDK.Core.Body
             else
             {
                 ActiveTransform.Rotate(axis, value, Space.World);
+                OnTeleported?.Invoke();
             }
 
             if (isNetworked) _networkBody?.TeleportGlobalRotation(ActiveTransform.rotation);

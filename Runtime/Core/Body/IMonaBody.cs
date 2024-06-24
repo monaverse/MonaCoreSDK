@@ -17,6 +17,7 @@ namespace Mona.SDK.Core.Body
         event Action<IMonaBody> OnBodyDisabled;
         event Action OnResumed;
         event Action OnPaused;
+        event Action OnTeleported;
 
         string SkinId { get; set; }
         GameObject Skin { get; set; }
