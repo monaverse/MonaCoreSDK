@@ -483,7 +483,12 @@ namespace Mona.SDK.Core.Body
                 if (_rigidbody == null)
                 {
                     _rigidbody = gameObject.AddComponent<Rigidbody>();
-                    _rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                    _rigidbody.mass = 1f;
+                    _rigidbody.drag = 0.1f;
+                    _rigidbody.angularDrag = 0.05f;
+
+                    // Look into making this implemented based on Body property
+                    //_rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
                 }
                 _rigidbody.isKinematic = true;
                 _activeRigidbody = _rigidbody;
@@ -1026,7 +1031,7 @@ namespace Mona.SDK.Core.Body
             ApplyPositionAndRotation();
             ApplyAllForces(deltaTime);
             ApplyAllTorques(deltaTime);
-            ApplyDrag();
+            //ApplyDrag();
 
             CalculateVelocity(deltaTime, true);
         }
@@ -1060,7 +1065,7 @@ namespace Mona.SDK.Core.Body
                 ApplyPositionAndRotation();
                 ApplyAllForces(deltaTime);
                 ApplyAllTorques(deltaTime);
-                ApplyDrag();
+                //ApplyDrag();
 
                 CalculateVelocity(deltaTime, true);
 
@@ -1100,7 +1105,7 @@ namespace Mona.SDK.Core.Body
                 ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
                 ApplyAllTorques(evt.DeltaTime);
-                ApplyDrag();
+                //ApplyDrag();
 
                 CalculateVelocity(evt.DeltaTime, true);
 
