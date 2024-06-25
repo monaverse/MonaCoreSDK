@@ -1255,13 +1255,17 @@ namespace Mona.SDK.Core.Body
 
                 if (_teleportPositionSet)
                 {
-                    ActiveRigidbody.velocity = Vector3.zero;
+                    if (!ActiveRigidbody.isKinematic)
+                        ActiveRigidbody.velocity = Vector3.zero;
+
                     ActiveRigidbody.position = _applyPosition;
                     ActiveTransform.position = _applyPosition;
                 }
                 if (_teleportRotationSet)
                 {
-                    ActiveRigidbody.angularVelocity = Vector3.zero;
+                    if (!ActiveRigidbody.isKinematic)
+                        ActiveRigidbody.angularVelocity = Vector3.zero;
+
                     ActiveRigidbody.rotation = _applyRotation.normalized;
                     ActiveTransform.rotation = _applyRotation.normalized;
                 }
