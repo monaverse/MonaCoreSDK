@@ -318,7 +318,7 @@ namespace Mona.SDK.Core.State
             var variable = GetVariable(variableName);
 
             if (variable is IMonaVariablesFloatValue)
-                return ((IMonaVariablesFloatValue)variable).Value.ToString();
+                return ((IEasyUINumericalDisplay)variable).FormattedNumber;
             else if (variable is IMonaVariablesStringValue)
                 return ((IMonaVariablesStringValue)variable).Value;
             else if (variable is IMonaVariablesBoolValue)
