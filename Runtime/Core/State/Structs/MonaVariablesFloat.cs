@@ -52,6 +52,11 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private float _max = 10f;
         [SerializeField] private bool _returnRandomValueFromMinMax;
 
+        [SerializeField]
+        private bool _isLocal;
+
+        public bool IsLocal { get => _isLocal; set => _isLocal = value; }
+
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
         public NumberRoundingType RoundingType { get => _roundingType; set => _roundingType = value; }

@@ -146,6 +146,11 @@ namespace Mona.SDK.Core.Body
         private Vector3 _lastPosition;
         private Vector3 _transformVelocity;
 
+        private Transform _pinToParent;
+        private Func<Vector3> _pinToParentPosition;
+        private Func<Quaternion> _pinToParentRotation;
+
+        private bool _setPlayer;
         private int _playerId;
         private int _clientId;
         private string _playerName;
@@ -958,6 +963,11 @@ namespace Mona.SDK.Core.Body
                 _activeRigidbody = null;
             }
 
+            if(_setPlayer)
+            {
+                _networkBody?.SetPlayer(_playerId, _clientId, _playerName);
+            }
+
             FireSpawnEvent();
 
             if (_networkBody != null)
@@ -1065,6 +1075,7 @@ namespace Mona.SDK.Core.Body
                 ApplyPositionAndRotation();
                 ApplyAllForces(deltaTime);
                 ApplyAllTorques(deltaTime);
+                ApplyPinToUpdate();
                 //ApplyDrag();
 
                 CalculateVelocity(deltaTime, true);
@@ -1105,12 +1116,24 @@ namespace Mona.SDK.Core.Body
                 ApplyPositionAndRotation();
                 ApplyAllForces(evt.DeltaTime);
                 ApplyAllTorques(evt.DeltaTime);
+                ApplyPinToUpdate();
                 //ApplyDrag();
 
                 CalculateVelocity(evt.DeltaTime, true);
 
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
+            }
+        }
+
+        private void ApplyPinToUpdate()
+        {
+            if (_pinToParent != null)
+            {
+                var pos = _pinToParentPosition();
+                var rot = _pinToParentRotation();
+                ActiveTransform.position = pos;
+                ActiveTransform.rotation = rot;
             }
         }
 
@@ -1518,11 +1541,26 @@ namespace Mona.SDK.Core.Body
 
         public void SetTransformParent(Transform parent)
         {
+            ClearPin();
             UnregisterInParents();
             ActiveTransform.SetParent(parent, true);
             RegisterInParents();
             HasRigidbodyInParent();
             MonaEventBus.Trigger<MonaBodyParentChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_PARENT_CHANGED_EVENT, (IMonaBody)this), new MonaBodyParentChangedEvent());
+        }
+
+        public void PinToParent(Transform parent, Func<Vector3> positionFn, Func<Quaternion> rotationFn)
+        {
+            _pinToParent = parent;
+            _pinToParentPosition = positionFn;
+            _pinToParentRotation = rotationFn;
+        }
+
+        public void ClearPin()
+        {
+            _pinToParent = null;
+            _pinToParentPosition = null;
+            _pinToParentRotation = null;
         }
 
         public void SetActive(bool active)
@@ -1606,6 +1644,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true)
         {
+            _setPlayer = true;
             _playerId = playerId;
             _clientId = clientId;
             _playerName = name;
@@ -1831,7 +1870,7 @@ namespace Mona.SDK.Core.Body
                 OnTeleported?.Invoke();
             }
                 
-            if (isNetworked) _networkBody?.TeleportPosition(position);
+            //if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
         Quaternion _teleportRotation;
@@ -1859,7 +1898,7 @@ namespace Mona.SDK.Core.Body
                 OnTeleported?.Invoke();
             }
 
-            if (isNetworked) _networkBody?.TeleportRotation(rotation);
+            //if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
         public void TeleportGlobalRotation(Vector3 axis, float value, bool isNetworked = true)
@@ -1879,7 +1918,7 @@ namespace Mona.SDK.Core.Body
                 OnTeleported?.Invoke();
             }
 
-            if (isNetworked) _networkBody?.TeleportGlobalRotation(ActiveTransform.rotation);
+            //if (isNetworked) _networkBody?.TeleportGlobalRotation(ActiveTransform.rotation);
         }
 
         public void SetPosition(Vector3 position, bool isNetworked = true)
@@ -1896,7 +1935,7 @@ namespace Mona.SDK.Core.Body
             {
                 ActiveRigidbody.transform.localScale = scale;
             }
-            if (isNetworked) _networkBody?.TeleportScale(scale);
+            if (isNetworked) _networkBody?.TeleportScale(scale, ActiveRigidbody.isKinematic);
         }
 
         public void SetSpawnTransforms(Vector3 position, Quaternion rotation, Vector3 scale, bool spawnedAsChild, bool isNetworked = true)

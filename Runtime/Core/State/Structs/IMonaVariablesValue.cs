@@ -9,5 +9,6 @@ namespace Mona.SDK.Core.State.Structs
         string Name { get; set; }
         void Reset();
         void SaveReset();
+        bool IsLocal { get; set; }
     }
 }

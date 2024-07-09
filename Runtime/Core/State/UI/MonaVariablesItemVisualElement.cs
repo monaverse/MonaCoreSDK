@@ -26,6 +26,8 @@ namespace Mona.SDK.Core.State.UIElements
         protected Vector3Field _vector3Field;
         protected Label _labelField;
 
+        protected Toggle _isLocalField;
+
         protected Action callback;
 
         private Regex _regex;
@@ -76,9 +78,16 @@ namespace Mona.SDK.Core.State.UIElements
             _vector3Field.RegisterValueChangedCallback(HandleVector3Changed);
 
             _toggleField = new Toggle();
+            _toggleField.style.flexGrow = 1;
             _toggleField.RegisterValueChangedCallback(HandleBoolChanged);
 
             _labelField = new Label();
+            _labelField.style.flexGrow = 1;
+
+            _isLocalField = new Toggle();
+            _isLocalField.style.width = 30;
+            _isLocalField.style.paddingLeft = 10;
+            _isLocalField.RegisterValueChangedCallback(HandleIsLocalChanged);
         }
 
         public void Dispose()
@@ -92,6 +101,7 @@ namespace Mona.SDK.Core.State.UIElements
             _vector2Field.UnregisterValueChangedCallback(HandleVector2Changed);
             _vector3Field.UnregisterValueChangedCallback(HandleVector3Changed);
             _toggleField.UnregisterValueChangedCallback(HandleBoolChanged);
+            _isLocalField.UnregisterValueChangedCallback(HandleIsLocalChanged);
         }
 
         private void HandleBoolChanged(ChangeEvent<bool> evt)
@@ -119,6 +129,11 @@ namespace Mona.SDK.Core.State.UIElements
         {
             ((IMonaVariablesFloatValue)_state.VariableList[_index]).Value = evt.newValue;
             ((IMonaVariablesFloatValue)_state.VariableList[_index]).DefaultValue = evt.newValue;
+        }
+
+        private void HandleIsLocalChanged(ChangeEvent<bool> evt)
+        {
+            _state.VariableList[_index].IsLocal = evt.newValue;
         }
 
         private void HandleTypeChanged(ChangeEvent<string> evt)
@@ -248,6 +263,9 @@ namespace Mona.SDK.Core.State.UIElements
                 ((IMonaVariablesBodyArrayValue)value).Value.ForEach(x => lbl.Append(x.Transform.name + ","));
                 _labelField.text = lbl.ToString();
             }
+
+            Add(_isLocalField);
+            _isLocalField.value = value.IsLocal;
         }
 
         public void SetStateItem(IMonaVariables state, int i)

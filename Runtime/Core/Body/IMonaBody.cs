@@ -106,6 +106,8 @@ namespace Mona.SDK.Core.Body
         void SetVisible(bool visible, bool isNetworked = true);
         void SetActive(bool active, bool isNetworked = true);
         void SetTransformParent(Transform parent);
+        void ClearPin();
+        void PinToParent(Transform parent, Func<Vector3> position, Func<Quaternion> rotation);
 
         bool Intersects(SphereCollider collider, bool includeTriggers = false);
         bool Intersects(Collider collider, bool includeTriggers = false);

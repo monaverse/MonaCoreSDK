@@ -26,11 +26,14 @@ namespace Mona.SDK.Core.State.UIElements
             header.Add(new Label("Type"));
             header.Add(new Label("Name"));
             header.Add(new Label("Value"));
+            header.Add(new Label("Local?"));
             header.ElementAt(0).style.width = 80;
             header.ElementAt(0).style.marginRight = 5;
             header.ElementAt(0).style.marginLeft = 30;
             header.ElementAt(1).style.width = 100;
             header.ElementAt(1).style.marginRight = 5;
+            header.ElementAt(2).style.flexGrow = 1;
+            header.ElementAt(3).style.width = 40;
             Add(header);
 
             _list = new ListView(null, 26, () => new MonaVariablesItemVisualElement(callback), (elem, i) => BindStateItem((MonaVariablesItemVisualElement)elem, i));

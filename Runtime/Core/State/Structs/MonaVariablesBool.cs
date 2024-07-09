@@ -44,6 +44,11 @@ namespace Mona.SDK.Core.State.Structs
         public string Name { get => _name; set => _name = value; }
 
         [SerializeField]
+        private bool _isLocal;
+
+        public bool IsLocal { get => _isLocal; set => _isLocal = value; }
+
+        [SerializeField]
         public bool _value;
         private bool _resetValue;
 

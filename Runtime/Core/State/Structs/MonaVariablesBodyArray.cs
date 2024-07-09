@@ -46,6 +46,11 @@ namespace Mona.SDK.Core.State.Structs
         public string Name { get => _name; set => _name = value; }
 
         [SerializeField]
+        private bool _isLocal;
+
+        public bool IsLocal { get => _isLocal; set => _isLocal = value; }
+
+        [SerializeField]
         public List<IMonaBody> _value = new List<IMonaBody>();
 
         private List<IMonaBody> _resetValue = new List<IMonaBody>();
