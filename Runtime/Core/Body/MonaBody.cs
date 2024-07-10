@@ -976,6 +976,8 @@ namespace Mona.SDK.Core.Body
                     _networkBody?.SetAnimator(_animator);
                 MonaEventBus.Unregister(new EventHook(MonaCoreConstants.FIXED_TICK_EVENT), OnFixedUpdate);
             }
+
+            MonaEventBus.Trigger<MonaBodyRigidbodyChangedEvent>(new EventHook(MonaCoreConstants.MONA_BODY_RIGIDBODY_CHANGED_EVENT, this), new MonaBodyRigidbodyChangedEvent());
         }
 
         public void SetAnimator(Animator animator)
@@ -1271,8 +1273,8 @@ namespace Mona.SDK.Core.Body
                         ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
                     else
                     {
-                        if (updatePosition) ActiveRigidbody.position = _applyPosition;
-                        if (updateRotation) ActiveRigidbody.rotation = _applyRotation.normalized;
+                        if (updatePosition) ActiveRigidbody.MovePosition(_applyPosition);
+                        if (updateRotation) ActiveRigidbody.MoveRotation(_applyRotation.normalized);
                     }
                 }
 
