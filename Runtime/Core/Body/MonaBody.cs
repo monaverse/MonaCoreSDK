@@ -2000,6 +2000,12 @@ namespace Mona.SDK.Core.Body
                 return ActiveTransform.position;
         }
 
+        public Vector3 GetPosition(Vector3 offset)
+        {
+            if (_destroyed) return default;
+            return ActiveTransform.TransformPoint(offset);
+        }
+
         public Quaternion GetRotation()
         {
             if (_hasRigidbody)
