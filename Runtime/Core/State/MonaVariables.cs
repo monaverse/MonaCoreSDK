@@ -131,6 +131,18 @@ namespace Mona.SDK.Core.State
             return prop;
         }
 
+        private bool CanSet(IMonaVariablesValue prop)
+        {
+            var ret = _networkState == null || _networkState.HasControl();
+            if (ret)
+            {
+                return true;
+            }
+
+            //if(!prop.IsLocal) Debug.Log($"{nameof(CanSet)} cannot set {_monaBody.Transform.gameObject.name} {prop.Name}, i do not have control and it's not local");
+            return prop.IsLocal;
+        }
+
         public void Set(string name, IMonaBody value, bool createIfNotFound = true)
         {
             var prop = GetVariable(name, typeof(MonaVariablesBody), createIfNotFound);
@@ -157,6 +169,9 @@ namespace Mona.SDK.Core.State
             var prop = GetVariable(name, typeof(MonaVariablesBool), createIfNotFound);
 
             if (prop == null)
+                return;
+
+            if (!CanSet(prop) && isNetworked)
                 return;
 
             var propValue = ((IMonaVariablesBoolValue)prop);
@@ -204,6 +219,9 @@ namespace Mona.SDK.Core.State
             if (prop == null)
                 return;
 
+            if (!CanSet(prop) && isNetworked)
+                return;
+
             var propValue = ((IMonaVariablesFloatValue)prop);
             if (propValue.Value != value)
             {
@@ -225,6 +243,9 @@ namespace Mona.SDK.Core.State
             var prop = GetVariable(name, typeof(MonaVariablesInt), createIfNotFound);
 
             if (prop == null)
+                return;
+
+            if (!CanSet(prop) && isNetworked)
                 return;
 
             var propValue = ((IMonaVariablesIntValue)prop);
@@ -250,6 +271,9 @@ namespace Mona.SDK.Core.State
             if (prop == null)
                 return;
 
+            if (!CanSet(prop) && isNetworked)
+                return;
+
             var propValue = ((IMonaVariablesStringValue)prop);
             if (propValue.Value != value)
             {
@@ -271,6 +295,9 @@ namespace Mona.SDK.Core.State
             var prop = GetVariable(name, typeof(MonaVariablesVector2), createIfNotFound);
 
             if (prop == null)
+                return;
+
+            if (!CanSet(prop) && isNetworked)
                 return;
 
             var propValue = ((IMonaVariablesVector2Value)prop);
@@ -295,6 +322,9 @@ namespace Mona.SDK.Core.State
 
 
             if (prop == null)
+                return;
+
+            if (!CanSet(prop) && isNetworked)
                 return;
 
             var propValue = ((IMonaVariablesVector3Value)prop);
@@ -353,10 +383,13 @@ namespace Mona.SDK.Core.State
             }
         }
 
-        protected virtual void FireValueEvent(string variableName, IMonaVariablesValue value)
+        public virtual void FireValueEvent(string variableName, IMonaVariablesValue value, bool isNetworked = false)
         {
             value.Change();
             MonaEventBus.Trigger<MonaValueChangedEvent>(new EventHook(MonaCoreConstants.VALUE_CHANGED_EVENT, _monaBody), new MonaValueChangedEvent(variableName, value));
+
+            if (isNetworked)
+                _networkState?.UpdateValue(value);
         }
     }
 }

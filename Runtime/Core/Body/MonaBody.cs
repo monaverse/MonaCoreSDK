@@ -1087,7 +1087,7 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        public void StateAuthorityChanged() => FireStateAuthorityChanged();
+        public void StateAuthorityChanged(bool owned) => FireStateAuthorityChanged(owned);
 
         public void HandleFixedUpdate(MonaFixedTickEvent evt)
         {
@@ -1531,9 +1531,9 @@ namespace Mona.SDK.Core.Body
             MonaEventBus.Trigger<MonaBodyFixedTickEvent>(new EventHook(MonaCoreConstants.MONA_BODY_FIXED_TICK_EVENT, (IMonaBody)this), new MonaBodyFixedTickEvent(deltaTime, hasInput));
         }
 
-        private void FireStateAuthorityChanged()
+        private void FireStateAuthorityChanged(bool owned)
         {
-            MonaEventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this));
+            MonaEventBus.Trigger<MonaStateAuthorityChangedEvent>(new EventHook(MonaCoreConstants.STATE_AUTHORITY_CHANGED_EVENT, (IMonaBody)this), new MonaStateAuthorityChangedEvent((IMonaBody)this, owned));
         }
 
         private void FireInstantiated()

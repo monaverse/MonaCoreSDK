@@ -38,6 +38,8 @@ namespace Mona.SDK.Core.State
 
         void CacheVariableNames();
         bool HasUI();
+
+        void FireValueEvent(string variableName, IMonaVariablesValue value, bool isNetworked = false);
     }
 
 }

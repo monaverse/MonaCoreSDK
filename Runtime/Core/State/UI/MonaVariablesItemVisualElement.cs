@@ -107,28 +107,38 @@ namespace Mona.SDK.Core.State.UIElements
         private void HandleBoolChanged(ChangeEvent<bool> evt)
         {
             ((IMonaVariablesBoolValue)_state.VariableList[_index]).Value = evt.newValue;
+            if (Application.isPlaying)
+                _state.FireValueEvent(_state.VariableList[_index].Name, (IMonaVariablesValue)_state.VariableList[_index], true);
         }
 
         private void HandleVector3Changed(ChangeEvent<Vector3> evt)
         {
             ((IMonaVariablesVector3Value)_state.VariableList[_index]).Value = evt.newValue;
+            if (Application.isPlaying)
+                _state.FireValueEvent(_state.VariableList[_index].Name, (IMonaVariablesValue)_state.VariableList[_index], true);
         }
 
         private void HandleVector2Changed(ChangeEvent<Vector2> evt)
         {
             ((IMonaVariablesVector2Value)_state.VariableList[_index]).Value = evt.newValue;
+            if (Application.isPlaying)
+                _state.FireValueEvent(_state.VariableList[_index].Name, (IMonaVariablesValue)_state.VariableList[_index], true);
         }
 
         private void HandleStringChanged(ChangeEvent<string> evt)
         {
             if (_state.VariableList[_index] is IMonaVariablesStringValue)
                 ((IMonaVariablesStringValue)_state.VariableList[_index]).Value = evt.newValue;
+            if (Application.isPlaying)
+                _state.FireValueEvent(_state.VariableList[_index].Name, (IMonaVariablesValue)_state.VariableList[_index], true);
         }
 
         private void HandleFloatChanged(ChangeEvent<float> evt)
         {
             ((IMonaVariablesFloatValue)_state.VariableList[_index]).Value = evt.newValue;
             ((IMonaVariablesFloatValue)_state.VariableList[_index]).DefaultValue = evt.newValue;
+            if(Application.isPlaying)
+                _state.FireValueEvent(_state.VariableList[_index].Name, (IMonaVariablesValue)_state.VariableList[_index], true);
         }
 
         private void HandleIsLocalChanged(ChangeEvent<bool> evt)
