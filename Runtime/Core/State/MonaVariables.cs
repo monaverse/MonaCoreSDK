@@ -16,6 +16,8 @@ namespace Mona.SDK.Core.State
     public class MonaVariables : IMonaVariables, IDisposable
     {
         protected INetworkMonaVariables _networkState;
+        public INetworkMonaVariables NetworkVariables => _networkState;
+
         protected IMonaBody _monaBody;
         protected bool _hasUI;
 
