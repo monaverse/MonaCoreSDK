@@ -562,14 +562,17 @@ namespace Mona.SDK.Core.Body
             return _colliders.Count > 0;
         }
 
-        public void AddCollider()
+        public List<Collider> AddCollider()
         {
+            var colliders = new List<Collider>();
             for (var i = 0; i < _renderers.Length; i++)
             {
-                _renderers[i].AddComponent<BoxCollider>();
+                var collider = _renderers[i].AddComponent<BoxCollider>();
+                colliders.Add(collider);
                 break;
             }
             CacheColliders();
+            return colliders;
         }
 
         public Vector3 GetCenter()

@@ -68,7 +68,7 @@ namespace Mona.SDK.Core.Body
         void AddRigidbody();
         void RemoveRigidbody();
         bool HasCollider();
-        void AddCollider();
+        List<Collider> AddCollider();
 
         bool IsAttachedToRemotePlayer();
         bool IsAttachedToLocalPlayer();
