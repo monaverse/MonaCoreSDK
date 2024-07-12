@@ -1397,9 +1397,14 @@ namespace Mona.SDK.Core.Body
             var hasColliders = _colliders.Count > 0 || (includeTriggers && _triggers.Count < 0);
             if (hasColliders)
             {
-                for (var i = 0; i < _colliders.Count; i++)
+                for (var i = _colliders.Count-1; i >= 0; i--)
                 {
                     var myCollider = _colliders[i];
+                    if(myCollider == null)
+                    {
+                        _colliders.RemoveAt(i);
+                        continue;
+                    }    
                     var myPosition = GetPosition();
                     var otherPosition = body.GetPosition();
                     var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
@@ -1410,9 +1415,14 @@ namespace Mona.SDK.Core.Body
 
                 if(includeTriggers)
                 {
-                    for (var i = 0; i < _triggers.Count; i++)
+                    for (var i = _triggers.Count-1; i >= 0; i--)
                     {
                         var myCollider = _triggers[i];
+                        if (myCollider == null)
+                        {
+                            _colliders.RemoveAt(i);
+                            continue;
+                        }
                         var myPosition = GetPosition();
                         var otherPosition = body.GetPosition();
                         var closestPointToOtherPosition = myCollider.ClosestPointOnBounds(otherPosition);
