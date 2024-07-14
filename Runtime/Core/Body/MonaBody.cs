@@ -150,7 +150,9 @@ namespace Mona.SDK.Core.Body
         private Func<Vector3> _pinToParentPosition;
         private Func<Quaternion> _pinToParentRotation;
 
-        private bool _setPlayer;
+        private bool _playerSet;
+        public bool PlayerSet => _playerSet;
+
         private int _playerId;
         private int _clientId;
         private string _playerName;
@@ -966,7 +968,7 @@ namespace Mona.SDK.Core.Body
                 _activeRigidbody = null;
             }
 
-            if(_setPlayer)
+            if(_playerSet)
             {
                 _networkBody?.SetPlayer(_playerId, _clientId, _playerName);
             }
@@ -1659,7 +1661,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true)
         {
-            _setPlayer = true;
+            _playerSet = true;
             _playerId = playerId;
             _clientId = clientId;
             _playerName = name;

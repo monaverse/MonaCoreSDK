@@ -52,6 +52,7 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
         Vector3 CurrentVelocity { get; }
 
+        bool PlayerSet { get; }
         int PlayerId { get; }
         int ClientId { get; }
         string PlayerName { get; }
