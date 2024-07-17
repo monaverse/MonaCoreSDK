@@ -116,6 +116,7 @@ namespace Mona.SDK.Core.Body
         bool WithinRadius(IMonaBody body, float radius, bool includeTriggers = false);
 
         void SetInitialTransforms();
+        void SetInitialTransforms(Vector3 position, Quaternion rotation);
 
         void SetLocalInput(MonaInput input);
 

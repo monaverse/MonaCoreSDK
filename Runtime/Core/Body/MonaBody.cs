@@ -642,6 +642,23 @@ namespace Mona.SDK.Core.Body
             _initialScale = ActiveTransform.localScale;
         }
 
+        public void SetInitialTransforms(Vector3 position, Quaternion rotation)
+        {
+            _initialPosition = position;
+            if (ActiveTransform.parent != null)
+                _initialLocalPosition = ActiveTransform.parent.InverseTransformPoint(position);
+            else
+                _initialLocalPosition = position;
+
+            _initialRotation = rotation;
+            if (ActiveTransform.parent != null)
+                _initialLocalRotation = Quaternion.Inverse(ActiveTransform.parent.rotation) * rotation;
+            else
+                _initialLocalRotation = rotation;
+
+            //_initialScale = ActiveTransform.localScale;
+        }
+
         private void RemoveDelegates()
         {
             //Debug.Log($"{nameof(RemoveDelegates)} {Transform?.name}");
@@ -1288,16 +1305,30 @@ namespace Mona.SDK.Core.Body
                     if (!ActiveRigidbody.isKinematic)
                         ActiveRigidbody.velocity = Vector3.zero;
 
-                    ActiveRigidbody.position = _applyPosition;
-                    ActiveTransform.position = _applyPosition;
+                    if (_networkBody != null)
+                    {
+                        _networkBody?.TeleportPosition(_applyPosition);
+                    }
+                    else
+                    {
+                        ActiveRigidbody.position = _applyPosition;
+                        ActiveTransform.position = _applyPosition;
+                    }
                 }
                 if (_teleportRotationSet)
                 {
                     if (!ActiveRigidbody.isKinematic)
                         ActiveRigidbody.angularVelocity = Vector3.zero;
 
-                    ActiveRigidbody.rotation = _applyRotation.normalized;
-                    ActiveTransform.rotation = _applyRotation.normalized;
+                    if (_networkBody != null)
+                    {
+                        _networkBody?.TeleportRotation(_applyRotation);
+                    }
+                    else
+                    {
+                        ActiveRigidbody.rotation = _applyRotation.normalized;
+                        ActiveTransform.rotation = _applyRotation.normalized;
+                    }
                 }
             }
             else
@@ -1578,6 +1609,7 @@ namespace Mona.SDK.Core.Body
             _pinToParent = null;
             _pinToParentPosition = null;
             _pinToParentRotation = null;
+            Debug.Log($"{nameof(ClearPin)}", gameObject);
         }
 
         public void SetActive(bool active)
@@ -1884,10 +1916,10 @@ namespace Mona.SDK.Core.Body
                 else
                     ActiveTransform.position = position;
 
+                if (isNetworked) _networkBody?.TeleportPosition(position);
+
                 OnTeleported?.Invoke();
             }
-                
-            //if (isNetworked) _networkBody?.TeleportPosition(position);
         }
 
         Quaternion _teleportRotation;
@@ -1912,10 +1944,11 @@ namespace Mona.SDK.Core.Body
             {
                 ActiveTransform.rotation = rotation;
 
+                if (isNetworked) _networkBody?.TeleportRotation(rotation);
+
                 OnTeleported?.Invoke();
             }
 
-            //if (isNetworked) _networkBody?.TeleportRotation(rotation);
         }
 
         public void TeleportGlobalRotation(Vector3 axis, float value, bool isNetworked = true)
@@ -1932,6 +1965,9 @@ namespace Mona.SDK.Core.Body
             else
             {
                 ActiveTransform.Rotate(axis, value, Space.World);
+
+                if (isNetworked) _networkBody?.TeleportRotation(ActiveTransform.rotation);
+
                 OnTeleported?.Invoke();
             }
 
