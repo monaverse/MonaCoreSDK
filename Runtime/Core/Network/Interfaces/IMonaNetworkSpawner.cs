@@ -15,5 +15,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         void RegisterMonaPrefabProvider(IMonaAssetProvider provider);
         void SpawnLocalMonaReactor(INetworkMonaReactorClient reactor);
         void SpawnLocalMonaBody(INetworkMonaBodyClient monaBody);
+        void PlayerLeft(int player);
     }
 }

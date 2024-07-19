@@ -53,4 +53,9 @@ public class MonaNetworkSpawner : MonoBehaviour, IMonaNetworkSpawner
     {
         throw new System.NotImplementedException();
     }
+
+    public virtual void PlayerLeft(int player)
+    {
+        throw new System.NotImplementedException();
+    }
 }
