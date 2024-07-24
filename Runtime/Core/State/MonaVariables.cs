@@ -237,7 +237,7 @@ namespace Mona.SDK.Core.State
         public float GetFloat(string name, bool createIfNotFound = true)
         {
             var prop = GetVariable(name, typeof(MonaVariablesFloat), createIfNotFound);
-            return ((IMonaVariablesFloatValue)prop).Value;
+            return ((IMonaVariablesFloatValue)prop).ValueToReturnFromTile;
         }
 
         public void Set(string name, int value, bool isNetworked = true, bool createIfNotFound = true)

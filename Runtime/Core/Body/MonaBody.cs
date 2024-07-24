@@ -1609,7 +1609,7 @@ namespace Mona.SDK.Core.Body
             _pinToParent = null;
             _pinToParentPosition = null;
             _pinToParentRotation = null;
-            Debug.Log($"{nameof(ClearPin)}", gameObject);
+            //Debug.Log($"{nameof(ClearPin)}", gameObject);
         }
 
         public void SetActive(bool active)

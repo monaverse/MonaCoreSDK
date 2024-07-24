@@ -51,11 +51,15 @@ namespace Mona.SDK.Core.State.Structs
         [SerializeField] private float _min = 0f;
         [SerializeField] private float _max = 10f;
         [SerializeField] private bool _returnRandomValueFromMinMax;
+        [SerializeField] private bool _useRandomSeed;
+        [SerializeField] private string _randomSeed = "Any Text";
+
 
         [SerializeField]
         private bool _isLocal;
 
         public bool IsLocal { get => _isLocal; set => _isLocal = value; }
+        private CoreRandom _randomValue;
 
         public string Name { get => _name; set => _name = value; }
         public float DefaultValue { get => _defaultValue; set => _defaultValue = value; }
@@ -63,6 +67,7 @@ namespace Mona.SDK.Core.State.Structs
         public bool UseMinMax { get => _minMaxType != MinMaxConstraintType.None; }
         public MinMaxConstraintType MinMaxType { get => _minMaxType; set => _minMaxType = value; }
         public bool ReturnRandomValueFromMinMax { get => _returnRandomValueFromMinMax; set => _returnRandomValueFromMinMax = value; }
+        public bool UseRandomSeed { get => _useRandomSeed; set => _useRandomSeed = value; }
         private float MinMaxRange => _max - _min;
 
         private float _resetValue;
@@ -75,6 +80,11 @@ namespace Mona.SDK.Core.State.Structs
         public void SaveReset()
         {
             _resetValue = _value;
+        }
+
+        public void ResetRandom()
+        {
+            _randomValue.Reset(_randomSeed);
         }
 
         public float Value
@@ -127,6 +137,23 @@ namespace Mona.SDK.Core.State.Structs
                 }
 
                 UpdateUIDisplay();
+            }
+        }
+
+        public float ValueToReturnFromTile
+        {
+            get
+            {
+                if (!_returnRandomValueFromMinMax && !_useRandomSeed)
+                    return Value;
+
+                float randomValue = _roundingType == NumberRoundingType.None ?
+                    _randomValue.NextFloat(_min, _max) : _randomValue.Next((int)_min, (int)_max);
+
+                _value = randomValue;
+                UpdateUIDisplay();
+
+                return _value;
             }
         }
 
@@ -183,6 +210,16 @@ namespace Mona.SDK.Core.State.Structs
 
             _min = newMin;
             _max = newMax;
+        }
+
+        public string RandomSeed
+        {
+            get { return _randomSeed; }
+            set
+            {
+                _randomSeed = value;
+                _randomValue = new CoreRandom(_randomSeed);
+            }
         }
 
         // ------ UI Related Values ------ //
@@ -326,7 +363,10 @@ namespace Mona.SDK.Core.State.Structs
         public float PulseStartValue { get => _pulseStartValue; set => _pulseStartValue = value; }
         public float PulseFrequency { get => _pulseFrequency; set => _pulseFrequency = value; }
 
-        public MonaVariablesFloat() { }
+        public MonaVariablesFloat()
+        {
+            _randomValue = new CoreRandom(_randomSeed);
+        }
 
         private float RoundValue(float value)
         {

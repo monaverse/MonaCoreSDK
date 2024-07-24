@@ -22,6 +22,8 @@ namespace Mona.SDK.Core.State.UIElements
         protected FloatField _min;
         protected FloatField _max;
         protected Toggle _returnRandomValueFromMinMax;
+        protected Toggle _useRandomSeed;
+        protected TextField _randomSeed;
 
         protected Toggle _allowUIDisplay;
         protected Toggle _displayInUI;
@@ -65,18 +67,45 @@ namespace Mona.SDK.Core.State.UIElements
             _min.value = ((IMonaVariablesFloatValue)_variable).Min;
             _max.value = ((IMonaVariablesFloatValue)_variable).Max;
             _returnRandomValueFromMinMax.value = ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax;
+            _useRandomSeed.value = ((IMonaVariablesFloatValue)_variable).UseRandomSeed;
+            _randomSeed.value = ((IMonaVariablesFloatValue)_variable).RandomSeed;
 
-            if (((IMonaVariablesFloatValue)_variable).UseMinMax)
+            bool useMinMax = ((IMonaVariablesFloatValue)_variable).UseMinMax;
+            bool returnRandom = ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax;
+            bool useRandomSeed = ((IMonaVariablesFloatValue)_variable).UseRandomSeed;
+
+            if (useMinMax)
             {
                 _min.style.display = DisplayStyle.Flex;
                 _max.style.display = DisplayStyle.Flex;
                 _returnRandomValueFromMinMax.style.display = DisplayStyle.Flex;
+
+                if (returnRandom)
+                {
+                    _useRandomSeed.style.display = DisplayStyle.Flex;
+
+                    if (useRandomSeed)
+                    {
+                        _randomSeed.style.display = DisplayStyle.Flex;
+                    }
+                    else
+                    {
+                        _randomSeed.style.display = DisplayStyle.None;
+                    }   
+                }
+                else
+                {
+                    _useRandomSeed.style.display = DisplayStyle.None;
+                    _randomSeed.style.display = DisplayStyle.None;
+                }
             }
             else
             {
                 _min.style.display = DisplayStyle.None;
                 _max.style.display = DisplayStyle.None;
                 _returnRandomValueFromMinMax.style.display = DisplayStyle.None;
+                _useRandomSeed.style.display = DisplayStyle.None;
+                _randomSeed.style.display = DisplayStyle.None;
             }
 
             _allowUIDisplay.value = ((IEasyUINumericalDisplay)_variable).AllowUIDisplay;
@@ -213,6 +242,22 @@ namespace Mona.SDK.Core.State.UIElements
             {
                 ((IMonaVariablesFloatValue)_variable).ReturnRandomValueFromMinMax = evt.newValue;
                 callback?.Invoke();
+                Refresh();
+            });
+
+            _useRandomSeed = new Toggle("Use Random Seed");
+            _useRandomSeed.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaVariablesFloatValue)_variable).UseRandomSeed = evt.newValue;
+                callback?.Invoke();
+                Refresh();
+            });
+
+            _randomSeed = new TextField("Random Seed");
+            _randomSeed.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaVariablesFloatValue)_variable).RandomSeed = evt.newValue;
+                callback?.Invoke();
             });
 
             rootVisualElement.Add(_name);
@@ -222,6 +267,8 @@ namespace Mona.SDK.Core.State.UIElements
             rootVisualElement.Add(_min);
             rootVisualElement.Add(_max);
             rootVisualElement.Add(_returnRandomValueFromMinMax);
+            rootVisualElement.Add(_useRandomSeed);
+            rootVisualElement.Add(_randomSeed);
 
             _allowUIDisplay = new Toggle("Allow UI Display");
             _allowUIDisplay.RegisterValueChangedCallback((evt) =>

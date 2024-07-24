@@ -41,7 +41,7 @@ namespace Mona.SDK.Core.UIEditors
                 EditorUtility.SetDirty(target);
                 Undo.RecordObject(target, "change brain");
             }
-            Debug.Log($"{nameof(HandleCallback)}");
+            //Debug.Log($"{nameof(HandleCallback)}");
         }
     }
 #endif
