@@ -65,6 +65,11 @@ namespace Mona.SDK.Core.Input
                 && MousePosition.Equals(other.MousePosition);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public MonaInputState GetButton(MonaInputType type)
         {
             switch (type)

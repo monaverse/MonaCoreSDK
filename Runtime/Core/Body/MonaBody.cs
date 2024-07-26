@@ -16,7 +16,7 @@ namespace Mona.SDK.Core.Body
     {
         public override bool Equals(object other)
         {
-            if (!(other is MonaBody obj))
+            if (other is not MonaBody obj)
                 return false;
             return base.Equals(obj);
         }
@@ -24,6 +24,11 @@ namespace Mona.SDK.Core.Body
         public bool Equals(MonaBody other)
         {
             return LocalId == other.LocalId;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public event Action OnStarted = delegate { };
@@ -544,13 +549,18 @@ namespace Mona.SDK.Core.Body
                         if (collider is CharacterController)
                             _hasCharacterController = true;
 
-                        var radius = (collider is CharacterController) ? ((CharacterController)collider).radius : 0f;
-                        var closest = collider.ClosestPoint(referencePosition) - Vector3.up*radius;
-                        var distanceToReference = Vector3.Distance(closest, referencePosition);
-                        if (distanceToReference < closestDistance)
+                        var radius = collider is CharacterController ? ((CharacterController)collider).radius : 0f;
+
+                        if (collider is BoxCollider || collider is SphereCollider || collider is CapsuleCollider || (collider is MeshCollider meshCollider && meshCollider.convex))
                         {
-                            closestDistance = distanceToReference;
-                            _baseOffset = closest;
+                            var closest = collider.ClosestPoint(referencePosition) - Vector3.up * radius;
+                            var distanceToReference = Vector3.Distance(closest, referencePosition);
+
+                            if (distanceToReference < closestDistance)
+                            {
+                                closestDistance = distanceToReference;
+                                _baseOffset = closest;
+                            }
                         }
                     }
 
@@ -567,12 +577,17 @@ namespace Mona.SDK.Core.Body
         public List<Collider> AddCollider()
         {
             var colliders = new List<Collider>();
-            for (var i = 0; i < _renderers.Length; i++)
+
+            for (int i = 0; i < _renderers.Length; i++)
             {
+                if (_renderers[i] == null)
+                    continue;
+
                 var collider = _renderers[i].AddComponent<BoxCollider>();
                 colliders.Add(collider);
                 break;
             }
+
             CacheColliders();
             return colliders;
         }
@@ -2022,7 +2037,7 @@ namespace Mona.SDK.Core.Body
                 {
                     _childMonaBodies[i].SetInitialTransforms();
                 }
-                catch(Exception e)
+                catch
                 {
                     _childMonaBodies.RemoveAt(i);
                 }
