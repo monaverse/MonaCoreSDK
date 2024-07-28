@@ -77,6 +77,8 @@ namespace Mona.SDK.Core.Body
         private float _bounce;
         private float _friction;
         private bool _onlyApplyDragWhenGrounded = true;
+        private bool _blendLinearForcesAndKinematics = false;
+        private bool _blendAngularForcesAndKinematics = false;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
         private IMonaBody _spawner;
@@ -139,6 +141,9 @@ namespace Mona.SDK.Core.Body
 
         public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
         public MonaBodyTransformBounds RotationBounds { get => _rotationBounds; set => _rotationBounds = value; }
+
+        public bool BlendLinearForcesAndKinematics { get => _blendLinearForcesAndKinematics; set => _blendLinearForcesAndKinematics = value; }
+        public bool BlendAngularForcesAndKinematics { get => _blendAngularForcesAndKinematics; set => _blendAngularForcesAndKinematics = value; }
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -1303,8 +1308,8 @@ namespace Mona.SDK.Core.Body
                 {
                     if (updatePosition || updateRotation)
                     {
-                        if (updatePosition) ActiveRigidbody.velocity = Vector3.zero;
-                        if (updateRotation) ActiveRigidbody.angularVelocity = Vector3.zero;
+                        if (updatePosition && !_blendLinearForcesAndKinematics) ActiveRigidbody.velocity = Vector3.zero;
+                        if (updateRotation && !_blendAngularForcesAndKinematics) ActiveRigidbody.angularVelocity = Vector3.zero;
                     }
                     if (updatePosition && updateRotation)
                         ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
@@ -1317,7 +1322,7 @@ namespace Mona.SDK.Core.Body
 
                 if (_teleportPositionSet)
                 {
-                    if (!ActiveRigidbody.isKinematic)
+                    if (!ActiveRigidbody.isKinematic && !_blendLinearForcesAndKinematics)
                         ActiveRigidbody.velocity = Vector3.zero;
 
                     if (_networkBody != null)
@@ -1332,7 +1337,7 @@ namespace Mona.SDK.Core.Body
                 }
                 if (_teleportRotationSet)
                 {
-                    if (!ActiveRigidbody.isKinematic)
+                    if (!ActiveRigidbody.isKinematic && !_blendAngularForcesAndKinematics)
                         ActiveRigidbody.angularVelocity = Vector3.zero;
 
                     if (_networkBody != null)

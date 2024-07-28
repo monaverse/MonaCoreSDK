@@ -52,6 +52,9 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
         Vector3 CurrentVelocity { get; }
 
+        bool BlendLinearForcesAndKinematics { get; set; }
+        bool BlendAngularForcesAndKinematics { get; set; }
+
         bool PlayerSet { get; }
         int PlayerId { get; }
         int ClientId { get; }
