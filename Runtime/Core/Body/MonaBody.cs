@@ -16,7 +16,7 @@ namespace Mona.SDK.Core.Body
     {
         public override bool Equals(object other)
         {
-            if (!(other is MonaBody obj))
+            if (other is not MonaBody obj)
                 return false;
             return base.Equals(obj);
         }
@@ -24,6 +24,11 @@ namespace Mona.SDK.Core.Body
         public bool Equals(MonaBody other)
         {
             return LocalId == other.LocalId;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public event Action OnStarted = delegate { };
@@ -73,6 +78,8 @@ namespace Mona.SDK.Core.Body
         private float _bounce;
         private float _friction;
         private bool _onlyApplyDragWhenGrounded = true;
+        private bool _blendLinearForcesAndKinematics = false;
+        private bool _blendAngularForcesAndKinematics = false;
         private bool _applyPinOnGrounded = false;
         private IMonaBody _parent;
         private IMonaBody _spawner;
@@ -138,6 +145,9 @@ namespace Mona.SDK.Core.Body
 
         public MonaBodyTransformBounds PositionBounds { get => _positionBounds; set => _positionBounds = value; }
         public MonaBodyTransformBounds RotationBounds { get => _rotationBounds; set => _rotationBounds = value; }
+
+        public bool BlendLinearForcesAndKinematics { get => _blendLinearForcesAndKinematics; set => _blendLinearForcesAndKinematics = value; }
+        public bool BlendAngularForcesAndKinematics { get => _blendAngularForcesAndKinematics; set => _blendAngularForcesAndKinematics = value; }
 
         private bool _grounded;
         public bool Grounded => _grounded;
@@ -548,13 +558,18 @@ namespace Mona.SDK.Core.Body
                         if (collider is CharacterController)
                             _hasCharacterController = true;
 
-                        var radius = (collider is CharacterController) ? ((CharacterController)collider).radius : 0f;
-                        var closest = collider.ClosestPoint(referencePosition) - Vector3.up*radius;
-                        var distanceToReference = Vector3.Distance(closest, referencePosition);
-                        if (distanceToReference < closestDistance)
+                        var radius = collider is CharacterController ? ((CharacterController)collider).radius : 0f;
+
+                        if (collider is BoxCollider || collider is SphereCollider || collider is CapsuleCollider || (collider is MeshCollider meshCollider && meshCollider.convex))
                         {
-                            closestDistance = distanceToReference;
-                            _baseOffset = closest;
+                            var closest = collider.ClosestPoint(referencePosition) - Vector3.up * radius;
+                            var distanceToReference = Vector3.Distance(closest, referencePosition);
+
+                            if (distanceToReference < closestDistance)
+                            {
+                                closestDistance = distanceToReference;
+                                _baseOffset = closest;
+                            }
                         }
                     }
 
@@ -571,12 +586,17 @@ namespace Mona.SDK.Core.Body
         public List<Collider> AddCollider()
         {
             var colliders = new List<Collider>();
-            for (var i = 0; i < _renderers.Length; i++)
+
+            for (int i = 0; i < _renderers.Length; i++)
             {
+                if (_renderers[i] == null)
+                    continue;
+
                 var collider = _renderers[i].AddComponent<BoxCollider>();
                 colliders.Add(collider);
                 break;
             }
+
             CacheColliders();
             return colliders;
         }
@@ -1294,8 +1314,8 @@ namespace Mona.SDK.Core.Body
                 {
                     if (updatePosition || updateRotation)
                     {
-                        if (updatePosition) ActiveRigidbody.velocity = Vector3.zero;
-                        if (updateRotation) ActiveRigidbody.angularVelocity = Vector3.zero;
+                        if (updatePosition && !_blendLinearForcesAndKinematics) ActiveRigidbody.velocity = Vector3.zero;
+                        if (updateRotation && !_blendAngularForcesAndKinematics) ActiveRigidbody.angularVelocity = Vector3.zero;
                     }
                     if (updatePosition && updateRotation)
                         ActiveRigidbody.Move(_applyPosition, _applyRotation.normalized);
@@ -1308,7 +1328,7 @@ namespace Mona.SDK.Core.Body
 
                 if (_teleportPositionSet)
                 {
-                    if (!ActiveRigidbody.isKinematic)
+                    if (!ActiveRigidbody.isKinematic && !_blendLinearForcesAndKinematics)
                         ActiveRigidbody.velocity = Vector3.zero;
 
                     if (_networkBody != null)
@@ -1323,7 +1343,7 @@ namespace Mona.SDK.Core.Body
                 }
                 if (_teleportRotationSet)
                 {
-                    if (!ActiveRigidbody.isKinematic)
+                    if (!ActiveRigidbody.isKinematic && !_blendAngularForcesAndKinematics)
                         ActiveRigidbody.angularVelocity = Vector3.zero;
 
                     if (_networkBody != null)
@@ -2030,7 +2050,7 @@ namespace Mona.SDK.Core.Body
                 {
                     _childMonaBodies[i].SetInitialTransforms();
                 }
-                catch(Exception e)
+                catch
                 {
                     _childMonaBodies.RemoveAt(i);
                 }

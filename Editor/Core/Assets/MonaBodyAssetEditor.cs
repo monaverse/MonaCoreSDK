@@ -2,11 +2,9 @@
 using UnityEditor;
 using UnityEditor.UIElements;
 #endif
-using UnityEngine;
 using UnityEngine.UIElements;
 using Mona.SDK.Core.Assets;
 using Mona.SDK.Core.UIElements;
-using Mona.SDK.Core.Assets.Interfaces;
 using Mona.SDK.Core.Assets.ScriptableObjects;
 
 namespace Mona.SDK.Core.UIEditors
