@@ -18,6 +18,7 @@ namespace Mona.SDK.Core.Body
         event Action OnResumed;
         event Action OnPaused;
         event Action OnTeleported;
+        event Action<IMonaBody> OnPlayerChanged;
 
         string SkinId { get; set; }
         GameObject Skin { get; set; }
@@ -44,6 +45,7 @@ namespace Mona.SDK.Core.Body
         bool ChildrenLoaded { get; }
         MonaBodyNetworkSyncType SyncType { get; set; }
         bool DisableOnLoad { get; }
+        bool KeepAwake { get; set; }
 
         Vector3 InitialPosition { get; }
         Vector3 InitialLocalPosition { get; }

@@ -36,6 +36,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
         public event Action OnTeleported = delegate { };
+        public event Action<IMonaBody> OnPlayerChanged = delegate { };
 
         private string _skinId;
         public string SkinId { get => _skinId; set => _skinId = value; }
@@ -80,6 +81,8 @@ namespace Mona.SDK.Core.Body
         private MonaBodyAttachType _attachType = MonaBodyAttachType.None;
         private bool _hasRigidbodyInParent;
 
+        [SerializeField] private bool _keepAwake;
+
         private Vector3 _initialPosition = Vector3.zero;
         private Vector3 _initialLocalPosition = Vector3.zero;
         private Quaternion _initialRotation = Quaternion.identity;
@@ -123,6 +126,7 @@ namespace Mona.SDK.Core.Body
         public INetworkMonaBodyClient NetworkBody => _networkBody;
         public Animator Animator => _animator;
         public MonaBodyAttachType AttachType { get => _attachType; set => _attachType = value; }
+        public bool KeepAwake { get => _keepAwake; set => _keepAwake = value; }
         public List<Collider> Colliders => _colliders;
 
         public Vector3 InitialPosition => _initialPosition;
@@ -1145,6 +1149,8 @@ namespace Mona.SDK.Core.Body
 
                 CalculateVelocity(evt.DeltaTime, true);
 
+                if(_keepAwake && ActiveRigidbody != null)
+                    ActiveRigidbody.WakeUp();
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
             }
@@ -1698,6 +1704,8 @@ namespace Mona.SDK.Core.Body
             _clientId = clientId;
             _playerName = name;
             if (isNetworked) _networkBody?.SetPlayer(_playerId, _clientId, _playerName);
+            OnPlayerChanged?.Invoke(this);
+            MonaEventBus.Trigger<MonaPlayerChangedEvent>(new EventHook(MonaCoreConstants.MONA_PLAYER_CHANGED_EVENT), new MonaPlayerChangedEvent(this));
         }
 
         public int GetLayer()
