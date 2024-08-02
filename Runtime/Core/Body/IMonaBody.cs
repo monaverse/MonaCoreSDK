@@ -61,6 +61,7 @@ namespace Mona.SDK.Core.Body
         int PlayerId { get; }
         int ClientId { get; }
         string PlayerName { get; }
+        bool Audience { get; }
 
         bool Instantiated { get; }
         bool Started { get; }
@@ -199,7 +200,7 @@ namespace Mona.SDK.Core.Body
         void SetDisableOnLoad(bool b);
         void EnsureUniqueDurableID();
 
-        void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true);
+        void SetPlayer(int playerId, int clientId, string name, bool audience, bool isNetworked = true);
         Bounds GetBounds(GameObject go = null);
     }
 }

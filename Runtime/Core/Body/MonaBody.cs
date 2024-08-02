@@ -170,10 +170,12 @@ namespace Mona.SDK.Core.Body
         private int _playerId;
         private int _clientId;
         private string _playerName;
+        private bool _audience;
 
         public int PlayerId => _playerId;
         public int ClientId => _clientId;
         public string PlayerName => _playerName;
+        public bool Audience => _audience;
 
         public struct MonaBodyForce
         {
@@ -1011,7 +1013,7 @@ namespace Mona.SDK.Core.Body
 
             if(_playerSet)
             {
-                _networkBody?.SetPlayer(_playerId, _clientId, _playerName);
+                _networkBody?.SetPlayer(_playerId, _clientId, _playerName, _audience);
             }
 
             FireSpawnEvent();
@@ -1717,13 +1719,14 @@ namespace Mona.SDK.Core.Body
             }
         }
 
-        public void SetPlayer(int playerId, int clientId, string name, bool isNetworked = true)
+        public void SetPlayer(int playerId, int clientId, string name, bool audience, bool isNetworked = true)
         {
             _playerSet = true;
             _playerId = playerId;
             _clientId = clientId;
             _playerName = name;
-            if (isNetworked) _networkBody?.SetPlayer(_playerId, _clientId, _playerName);
+            _audience = audience;
+            if (isNetworked) _networkBody?.SetPlayer(_playerId, _clientId, _playerName, _audience);
             OnPlayerChanged?.Invoke(this);
             MonaEventBus.Trigger<MonaPlayerChangedEvent>(new EventHook(MonaCoreConstants.MONA_PLAYER_CHANGED_EVENT), new MonaPlayerChangedEvent(this));
         }
