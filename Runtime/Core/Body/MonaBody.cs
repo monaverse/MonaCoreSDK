@@ -40,6 +40,7 @@ namespace Mona.SDK.Core.Body
         public event Action OnResumed = delegate { };
         public event Action OnPaused = delegate { };
         public event Action OnControlRequested = delegate { };
+        public event Action OnDestroyRequested = delegate { };
         public event Action OnTeleported = delegate { };
         public event Action<IMonaBody> OnPlayerChanged = delegate { };
 
@@ -802,7 +803,13 @@ namespace Mona.SDK.Core.Body
 
         public void Destroy()
         {
-            GameObject.Destroy(gameObject);
+            if (_networkBody != null)
+            {
+                _networkBody.Destroy();
+                OnDestroyRequested?.Invoke();
+            }
+            else
+                GameObject.Destroy(gameObject);
         }
 
         private bool _destroyed;
