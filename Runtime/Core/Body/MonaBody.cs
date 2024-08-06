@@ -489,12 +489,19 @@ namespace Mona.SDK.Core.Body
         public void CacheRenderers()
         {
             _renderers = GetComponentsInChildren<Renderer>(true);
-
-            _materialsIndex.Clear();
-            for (var i = 0; i < _renderers.Length; i++)
-                _materialsIndex[_renderers[i]] = _renderers[i].materials;
-
+           
             _bodyRenderers = GetComponents<Renderer>();
+        }
+
+        private void CacheMaterials()
+        {
+            if (_materialsIndex == null)
+            {
+                _materialsIndex = new Dictionary<Renderer, Material[]>();
+                _materialsIndex.Clear();
+                for (var i = 0; i < _renderers.Length; i++)
+                    _materialsIndex[_renderers[i]] = _renderers[i].materials;
+            }
         }
 
         public void AddRigidbody()
@@ -856,10 +863,12 @@ namespace Mona.SDK.Core.Body
                 SetSharedMaterial(material, i);
         }
 
-        private Dictionary<Renderer, Material[]> _materialsIndex = new Dictionary<Renderer, Material[]>();
+        private Dictionary<Renderer, Material[]> _materialsIndex;
 
         public void SetMaterial(Material material, int rendererIndex, int materialSlot = -1)
         {
+            CacheMaterials();
+
             var renderer = _renderers[rendererIndex];
             if (materialSlot == -1)
             {
@@ -892,6 +901,7 @@ namespace Mona.SDK.Core.Body
             {
                 if (materialSlot == -1)
                 {
+                    CacheMaterials();
                     var materials = _materialsIndex[renderer];
                     for (var i = 0; i < materials.Length; i++)
                         materials[i] = material;
