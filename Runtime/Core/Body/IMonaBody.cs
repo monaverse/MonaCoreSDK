@@ -195,6 +195,7 @@ namespace Mona.SDK.Core.Body
         void Resume(bool isNetworked = true);
 
         void Destroy();
+        bool Destroyed { get; }
 
         void TriggerRemoteAnimation(string clipName);
 

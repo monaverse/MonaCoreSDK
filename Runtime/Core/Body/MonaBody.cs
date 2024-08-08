@@ -128,7 +128,7 @@ namespace Mona.SDK.Core.Body
         private Rigidbody _activeRigidbody;
         public Rigidbody ActiveRigidbody => _activeRigidbody;
 
-        public Transform Transform => (_destroyed) ? null : transform;
+        public Transform Transform => (_destroyed || gameObject == null) ? null : transform;
         public float DeltaTime => _networkBody != null ? _networkBody.DeltaTime : Time.deltaTime;
         public Camera Camera => _camera;
         public INetworkMonaBodyClient NetworkBody => _networkBody;
@@ -820,6 +820,8 @@ namespace Mona.SDK.Core.Body
         }
 
         private bool _destroyed;
+        public bool Destroyed => _destroyed;
+
         private void OnDestroy()
         {
             _destroyed = true;
@@ -1664,7 +1666,7 @@ namespace Mona.SDK.Core.Body
 
         public void SetActive(bool active, bool isNetworked)
         {
-            if (gameObject != null && active != GetActive())
+            if (!_destroyed && gameObject != null && active != GetActive())
             {
                 _setActiveIsNetworked = isNetworked;
                 
@@ -1681,7 +1683,7 @@ namespace Mona.SDK.Core.Body
 
         public bool GetActive()
         {
-            return gameObject != null && gameObject.activeInHierarchy;
+            return !_destroyed && gameObject != null && gameObject.activeInHierarchy;
         }
 
 
