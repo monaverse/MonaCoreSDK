@@ -16,12 +16,12 @@ namespace Mona.SDK.Core.Body
     {
         public override bool Equals(object other)
         {
-            if (other is not MonaBody obj)
+            if (other is not IMonaBody obj)
                 return false;
             return base.Equals(obj);
         }
 
-        public bool Equals(MonaBody other)
+        public bool Equals(IMonaBody other)
         {
             return LocalId == other.LocalId;
         }
@@ -210,6 +210,8 @@ namespace Mona.SDK.Core.Body
         public MonaBodyNetworkSyncType SyncType { get => _syncType; set => _syncType = value; }
 
         public bool SyncPositionAndRotation = true;
+        public bool GetSyncPositionAndRotation() => SyncPositionAndRotation;
+        public void SetSyncPositionAndRotation(bool b) => SyncPositionAndRotation = b;
 
         [SerializeField]
         private bool _disableOnLoad = false;
@@ -223,9 +225,6 @@ namespace Mona.SDK.Core.Body
         protected List<string> _monaTags = new List<string>();
 
         public List<string> MonaTags => _monaTags;
-
-        public static List<IMonaBody> MonaBodies = new List<IMonaBody>();
-        public static Dictionary<string, List<IMonaBody>> MonaBodiesByTag = new Dictionary<string, List<IMonaBody>>();
 
         private List<IMonaBody> _childMonaBodies = new List<IMonaBody>();
         private Dictionary<string, List<IMonaBody>> _childMonaBodiesByTag = new Dictionary<string, List<IMonaBody>>();
@@ -260,10 +259,10 @@ namespace Mona.SDK.Core.Body
 
         private void RegisterInTagRegistry(string tag)
         {
-            if (!MonaBodiesByTag.ContainsKey(tag))
-                MonaBodiesByTag.Add(tag, new List<IMonaBody>());
-            if (!MonaBodiesByTag[tag].Contains(this))
-                MonaBodiesByTag[tag].Add(this);
+            if (!MonaBodyFactory.MonaBodiesByTag.ContainsKey(tag))
+                MonaBodyFactory.MonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (!MonaBodyFactory.MonaBodiesByTag[tag].Contains(this))
+                MonaBodyFactory.MonaBodiesByTag[tag].Add(this);
         }
 
         private void RegisterInChildTagRegistry(string tag, IMonaBody body)
@@ -287,10 +286,10 @@ namespace Mona.SDK.Core.Body
 
         private void UnregisterInTagRegistry(string tag)
         {
-            if (!MonaBodiesByTag.ContainsKey(tag))
-                MonaBodiesByTag.Add(tag, new List<IMonaBody>());
-            if (MonaBodiesByTag[tag].Contains(this))
-                MonaBodiesByTag[tag].Remove(this);
+            if (!MonaBodyFactory.MonaBodiesByTag.ContainsKey(tag))
+                MonaBodyFactory.MonaBodiesByTag.Add(tag, new List<IMonaBody>());
+            if (MonaBodyFactory.MonaBodiesByTag[tag].Contains(this))
+                MonaBodyFactory.MonaBodiesByTag[tag].Remove(this);
         }
 
         private void UnregisterInChildTagRegistry(string tag, IMonaBody body)
@@ -299,23 +298,6 @@ namespace Mona.SDK.Core.Body
                 _childMonaBodiesByTag.Add(tag, new List<IMonaBody>());
             if (_childMonaBodiesByTag[tag].Contains(body))
                 _childMonaBodiesByTag[tag].Remove(body);
-        }
-
-        public static List<IMonaBody> FindByTag(string tag)
-        {
-            if(MonaBodiesByTag.ContainsKey(tag))
-                return MonaBodiesByTag[tag];
-            return _empty;
-        }
-
-        public static IMonaBody FindByLocalId(string localId)
-        {
-            for (var i = 0; i < MonaBodies.Count; i++)
-            {
-                if (MonaBodies[i].LocalId == localId)
-                    return MonaBodies[i];
-            }
-            return null;
         }
 
         public IMonaBody FindChildByTag(string tag)
@@ -332,12 +314,11 @@ namespace Mona.SDK.Core.Body
             return null;
         }
 
-        private static List<IMonaBody> _empty = new List<IMonaBody>();
         public List<IMonaBody> FindChildrenByTag(string tag)
         {
             if (_childMonaBodiesByTag.ContainsKey(tag))
                 return _childMonaBodiesByTag[tag];
-            return _empty;
+            return MonaBodyFactory.Empty;
         }
 
         public List<IMonaBody> Children() => _childMonaBodies;
@@ -952,7 +933,7 @@ namespace Mona.SDK.Core.Body
 
         private void RegisterInParents()
         {
-            MonaBodies.Add(this);
+            MonaBodyFactory.MonaBodies.Add(this);
             var parents = new List<IMonaBody>(GetComponentsInParent<IMonaBody>(true));
             parents.Remove(this);
 
@@ -970,7 +951,7 @@ namespace Mona.SDK.Core.Body
 
         private void UnregisterInParents()
         {
-            MonaBodies.Remove(this);
+            MonaBodyFactory.MonaBodies.Remove(this);
             _parent = null;
             var parents = new List<IMonaBody>(GetComponentsInParent<IMonaBody>(true));
             parents.Remove(this);
@@ -2160,7 +2141,7 @@ namespace Mona.SDK.Core.Body
 
         public List<IMonaBody> GetTagsByDistance(string tag)
         {
-            var tags = FindByTag(tag);
+            var tags = MonaBodyFactory.FindByTag(tag);
 
             if (tags.Count < 1)
                 return tags;

@@ -30,12 +30,12 @@ namespace Mona.SDK.Core.Mock
         {
             if (MockPlayer)
             {
-                if(MonaBody.FindByTag("Player").Count == 0)
+                if(MonaBodyFactory.FindByTag("Player").Count == 0)
                 {
                     Debug.LogError($"Please add a 'Player' tag to a MonaBody representing your mock player");
                     return;
                 }
-                TriggerLocalPlayerJoined(MonaBody.FindByTag("Player")[0], MockPlayerId);
+                TriggerLocalPlayerJoined(MonaBodyFactory.FindByTag("Player")[0], MockPlayerId);
             }
         }
 

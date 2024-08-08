@@ -20,6 +20,8 @@ namespace Mona.SDK.Core.Body
         event Action OnTeleported;
         event Action<IMonaBody> OnPlayerChanged;
 
+        SerializableGuid Guid { get; set; }
+
         string SkinId { get; set; }
         GameObject Skin { get; set; }
 
@@ -45,6 +47,9 @@ namespace Mona.SDK.Core.Body
         int ChildIndex { get; set; }
         bool ChildrenLoaded { get; }
         MonaBodyNetworkSyncType SyncType { get; set; }
+        bool GetSyncPositionAndRotation();
+        void SetSyncPositionAndRotation(bool b);
+
         bool DisableOnLoad { get; }
         bool KeepAwake { get; set; }
 

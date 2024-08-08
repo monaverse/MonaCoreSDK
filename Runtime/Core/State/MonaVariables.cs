@@ -33,7 +33,7 @@ namespace Mona.SDK.Core.State
             if (gameObject == null) return;
             _monaBody = gameObject.GetComponent<IMonaBody>();
             if (_monaBody == null)
-                _monaBody = gameObject.AddComponent<MonaBody>();
+                _monaBody = MonaBodyFactory.Create(gameObject);
         }
 
         [SerializeReference]

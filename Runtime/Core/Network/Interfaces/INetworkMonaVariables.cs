@@ -17,6 +17,6 @@ namespace Mona.SDK.Core.Network.Interfaces
         void TakeControl();
         void UpdateValue(IMonaVariablesValue value);
         void SetIdentifier(string localId, int i, string prefabId, bool locallyOwnedMonaBody);
-        void SetMonaBody(MonaBody monaBody, int index);
+        void SetMonaBody(IMonaBody monaBody, int index);
     }
 }

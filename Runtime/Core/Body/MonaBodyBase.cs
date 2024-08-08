@@ -170,9 +170,9 @@ namespace Mona.SDK.Core.Body
             //Debug.Log($"{nameof(MonaBody)}.{nameof(MakeUnique)} {_localId}");
         }
 
-        public static IMonaBody Spawn(Guid guid, string prefabId, int playerId, MonaBody monaBody, bool spawn, Vector3 position, Quaternion rotation, bool locallyOwnedMonaBody = false)
+        public static IMonaBody Spawn(Guid guid, string prefabId, int playerId, IMonaBody monaBody, bool spawn, Vector3 position, Quaternion rotation, bool locallyOwnedMonaBody = false)
         {
-            var body = spawn ? (IMonaBody)GameObject.Instantiate(monaBody, Vector3.up * 10000f, Quaternion.identity) : monaBody;
+            var body = spawn ? (IMonaBody)(GameObject.Instantiate(monaBody.Transform.gameObject, Vector3.up * 10000f, Quaternion.identity).GetComponent<IMonaBody>()) : monaBody;
 
             var bodies = body.Transform.GetComponentsInChildren<IMonaBody>();
             Debug.Log($"GENERATE GUID {guid} {prefabId}");
