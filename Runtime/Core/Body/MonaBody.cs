@@ -637,7 +637,7 @@ namespace Mona.SDK.Core.Body
 
         public void InitializeTags()
         {
-            if(_monaTagged == null)
+            if(_monaTagged == null || _monaTagged.Count == 0)
             {
                 _monaTagged = new List<IMonaTagged>(transform.GetComponents<IMonaTagged>());
                 _monaTagged.Remove(this);
