@@ -42,7 +42,10 @@ namespace Mona.SDK.Core.State
         public List<IMonaVariablesValue> VariableList
         {
             get => _values;
-            set => _values = value;
+            set {
+                _values = value;
+                CacheVariableNames();
+            }
         }
 
         private Dictionary<int, IMonaVariablesValue> _variablesIndex = new Dictionary<int, IMonaVariablesValue>();
@@ -58,6 +61,7 @@ namespace Mona.SDK.Core.State
         public void CacheVariableNames()
         {
             InitVariableNames();
+            _variablesCache.Clear();
             _hasUI = false;
             for (var i = 0; i < _values.Count; i++)
             {
@@ -378,6 +382,7 @@ namespace Mona.SDK.Core.State
             _variablesIndexByName.Clear();
             for (var i = 0; i < _values.Count; i++)
             {
+                //Debug.Log($"{nameof(SyncValuesOnNetwork)} {_values[i].Name} {i}", _monaBody.Transform.gameObject);
                 _variablesIndex[i] = _values[i];
                 _variablesIndexByName[_values[i].Name] = i;
                 
