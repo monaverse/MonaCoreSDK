@@ -810,12 +810,13 @@ namespace Mona.SDK.Core.Body
 
         public void Destroy()
         {
+            if (_destroyed) return;
             if (_networkBody != null)
             {
                 _networkBody.Destroy();
                 OnDestroyRequested?.Invoke();
             }
-            else
+            else if(gameObject != null)
                 GameObject.Destroy(gameObject);
         }
 
@@ -1122,6 +1123,11 @@ namespace Mona.SDK.Core.Body
             if (_destroyed) return;
             if (_networkBody != null)
             {
+                if (_keepAwake && ActiveRigidbody != null)
+                {
+                    ActiveRigidbody.WakeUp();
+                }
+
                 _hasInput = _monaInputs.Count > 0;
                 if (_hasInput)
                 {
@@ -1163,6 +1169,11 @@ namespace Mona.SDK.Core.Body
             if (_destroyed) return;
             if (_networkBody == null)
             {
+                if (_keepAwake && ActiveRigidbody != null)
+                {
+                    ActiveRigidbody.WakeUp();
+                }
+
                 _hasInput = _monaInputs.Count > 0;
                 if (_hasInput)
                 {
@@ -1190,8 +1201,6 @@ namespace Mona.SDK.Core.Body
 
                 CalculateVelocity(evt.DeltaTime, true);
 
-                if(_keepAwake && ActiveRigidbody != null)
-                    ActiveRigidbody.WakeUp();
                 //TODOif (isNetworked) _networkBody?.SetPosition(position, isKinematic);
                 //_hasInput = false;
             }
@@ -1992,9 +2001,17 @@ namespace Mona.SDK.Core.Body
             }
             else
             {
-                ActiveTransform.rotation = rotation;
 
-                if (isNetworked) _networkBody?.TeleportRotation(rotation);
+                if (isNetworked && _networkBody != null)
+                {
+                    _networkBody?.TeleportRotation(rotation);
+                }
+                else
+                {
+                    ActiveTransform.rotation = rotation;
+                }
+
+                if (isNetworked) 
 
                 OnTeleported?.Invoke();
             }
