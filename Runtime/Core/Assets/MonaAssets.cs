@@ -81,6 +81,7 @@ namespace Mona.SDK.Core.Assets
         {
             for (var i = 0; i < _monaAssets.Count; i++)
             {
+                if (_monaAssets[i] == null) continue;
                 var monaAsset = (T)_monaAssets[i];
                 if (predicate(monaAsset))
                     return monaAsset;
