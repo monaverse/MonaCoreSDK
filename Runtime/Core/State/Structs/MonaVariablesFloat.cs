@@ -477,7 +477,7 @@ namespace Mona.SDK.Core.State.Structs
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
             string primarySeparator = _numericalFormatting.TimeSeparatorType == EasyUITimeSeparatorType.Default ?
-                " : " : "   ";
+                ":" : "   ";
             string decimalSeparator = _numericalFormatting.TimeSeparatorType == EasyUITimeSeparatorType.Default ?
                 " . " : "   ";
 
