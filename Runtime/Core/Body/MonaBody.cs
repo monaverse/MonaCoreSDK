@@ -1963,19 +1963,35 @@ namespace Mona.SDK.Core.Body
             if (_hasRigidbody)
             {
                 if (setToLocal)
-                    position = ActiveTransform.TransformPoint(position);
+                {
+                    if (ActiveTransform.parent != null)
+                        position = ActiveTransform.parent.TransformPoint(position);
+                }
 
                 _teleportPositionSet = true;
                 _teleportPosition = position;
             }
             else
             {
-                if (setToLocal)
-                    ActiveTransform.localPosition = position;
+                if (isNetworked && _networkBody != null)
+                {
+                    if (setToLocal)
+                    {
+                        if(ActiveTransform.parent != null)
+                            _networkBody?.TeleportPosition(ActiveTransform.parent.TransformPoint(position));
+                        else
+                            _networkBody?.TeleportPosition(position);
+                    }
+                    else
+                        _networkBody?.TeleportPosition(position);
+                }
                 else
-                    ActiveTransform.position = position;
-
-                if (isNetworked) _networkBody?.TeleportPosition(position);
+                { 
+                    if (setToLocal)
+                        ActiveTransform.localPosition = position;
+                    else
+                        ActiveTransform.position = position;
+                }
 
                 OnTeleported?.Invoke();
             }
@@ -2001,7 +2017,6 @@ namespace Mona.SDK.Core.Body
             }
             else
             {
-
                 if (isNetworked && _networkBody != null)
                 {
                     _networkBody?.TeleportRotation(rotation);
@@ -2010,8 +2025,6 @@ namespace Mona.SDK.Core.Body
                 {
                     ActiveTransform.rotation = rotation;
                 }
-
-                if (isNetworked) 
 
                 OnTeleported?.Invoke();
             }
