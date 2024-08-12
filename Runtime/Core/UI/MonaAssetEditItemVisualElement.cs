@@ -35,6 +35,8 @@ namespace Mona.SDK.Core.UIElements
         private TextField _bodyUrlField;
         private Toggle _avatarUseUrlField;
         private TextField _avatarUrlField;
+        private Toggle _audioUseUrlField;
+        private TextField _audioUrlField;
         private IntegerField _animationLayer;
         private FloatField _animationLayerWeight;
 
@@ -138,6 +140,21 @@ namespace Mona.SDK.Core.UIElements
                     ((IMonaAudioAssetItem)_assets.AllAssets[_index]).Value = (AudioClip)evt.newValue;
             });
 
+            _audioUrlField = new TextField();
+            _audioUrlField.style.flexGrow = 1;
+            _audioUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                ((IMonaAudioAssetItem)_assets.AllAssets[_index]).Url = (string)evt.newValue;
+            });
+
+            _audioUseUrlField = new Toggle();
+            _audioUseUrlField.RegisterValueChangedCallback((evt) =>
+            {
+                if (!evt.newValue)
+                    ((IMonaAudioAssetItem)_assets.AllAssets[_index]).Url = null;
+                DisplayAudioFields(evt.newValue);
+            });
+
             _materialField = new ObjectField();
             _materialField.style.flexGrow = 1;
             _materialField.RegisterValueChangedCallback((evt) =>
@@ -203,6 +220,22 @@ namespace Mona.SDK.Core.UIElements
 #endif
         }
 
+        private void DisplayAudioFields(bool useUrl)
+        {
+#if UNITY_EDITOR
+            if (_audioField.parent == this) Remove(_audioField);
+            if (_audioUrlField.parent == this) Remove(_audioUrlField);
+            if (useUrl)
+            {
+                Add(_audioUrlField);
+            }
+            else
+            {
+                Add(_audioField);
+            }
+#endif
+        }
+
         private void DisplayBodyFields(bool useUrl)
         {
 #if UNITY_EDITOR
@@ -261,10 +294,13 @@ namespace Mona.SDK.Core.UIElements
                 _wearableField.value = (GameObject)((IMonaWearableAssetItem)value).Value;
             }
             else if (value is IMonaAudioAssetItem)
-            {            
-                Add(_audioField);
+            {
+                Add(_audioUseUrlField);
+                DisplayAudioFields(_audioUseUrlField.value);
+                _audioUseUrlField.value = !string.IsNullOrEmpty(((IMonaAudioAssetItem)value).Url);
                 _audioField.objectType = typeof(AudioClip);
                 _audioField.value = ((IMonaAudioAssetItem)value).Value;
+                _audioUrlField.value = ((IMonaAudioAssetItem)value).Url;
                 _audioField.SetEnabled(true);
             }
             else if (value is IMonaMaterialAssetItem)

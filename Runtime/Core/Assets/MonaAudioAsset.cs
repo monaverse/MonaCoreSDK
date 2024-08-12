@@ -12,5 +12,8 @@ namespace Mona.SDK.Core.Assets
 
         [SerializeField] private AudioClip _audioClip;
         public AudioClip Value { get => _audioClip; set => _audioClip = value; }
+
+        [SerializeField] private string _url;
+        public string Url { get => _url; set => _url = value; }
     }
 }
