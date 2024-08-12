@@ -77,7 +77,7 @@ namespace Mona.SDK.Core.Body
         void RemoveRigidbody();
         bool HasCollider();
         List<Collider> AddCollider();
-        List<Collider> AddCollider(MonaBodyColliderType colliderType, bool onlyRenderers = true);
+        List<Collider> AddCollider(MonaBodyColliderType colliderType, bool onlyRenderers = true, bool skipIfExists = true);
         void RemoveColliders();
 
         bool IsAttachedToRemotePlayer();

@@ -611,7 +611,7 @@ namespace Mona.SDK.Core.Body
             return colliders;
         }
 
-        public List<Collider> AddCollider(MonaBodyColliderType colliderType, bool onlyRenderers = true)
+        public List<Collider> AddCollider(MonaBodyColliderType colliderType, bool onlyRenderers = true, bool skipIfExists = true)
         {
             var colliders = new List<Collider>();
 
@@ -619,7 +619,7 @@ namespace Mona.SDK.Core.Body
             {
                 for (int i = 0; i < _renderers.Length; i++)
                 {
-                    if (_renderers[i] == null)
+                    if (_renderers[i] == null || (skipIfExists && _renderers[i].GetComponent<Collider>() != null))
                         continue;
 
                     switch (colliderType)
