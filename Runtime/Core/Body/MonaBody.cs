@@ -611,6 +611,64 @@ namespace Mona.SDK.Core.Body
             return colliders;
         }
 
+        public List<Collider> AddCollider(MonaBodyColliderType colliderType, bool onlyRenderers = true)
+        {
+            var colliders = new List<Collider>();
+
+            if (onlyRenderers)
+            {
+                for (int i = 0; i < _renderers.Length; i++)
+                {
+                    if (_renderers[i] == null)
+                        continue;
+
+                    switch (colliderType)
+                    {
+                        case MonaBodyColliderType.Box:
+                            var boxCollider = _renderers[i].AddComponent<BoxCollider>();
+                            colliders.Add(boxCollider);
+                            break;
+                        case MonaBodyColliderType.Sphere:
+                            var sphereCollider = _renderers[i].AddComponent<SphereCollider>();
+                            colliders.Add(sphereCollider);
+                            break;
+                        case MonaBodyColliderType.Mesh:
+                            var meshCollider = _renderers[i].AddComponent<MeshCollider>();
+                            colliders.Add(meshCollider);
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                switch (colliderType)
+                {
+                    case MonaBodyColliderType.Box:
+                        var boxCollider = gameObject.AddComponent<BoxCollider>();
+                        colliders.Add(boxCollider);
+                        break;
+                    case MonaBodyColliderType.Sphere:
+                        var sphereCollider = gameObject.AddComponent<SphereCollider>();
+                        colliders.Add(sphereCollider);
+                        break;
+                    case MonaBodyColliderType.Mesh:
+                        var meshCollider = gameObject.AddComponent<MeshCollider>();
+                        colliders.Add(meshCollider);
+                        break;
+                }
+            }
+
+            CacheColliders();
+            return colliders;
+        }
+
+        public void RemoveColliders()
+        {
+            var colliders = gameObject.GetComponentsInChildren<Collider>();
+            for (var i = 0; i < colliders.Length; i++)
+                Destroy(colliders[i]);
+        }
+
         public Vector3 GetCenter()
         {
             Vector3 pos = Vector3.zero;
