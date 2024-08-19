@@ -2251,6 +2251,7 @@ namespace Mona.SDK.Core.Body
         public List<IMonaBody> GetTagsByDistance(string tag)
         {
             var tags = FindByTag(tag);
+            tags.RemoveAll(x => !x.GetActive());
 
             if (tags.Count < 1)
                 return tags;
