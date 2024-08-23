@@ -175,7 +175,7 @@ namespace Mona.SDK.Core.Body
             var body = spawn ? (IMonaBody)GameObject.Instantiate(monaBody, Vector3.up * 10000f, Quaternion.identity) : monaBody;
 
             var bodies = body.Transform.GetComponentsInChildren<IMonaBody>();
-            Debug.Log($"GENERATE GUID {guid} {prefabId}");
+            //Debug.Log($"GENERATE GUID {guid} {prefabId}");
             for (var j = 0; j < bodies.Length; j++)
             {
                 var child = bodies[j];
