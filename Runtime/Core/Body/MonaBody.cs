@@ -82,6 +82,9 @@ namespace Mona.SDK.Core.Body
         private bool _blendLinearForcesAndKinematics = false;
         private bool _blendAngularForcesAndKinematics = false;
         private bool _applyPinOnGrounded = false;
+
+        [SerializeField] private bool _applyGroundingVelocity = true;
+
         private IMonaBody _parent;
         private IMonaBody _spawner;
         private IMonaBody _poolBodyPrevious { get; set; }
@@ -107,6 +110,8 @@ namespace Mona.SDK.Core.Body
         public IMonaBody Spawner { get => _spawner; set => _spawner = value; }
         public IMonaBody PoolBodyPrevious { get => _poolBodyPrevious; set => _poolBodyPrevious = value; }
         public IMonaBody PoolBodyNext { get => _poolBodyNext; set => _poolBodyNext = value; }
+
+        public bool ApplyGroundingVelocity { get => _applyGroundingVelocity; set => _applyGroundingVelocity = value; }
 
         public bool IsNetworked => _networkBody != null;
 
@@ -1290,7 +1295,7 @@ namespace Mona.SDK.Core.Body
 
             _grounded = false;
 
-            var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f, ~0, QueryTriggerInteraction.Ignore);
+            var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset * ActiveTransform.lossyScale.y + Vector3.up * 0.01f, -Vector3.up, _results, 0.02f, ~0, QueryTriggerInteraction.Ignore);
 
             if (hitCount > 0)
             {
@@ -1314,7 +1319,7 @@ namespace Mona.SDK.Core.Body
 
         private void ApplyGroundingObjectVelocity()
         {
-            if (!_grounded || !_cachedGroundingObject.TrackingObject)
+            if (!_grounded || !_cachedGroundingObject.TrackingObject || !_applyGroundingVelocity)
                 return;
 
             Vector3 adjustedVelocity = _cachedGroundingObject.AdjustedRiderVelocity;
@@ -1593,7 +1598,7 @@ namespace Mona.SDK.Core.Body
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position + _baseOffset + Vector3.up * 0.01f, -Vector3.up * .2f);
+            Gizmos.DrawRay(transform.position + _baseOffset * ActiveTransform.lossyScale.y + Vector3.up * 0.01f, -Vector3.up * .2f);
         }
 
         private RaycastHit[] _results = new RaycastHit[10];
@@ -1610,7 +1615,7 @@ namespace Mona.SDK.Core.Body
                     _grounded = false;
                     //var layerMask = 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_PHYSICS_GROUP_A) | 1 << LayerMask.NameToLayer(MonaCoreConstants.LAYER_LOCAL_PLAYER);
                     //Debug.Log($"Raycast {_baseOffset} {GetPosition()}");
-                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset + Vector3.up * 0.01f, -Vector3.up, _results, 0.2f, ~0, QueryTriggerInteraction.Ignore);
+                    var hitCount = Physics.RaycastNonAlloc(GetPosition() + _baseOffset * ActiveTransform.lossyScale.y + Vector3.up * 0.01f, -Vector3.up, _results, 0.2f, ~0, QueryTriggerInteraction.Ignore);
                     if (hitCount > 0)
                     {
                         for(var i = 0;i < hitCount; i++)

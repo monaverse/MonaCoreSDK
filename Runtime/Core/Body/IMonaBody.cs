@@ -55,6 +55,8 @@ namespace Mona.SDK.Core.Body
         Vector3 InitialScale { get; }
         Vector3 CurrentVelocity { get; }
 
+        bool ApplyGroundingVelocity { get; set; }
+
         bool BlendLinearForcesAndKinematics { get; set; }
         bool BlendAngularForcesAndKinematics { get; set; }
 

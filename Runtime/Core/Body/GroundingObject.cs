@@ -54,11 +54,14 @@ namespace Mona.SDK.Core.Body
             get
             {
                 Vector3 myVelocity = Velocity;
-                
+
                 if (Mathf.Approximately(myVelocity.magnitude, 0))
                     return Vector3.zero;
 
                 Vector3 riderVelocity = _riderMonaBody.CurrentVelocity;
+
+                if (Mathf.Approximately(riderVelocity.magnitude, 0))
+                    return myVelocity;
 
                 float verticalVelocity = riderVelocity.y - 0.5f > myVelocity.y ?
                     myVelocity.y : myVelocity.y;
