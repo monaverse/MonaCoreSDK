@@ -15,6 +15,8 @@ namespace Mona.SDK.Core.Body
         private bool _onlyHasTransform = false;
         private Vector3 _previousPosition;
 
+        public RaycastHit Hit;
+
         public IMonaBody MonaBody => _monaBody;
 
         public bool TrackingObject => _initialized;

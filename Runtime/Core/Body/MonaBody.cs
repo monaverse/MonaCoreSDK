@@ -1308,6 +1308,8 @@ namespace Mona.SDK.Core.Body
                         if (_cachedGroundingObject.transform != _results[i].collider.transform)
                             _cachedGroundingObject.Initialize(_results[i].collider.transform, this);
 
+                        _cachedGroundingObject.Hit = _results[i];
+
                         break;
                     }
                 }
