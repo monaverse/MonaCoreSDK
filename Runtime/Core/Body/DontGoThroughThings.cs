@@ -10,6 +10,7 @@ namespace Mona.SDK.Core.Body
 {
     public class DontGoThroughThings : MonoBehaviour
     {
+        public bool disableThisScript = false;
         // Careful when setting this to true - it might cause double
         // events to be fired - but it won't pass through the trigger
         public bool sendTriggerMessage = false;
@@ -71,6 +72,7 @@ namespace Mona.SDK.Core.Body
 
         private void FixedUpdate()
         {
+            if (disableThisScript) return;
 
             if (_body.ActiveRigidbody == null) return;
 
