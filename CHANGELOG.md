@@ -1,3 +1,7 @@
+# MonaCoreSDK 0.13.0
+
+**Full Changelog**: https://github.com/monaverse/MonaCoreSDK/compare/0.12.0...0.13.0
+
 # MonaCoreSDK 0.12.0
 
 **Full Changelog**: https://github.com/monaverse/MonaCoreSDK/compare/0.11.0...0.12.0
