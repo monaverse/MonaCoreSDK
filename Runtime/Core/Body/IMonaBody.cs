@@ -98,6 +98,7 @@ namespace Mona.SDK.Core.Body
         void CancelForces();
         void MoveDirection(Vector3 direction, bool isNetworked = true);
         void SetPosition(Vector3 position, bool isNetworked = true);
+        void AddLocalPosition(Vector3 dir, bool isNetworked = true);
         void AddPosition(Vector3 dir, bool isNetworked = true);
         void RotateAround(Vector3 direction, float angle, bool isNetowrked = true);
         //TODO void RotateTowards(Vector3 direction, float angle, bool isKinematic = false, bool isNetworked = true);

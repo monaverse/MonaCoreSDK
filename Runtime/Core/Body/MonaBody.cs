@@ -192,6 +192,7 @@ namespace Mona.SDK.Core.Body
         public struct MonaBodyDirection
         {
             public Vector3 Direction;
+            public bool IsLocal;
         }
 
         public struct MonaBodyRotation
@@ -1334,10 +1335,14 @@ namespace Mona.SDK.Core.Body
         }
 
         private Vector3 _applyPosition;
+        private Vector3 _applyLocalPosition;
         
-        private void ApplyAddPosition(Vector3 delta)
+        private void ApplyAddPosition(Vector3 delta, bool isLocal)
         {
-            _applyPosition += delta;
+            if (isLocal)
+                _applyLocalPosition += delta;
+            else
+                _applyPosition += delta;
         }
 
         private Quaternion _applyRotation;
@@ -1352,6 +1357,8 @@ namespace Mona.SDK.Core.Body
                 _applyRotation = _teleportRotation;
             else
                 _applyRotation = GetRotation();
+
+            _applyLocalPosition = GetLocalPosition();
 
             if (_teleportPositionSet)
                 _applyPosition = _teleportPosition;
@@ -1370,22 +1377,30 @@ namespace Mona.SDK.Core.Body
                 updateRotation = true;
             }
 
+            bool hasLocal = false;
+
             if (_positionDeltas.Count > 0)
             {
 
                 for (var i = 0; i < _positionDeltas.Count; i++)
                 {
                     var position = _positionDeltas[i];
-                    ApplyAddPosition(position.Direction);
+                    ApplyAddPosition(position.Direction, position.IsLocal);
+                    if (position.IsLocal) hasLocal = true;
                 }
 
                 //Debug.Log($"{Transform.gameObject} apply position {_applyPosition} {Time.frameCount}");
 
                 _positionDeltas.Clear();
 
-
                 _applyPosition = _positionBounds.BindValue(_applyPosition);
                 updatePosition = true;
+            }
+
+            if(hasLocal)
+            {
+                ActiveTransform.localPosition = _applyLocalPosition;
+                updatePosition = false;
             }
 
             if (_hasRigidbody)
@@ -2187,6 +2202,11 @@ namespace Mona.SDK.Core.Body
             _positionDeltas.Add(new MonaBodyDirection() { Direction = dir });
         }
 
+        public void AddLocalPosition(Vector3 dir, bool isNetworked = true)
+        {
+            _positionDeltas.Add(new MonaBodyDirection() { Direction = dir, IsLocal = true });
+        }
+
         public Vector3 GetPosition()
         {
             if (_destroyed) return default;
@@ -2194,6 +2214,12 @@ namespace Mona.SDK.Core.Body
                 return ActiveRigidbody.position;
             else
                 return ActiveTransform.position;
+        }
+
+        public Vector3 GetLocalPosition()
+        {
+            if (_destroyed) return default;
+            return ActiveTransform.localPosition;
         }
 
         public Vector3 GetPosition(Vector3 offset)
