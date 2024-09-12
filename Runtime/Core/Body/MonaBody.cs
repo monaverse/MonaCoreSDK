@@ -2020,7 +2020,7 @@ namespace Mona.SDK.Core.Body
 
         public void BindRotation()
         {
-            if (!_positionBounds.RestrictTransform) return;
+            if (!_rotationBounds.RestrictTransform) return;
             if (_hasRigidbody)
             {
                 if(!_hasRigidbodyInParent)
