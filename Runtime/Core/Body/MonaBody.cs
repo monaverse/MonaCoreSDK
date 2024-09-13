@@ -1349,7 +1349,7 @@ namespace Mona.SDK.Core.Body
         private void ApplyPositionAndRotation()
         {
             if (_rotationDeltas.Count == 0 && _positionDeltas.Count == 0 && !_teleportPositionSet && !_teleportRotationSet) return;
-
+            
             bool updateRotation = false;
             bool updatePosition = false;
 
@@ -1402,6 +1402,9 @@ namespace Mona.SDK.Core.Body
                 ActiveTransform.localPosition = _applyLocalPosition;
                 updatePosition = false;
             }
+
+            if (float.IsNaN(_applyPosition.x) || float.IsNaN(_applyPosition.y) || float.IsNaN(_applyPosition.z))
+                updatePosition = false;
 
             if (_hasRigidbody)
             {
