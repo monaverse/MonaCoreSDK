@@ -30,6 +30,7 @@
         public const string ON_CHANGE_SPAWN_EVENT = "OnChangeSpawn";
         public const string ON_CHANGE_AVATAR_EVENT = "OnChangeAvatar";
         public const string ON_CHANGE_SPACE_EVENT = "OnChangeSpace";
+        public const string KEY_BINDINGS_EVENT = "OnMonaKeyBindingsEvent";
 
         public const string VALUE_CHANGED_EVENT = "OnMonaValueChanged";
 
