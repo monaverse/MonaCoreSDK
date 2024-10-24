@@ -1486,8 +1486,11 @@ namespace Mona.SDK.Core.Body
 
         public void CancelForces()
         {
-            ActiveRigidbody.velocity = Vector3.zero;
-            ActiveRigidbody.angularVelocity = Vector3.zero;
+            if (!ActiveRigidbody.isKinematic)
+            {
+                ActiveRigidbody.velocity = Vector3.zero;
+                ActiveRigidbody.angularVelocity = Vector3.zero;
+            }
             _force.Clear();
         }
 
