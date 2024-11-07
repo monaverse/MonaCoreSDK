@@ -76,7 +76,7 @@ namespace Mona.SDK.Core.Input
             {
                 case MonaInputType.Move: return Move;
                 case MonaInputType.Look: return Look;
-                case MonaInputType.Jump: return Look;
+                case MonaInputType.Jump: return Jump;
                 case MonaInputType.Action: return Action;
                 case MonaInputType.Sprint: return Sprint;
                 case MonaInputType.SwitchCamera: return SwitchCamera;
@@ -90,6 +90,7 @@ namespace Mona.SDK.Core.Input
                 case MonaInputType.OpenChat: return OpenChat;
                 case MonaInputType.ToggleMouseCapture: return ToggleMouseCapture;
             }
+
             return MonaInputState.None;
         }
 
